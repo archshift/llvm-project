@@ -15,20 +15,26 @@
 
 #include <stdio.h>
 
+// Suppress eager checking
+union Int {
+  int val;
+  char __partial_init;
+};
+
 volatile int x;
 
 __attribute__((noinline))
-void fn_g(int a) {
-  x = a;
+void fn_g(Int a) {
+  x = a.val;
 }
 
 __attribute__((noinline))
-void fn_f(int a) {
+void fn_f(Int a) {
   fn_g(a);
 }
 
 int main(int argc, char *argv[]) {
   int volatile z;
-  fn_f(z);
+  fn_f({z});
   return x;
 }

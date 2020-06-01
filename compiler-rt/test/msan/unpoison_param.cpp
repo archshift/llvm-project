@@ -9,42 +9,48 @@
 #include <assert.h>
 #include <sanitizer/msan_interface.h>
 
+// Suppress eager checking
+union Int {
+  int val;
+  char __partial_init;
+};
+
 #if __has_feature(memory_sanitizer)
 
-__attribute__((noinline)) int bar(int a, int b) {
+__attribute__((noinline)) int bar(Int a, Int b) {
   volatile int zero = 0;
   return zero;
 }
 
-int foo(int a, int b, int unpoisoned_params) {
+int foo(Int a, Int b, int unpoisoned_params) {
   if (unpoisoned_params == 0) {
-    assert(__msan_test_shadow(&a, sizeof(a)) == 0);
-    assert(__msan_test_shadow(&b, sizeof(b)) == 0);
+    assert(__msan_test_shadow(&a.val, sizeof(a)) == 0);
+    assert(__msan_test_shadow(&b.val, sizeof(b)) == 0);
   } else if (unpoisoned_params == 1) {
-    assert(__msan_test_shadow(&a, sizeof(a)) == -1);
-    assert(__msan_test_shadow(&b, sizeof(b)) == 0);
+    assert(__msan_test_shadow(&a.val, sizeof(a)) == -1);
+    assert(__msan_test_shadow(&b.val, sizeof(b)) == 0);
   } else if (unpoisoned_params == 2) {
-    assert(__msan_test_shadow(&a, sizeof(a)) == -1);
-    assert(__msan_test_shadow(&b, sizeof(b)) == -1);
+    assert(__msan_test_shadow(&a.val, sizeof(a)) == -1);
+    assert(__msan_test_shadow(&b.val, sizeof(b)) == -1);
   }
 
   // Poisons parameter shadow in TLS so that the next call from uninstrumented
   // main has params 1 and 2 poisoned no matter what.
   int x, y;
-  return bar(x, y);
+  return bar({x}, {y});
 }
 
 #else
 
-int foo(int, int, int);
+int foo(Int, Int, int);
 
 int main() {
-  foo(0, 0, 2); // Poison parameters for next call.
-  foo(0, 0, 0); // Check that both params are poisoned.
+  foo({0}, {0}, 2); // Poison parameters for next call.
+  foo({0}, {0}, 0); // Check that both params are poisoned.
   __msan_unpoison_param(1);
-  foo(0, 0, 1); // Check that only first param is unpoisoned.
+  foo({0}, {0}, 1); // Check that only first param is unpoisoned.
   __msan_unpoison_param(2);
-  foo(0, 0, 2); // Check that first and second params are unpoisoned.
+  foo({0}, {0}, 2); // Check that first and second params are unpoisoned.
   return 0;
 }
 

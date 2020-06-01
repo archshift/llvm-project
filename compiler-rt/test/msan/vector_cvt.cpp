@@ -4,8 +4,14 @@
 
 #include <emmintrin.h>
 
-int to_int(double v) {
-  __m128d t = _mm_set_sd(v);
+// Bypasses eager checking
+union Double {
+  double v;
+  char c;
+};
+
+int to_int(Double v) {
+  __m128d t = _mm_set_sd(v.v);
   int x = _mm_cvtsd_si32(t);
   return x;
   // CHECK: WARNING: MemorySanitizer: use-of-uninitialized-value
@@ -18,7 +24,7 @@ int main() {
 #else
   double v = 1.1;
 #endif
-  double* volatile p = &v;
+  Double* volatile p = (Double *)&v;
   int x = to_int(*p);
   return !x;
 }

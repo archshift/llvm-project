@@ -15,13 +15,19 @@ public:
 
 A a;
 
+// Suppress eager checking
+union Long {
+  long val;
+  char __partial_init;
+};
+
 __attribute__((noinline))
-void f(long x) {
+void f(Long x) {
 }
 
 int main(void) {
   long  x;
-  long * volatile p = &x;
+  Long * volatile p = (Long *)&x;
   // This call poisons TLS shadow for the first function argument.
   f(*p);
   return 0;

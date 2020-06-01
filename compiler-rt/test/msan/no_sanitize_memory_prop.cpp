@@ -8,17 +8,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// Suppress eager checking
+union Int {
+  int val;
+  char __partial_init;
+};
+
 __attribute__((noinline))
 __attribute__((weak))
 __attribute__((no_sanitize_memory))
-int f(int x) {
+Int f(Int x) {
   return x;
 }
 
 int main(void) {
-  int x;
-  int * volatile p = &x;
-  int y = f(*p);
+  Int x;
+  Int * volatile p = &x;
+  int y = f(*p).val;
   if (y)
     exit(0);
   return 0;

@@ -36,6 +36,16 @@
 #define PARTIAL_OVERFLOW(x) assert(__msan_test_shadow((char *)(&(x) + 1) - 1, 1) == -1)
 #endif
 
+union Int {
+  int val;
+  char __partial_init;
+};
+
+union Double {
+  double val;
+  char __partial_init;
+};
+
 
 template<int N>
 struct S {
@@ -58,7 +68,7 @@ void f1000(S<1000> s) {
   PARTIAL_OVERFLOW(s);
 }
 
-void f_many(int a, double b, S<800> s, int c, double d) {
+void f_many(Int a, Double b, S<800> s, Int c, Double d) {
   NO_OVERFLOW(a);
   NO_OVERFLOW(b);
   PARTIAL_OVERFLOW(s);
@@ -68,7 +78,7 @@ void f_many(int a, double b, S<800> s, int c, double d) {
 
 // -8 bytes for "int a", aligned by 8
 // -2 to make "int c" a partial fit
-void f_many2(int a, S<800 - 8 - 2> s, int c, double d) {
+void f_many2(Int a, S<800 - 8 - 2> s, Int c, Double d) {
   NO_OVERFLOW(a);
   NO_OVERFLOW(s);
   PARTIAL_OVERFLOW(c);
@@ -85,8 +95,8 @@ int main(void) {
   f801(s801);
   f1000(s1000);
 
-  int i;
-  double d;
+  Int i;
+  Double d;
   f_many(i, d, s800, i, d);
 
   S<800 - 8 - 2> s788;

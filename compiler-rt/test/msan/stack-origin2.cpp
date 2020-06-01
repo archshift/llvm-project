@@ -20,17 +20,23 @@
 
 #include <stdlib.h>
 
+// Used to suppress eager checking
+union Int {
+  int val;
+  char __partial_init;
+};
+
 extern "C"
-int f(int depth) {
+Int f(int depth) {
   if (depth) return f(depth - 1);
 
-  int x;
-  int *volatile p = &x;
+  Int x;
+  Int *volatile p = &x;
   return *p;
 }
 
 int main(int argc, char **argv) {
-  return f(1);
+  return f(1).val;
   // CHECK: WARNING: MemorySanitizer: use-of-uninitialized-value
   // CHECK: {{#0 0x.* in main .*stack-origin2.cpp:}}[[@LINE-2]]
 

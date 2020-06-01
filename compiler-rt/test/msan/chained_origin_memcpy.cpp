@@ -18,17 +18,23 @@
 #include <stdio.h>
 #include <string.h>
 
+// Suppress eager checking
+union Int {
+  int val;
+  char __partial_init;
+};
+
 int xx[10000];
 int yy[10000];
 volatile int idx = 30;
 
 __attribute__((noinline))
-void fn_g(int a, int b) {
-  xx[idx] = a; xx[idx + 10] = b;
+void fn_g(Int a, Int b) {
+  xx[idx] = a.val; xx[idx + 10] = b.val;
 }
 
 __attribute__((noinline))
-void fn_f(int a, int b) {
+void fn_f(Int a, Int b) {
   fn_g(a, b);
 }
 
@@ -40,7 +46,7 @@ void fn_h() {
 int main(int argc, char *argv[]) {
   int volatile z1;
   int volatile z2;
-  fn_f(z1, z2);
+  fn_f({z1}, {z2});
   fn_h();
   return yy[idx + OFFSET];
 }

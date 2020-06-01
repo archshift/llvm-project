@@ -13,15 +13,21 @@ struct mypair {
  int y;
 };
 
-mypair my_make_pair(int64_t x, int y)  {
+// Suppress eager checking
+union Int64 {
+  int64_t val;
+  char __partial_init;
+};
+
+mypair my_make_pair(Int64 x, int y)  {
  mypair p;
- p.x = x;
+ p.x = x.val;
  p.y = y;
  return p;
 }
 
 int main() {
- int64_t * volatile p = new int64_t;
+ Int64 * volatile p = new Int64;
  mypair z = my_make_pair(*p, 0);
  if (z.x)
    printf("zzz\n");

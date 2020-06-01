@@ -17,33 +17,39 @@
 
 #include <stdio.h>
 
-volatile int x, y;
+// Suppress eager checking
+union Int {
+  int val;
+  char __partial_init;
+};
+
+volatile Int x, y;
 
 __attribute__((noinline))
-void fn_g(int a) {
-  x = a;
+void fn_g(Int a) {
+  x.val = a.val;
 }
 
 __attribute__((noinline))
-void fn_f(int a) {
+void fn_f(Int a) {
   fn_g(a);
 }
 
 __attribute__((noinline))
 void fn_h() {
-  y = x;
+  y.val = x.val;
 }
 
 int main(int argc, char *argv[]) {
 #ifdef HEAP
-  int * volatile zz = new int;
-  int z = *zz;
+  Int * volatile zz = new Int;
+  Int z = *zz;
 #else
-  int volatile z;
+  Int volatile z;
 #endif
-  fn_f(z);
+  fn_f({z.val});
   fn_h();
-  return y;
+  return y.val;
 }
 
 // CHECK: WARNING: MemorySanitizer: use-of-uninitialized-value
@@ -60,7 +66,7 @@ int main(int argc, char *argv[]) {
 // CHECK-FULL-STACK: {{#2 .* in main.*chained_origin.cpp:}}[[@LINE-16]]
 // CHECK-SHORT-STACK: {{#0 .* in fn_g.*chained_origin.cpp:}}[[@LINE-37]]
 
-// CHECK-STACK: Uninitialized value was created by an allocation of 'z' in the stack frame of function 'main'
+// CHECK-STACK: Uninitialized value was created by an allocation of 'z.sroa.0' in the stack frame of function 'main'
 // CHECK-STACK: {{#0 .* in main.*chained_origin.cpp:}}[[@LINE-27]]
 
 // CHECK-HEAP: Uninitialized value was created by a heap allocation

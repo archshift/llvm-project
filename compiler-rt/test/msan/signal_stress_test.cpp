@@ -27,10 +27,17 @@ void f(bool poisoned, int n, ...) {
 
 int sigcnt;
 
+// Used to suppress eager checking
+union VoidP {
+  void *ptr;
+  char __partial_init;
+};
+
 void SignalHandler(int signo) {
   assert(signo == SIGPROF);
   void *p;
-  void **volatile q = &p;
+  VoidP p_wrap = { p };
+  VoidP *volatile q = &p_wrap;
   f(true, 10,
     *q, *q, *q, *q, *q,
     *q, *q, *q, *q, *q);
@@ -48,7 +55,8 @@ int main() {
   setitimer(ITIMER_PROF, &itv, NULL);
 
   void *p;
-  void **volatile q = &p;
+  VoidP p_wrap = { p };
+  VoidP *volatile q = &p_wrap;
 
   do {
     f(false, 20,

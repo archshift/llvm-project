@@ -15,12 +15,17 @@ constexpr size_t kSize2 = 7;
 
 bool seen2;
 
-void dummy(long a, long b, long c, long d, long e) {}
+union Long {
+  long val;
+  char __partial_init;
+};
+
+void dummy(Long a, Long b, Long c, Long d, Long e) {}
 
 void poison_stack_and_param() {
   char x[10000];
   int y;
-  dummy(y, y, y, y, y);
+  dummy({y}, {y}, {y}, {y}, {y});
 }
 
 __attribute__((always_inline)) int cmp(long a, long b) {

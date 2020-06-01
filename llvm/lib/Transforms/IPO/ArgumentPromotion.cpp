@@ -134,6 +134,12 @@ doPromotion(Function *F, SmallPtrSetImpl<Argument *> &ArgsToPromote,
   SmallVector<AttributeSet, 8> ArgAttrVec;
   AttributeList PAL = F->getAttributes();
 
+  // The attribute list we'll use for promoted arguments. We mark them PartialInit
+  // because there's no way of knowing the data's initialization state on the other
+  // side of a pointer or reference.
+  AttributeSet PartialInitAttrSet =
+      AttributeSet().addAttribute(F->getContext(), Attribute::PartialInit);
+
   // First, determine the new argument list
   unsigned ArgNo = 0;
   for (Function::arg_iterator I = F->arg_begin(), E = F->arg_end(); I != E;
@@ -144,7 +150,7 @@ doPromotion(Function *F, SmallPtrSetImpl<Argument *> &ArgsToPromote,
       StructType *STy = cast<StructType>(AgTy);
       Params.insert(Params.end(), STy->element_begin(), STy->element_end());
       ArgAttrVec.insert(ArgAttrVec.end(), STy->getNumElements(),
-                        AttributeSet());
+                        PartialInitAttrSet);
       ++NumByValArgsPromoted;
     } else if (!ArgsToPromote.count(&*I)) {
       // Unchanged argument
@@ -198,7 +204,7 @@ doPromotion(Function *F, SmallPtrSetImpl<Argument *> &ArgsToPromote,
         Params.push_back(GetElementPtrInst::getIndexedType(
             cast<PointerType>(I->getType())->getElementType(),
             ArgIndex.second));
-        ArgAttrVec.push_back(AttributeSet());
+        ArgAttrVec.push_back(PartialInitAttrSet);
         assert(Params.back());
       }
 
@@ -267,7 +273,7 @@ doPromotion(Function *F, SmallPtrSetImpl<Argument *> &ArgsToPromote,
           // TODO: Tell AA about the new values?
           Args.push_back(IRB.CreateLoad(STy->getElementType(i), Idx,
                                         Idx->getName() + ".val"));
-          ArgAttrVec.push_back(AttributeSet());
+          ArgAttrVec.push_back(PartialInitAttrSet);
         }
       } else if (!I->use_empty()) {
         // Non-dead argument: insert GEPs and loads as appropriate.
@@ -310,7 +316,7 @@ doPromotion(Function *F, SmallPtrSetImpl<Argument *> &ArgsToPromote,
           newLoad->setAAMetadata(AAInfo);
 
           Args.push_back(newLoad);
-          ArgAttrVec.push_back(AttributeSet());
+          ArgAttrVec.push_back(PartialInitAttrSet);
         }
       }
 

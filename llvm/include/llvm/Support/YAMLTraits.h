@@ -905,7 +905,7 @@ private:
                              Context &Ctx) {
     assert(DefaultValue.hasValue() == false &&
            "Optional<T> shouldn't have a value!");
-    void *SaveInfo;
+    void *SaveInfo = nullptr;
     bool UseDefault = true;
     const bool sameAsDefault = outputting() && !Val.hasValue();
     if (!outputting() && !Val.hasValue())
@@ -924,7 +924,7 @@ private:
   template <typename T, typename Context>
   void processKeyWithDefault(const char *Key, T &Val, const T &DefaultValue,
                              bool Required, Context &Ctx) {
-    void *SaveInfo;
+    void *SaveInfo = nullptr;
     bool UseDefault;
     const bool sameAsDefault = outputting() && Val == DefaultValue;
     if ( this->preflightKey(Key, Required, sameAsDefault, UseDefault,
@@ -940,7 +940,7 @@ private:
 
   template <typename T, typename Context>
   void processKey(const char *Key, T &Val, bool Required, Context &Ctx) {
-    void *SaveInfo;
+    void *SaveInfo = nullptr;
     bool UseDefault;
     if ( this->preflightKey(Key, Required, false, UseDefault, SaveInfo) ) {
       yamlize(*this, Val, Required, Ctx);
@@ -976,7 +976,7 @@ yamlize(IO &io, T &Val, bool, EmptyContext &Ctx) {
 template <typename T>
 std::enable_if_t<has_ScalarBitSetTraits<T>::value, void>
 yamlize(IO &io, T &Val, bool, EmptyContext &Ctx) {
-  bool DoClear;
+  bool DoClear = false;
   if ( io.beginBitSetScalar(DoClear) ) {
     if ( DoClear )
       Val = T();
@@ -1131,7 +1131,7 @@ yamlize(IO &io, T &Seq, bool, Context &Ctx) {
     unsigned incnt = io.beginFlowSequence();
     unsigned count = io.outputting() ? SequenceTraits<T>::size(io, Seq) : incnt;
     for(unsigned i=0; i < count; ++i) {
-      void *SaveInfo;
+      void *SaveInfo = nullptr;
       if ( io.preflightFlowElement(i, SaveInfo) ) {
         yamlize(io, SequenceTraits<T>::element(io, Seq, i), true, Ctx);
         io.postflightFlowElement(SaveInfo);
@@ -1143,7 +1143,7 @@ yamlize(IO &io, T &Seq, bool, Context &Ctx) {
     unsigned incnt = io.beginSequence();
     unsigned count = io.outputting() ? SequenceTraits<T>::size(io, Seq) : incnt;
     for(unsigned i=0; i < count; ++i) {
-      void *SaveInfo;
+      void *SaveInfo = nullptr;
       if ( io.preflightElement(i, SaveInfo) ) {
         yamlize(io, SequenceTraits<T>::element(io, Seq, i), true, Ctx);
         io.postflightElement(SaveInfo);

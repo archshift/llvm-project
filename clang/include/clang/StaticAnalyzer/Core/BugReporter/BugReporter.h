@@ -355,7 +355,7 @@ protected:
   /// Reports with different uniqueing locations are considered to be different
   /// for the purposes of deduplication.
   PathDiagnosticLocation UniqueingLocation;
-  const Decl *UniqueingDecl;
+  const Decl *UniqueingDecl = nullptr;
 
   const Stmt *getStmt() const;
 

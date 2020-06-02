@@ -6736,7 +6736,7 @@ void TypeLocReader::VisitPackExpansionTypeLoc(PackExpansionTypeLoc TL) {
 }
 
 void TypeLocReader::VisitObjCInterfaceTypeLoc(ObjCInterfaceTypeLoc TL) {
-  TL.setNameLoc(readSourceLocation());
+  TL.initializeLocal(Reader.getASTContext(), readSourceLocation());
 }
 
 void TypeLocReader::VisitObjCTypeParamTypeLoc(ObjCTypeParamTypeLoc TL) {

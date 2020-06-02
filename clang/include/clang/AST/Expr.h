@@ -338,7 +338,8 @@ public:
       CL_ClassTemporary, // A temporary of class type, or subobject thereof.
       CL_ArrayTemporary, // A temporary of array type.
       CL_ObjCMessageRValue, // ObjC message is an rvalue
-      CL_PRValue // A prvalue for any other reason, of any other type
+      CL_PRValue, // A prvalue for any other reason, of any other type
+      CL_Unknown // Null enumeration
     };
     /// The results of modification testing.
     enum ModifiableType {
@@ -352,14 +353,15 @@ public:
       CM_ConstQualifiedField,
       CM_ConstAddrSpace,
       CM_ArrayType,
-      CM_IncompleteType
+      CM_IncompleteType,
+      CM_Unknown // Null enumeration
     };
 
   private:
     friend class Expr;
 
-    unsigned short Kind;
-    unsigned short Modifiable;
+    unsigned short Kind = CL_Unknown;
+    unsigned short Modifiable = CM_Unknown;
 
     explicit Classification(Kinds k, ModifiableType m)
       : Kind(k), Modifiable(m)

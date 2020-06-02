@@ -218,11 +218,11 @@ class WasmObjectWriter : public MCObjectWriter {
 
   // Relocations for fixing up references in the code section.
   std::vector<WasmRelocationEntry> CodeRelocations;
-  uint32_t CodeSectionIndex;
+  Optional<uint32_t> CodeSectionIndex;
 
   // Relocations for fixing up references in the data section.
   std::vector<WasmRelocationEntry> DataRelocations;
-  uint32_t DataSectionIndex;
+  Optional<uint32_t> DataSectionIndex;
 
   // Index values to use for fixing up call_indirect type indices.
   // Maps function symbols to the index of the type of the function
@@ -329,9 +329,9 @@ private:
   void writeExportSection(ArrayRef<wasm::WasmExport> Exports);
   void writeElemSection(ArrayRef<uint32_t> TableElems);
   void writeDataCountSection();
-  void writeCodeSection(const MCAssembler &Asm, const MCAsmLayout &Layout,
-                        ArrayRef<WasmFunction> Functions);
-  void writeDataSection();
+  int writeCodeSection(const MCAssembler &Asm, const MCAsmLayout &Layout,
+                       ArrayRef<WasmFunction> Functions);
+  int writeDataSection();
   void writeEventSection(ArrayRef<wasm::WasmEventType> Events);
   void writeGlobalSection(ArrayRef<wasm::WasmGlobal> Globals);
   void writeRelocSection(uint32_t SectionIndex, StringRef Name,
@@ -873,11 +873,11 @@ void WasmObjectWriter::writeDataCountSection() {
   endSection(Section);
 }
 
-void WasmObjectWriter::writeCodeSection(const MCAssembler &Asm,
-                                        const MCAsmLayout &Layout,
-                                        ArrayRef<WasmFunction> Functions) {
+int WasmObjectWriter::writeCodeSection(const MCAssembler &Asm,
+                                       const MCAsmLayout &Layout,
+                                       ArrayRef<WasmFunction> Functions) {
   if (Functions.empty())
-    return;
+    return -1;
 
   SectionBookkeeping Section;
   startSection(Section, wasm::WASM_SEC_CODE);
@@ -901,11 +901,12 @@ void WasmObjectWriter::writeCodeSection(const MCAssembler &Asm,
   applyRelocations(CodeRelocations, Section.ContentsOffset);
 
   endSection(Section);
+  return 0;
 }
 
-void WasmObjectWriter::writeDataSection() {
+int WasmObjectWriter::writeDataSection() {
   if (DataSegments.empty())
-    return;
+    return -1;
 
   SectionBookkeeping Section;
   startSection(Section, wasm::WASM_SEC_DATA);
@@ -931,6 +932,7 @@ void WasmObjectWriter::writeDataSection() {
   applyRelocations(DataRelocations, Section.ContentsOffset);
 
   endSection(Section);
+  return 0;
 }
 
 void WasmObjectWriter::writeRelocSection(
@@ -1657,13 +1659,15 @@ uint64_t WasmObjectWriter::writeObject(MCAssembler &Asm,
   writeExportSection(Exports);
   writeElemSection(TableElems);
   writeDataCountSection();
-  writeCodeSection(Asm, Layout, Functions);
-  writeDataSection();
+  int code_ret = writeCodeSection(Asm, Layout, Functions);
+  int data_ret = writeDataSection();
   for (auto &CustomSection : CustomSections)
     writeCustomSection(CustomSection, Asm, Layout);
   writeLinkingMetaDataSection(SymbolInfos, InitFuncs, Comdats);
-  writeRelocSection(CodeSectionIndex, "CODE", CodeRelocations);
-  writeRelocSection(DataSectionIndex, "DATA", DataRelocations);
+  if (!code_ret)
+    writeRelocSection(*CodeSectionIndex, "CODE", CodeRelocations);
+  if (!data_ret)
+    writeRelocSection(*DataSectionIndex, "DATA", DataRelocations);
   writeCustomRelocSections();
   if (ProducersSection)
     writeCustomSection(*ProducersSection, Asm, Layout);

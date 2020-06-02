@@ -65,6 +65,8 @@ Cl Expr::ClassifyImpl(ASTContext &Ctx, SourceLocation *Loc) const {
   case Cl::CL_ArrayTemporary:
   case Cl::CL_ObjCMessageRValue:
   case Cl::CL_PRValue: assert(getValueKind() == VK_RValue); break;
+  case Cl::CL_Unknown:
+    llvm_unreachable("Tried to classify unknown class!");
   }
 
   Cl::ModifiableType modifiable = Cl::CM_Untested;
@@ -678,6 +680,7 @@ Expr::LValueClassification Expr::ClassifyLValue(ASTContext &Ctx) const {
   case Cl::CL_ArrayTemporary: return LV_ArrayTemporary;
   case Cl::CL_ObjCMessageRValue: return LV_InvalidMessageExpression;
   case Cl::CL_PRValue: return LV_InvalidExpression;
+  case Cl::CL_Unknown: break;
   }
   llvm_unreachable("Unhandled kind");
 }
@@ -701,6 +704,7 @@ Expr::isModifiableLvalue(ASTContext &Ctx, SourceLocation *Loc) const {
   case Cl::CL_PRValue:
     return VC.getModifiable() == Cl::CM_LValueCast ?
       MLV_LValueCast : MLV_InvalidExpression;
+  case Cl::CL_Unknown: break;
   }
   assert(VC.getKind() == Cl::CL_LValue && "Unhandled kind");
   switch (VC.getModifiable()) {
@@ -716,6 +720,7 @@ Expr::isModifiableLvalue(ASTContext &Ctx, SourceLocation *Loc) const {
   case Cl::CM_ConstAddrSpace: return MLV_ConstAddrSpace;
   case Cl::CM_ArrayType: return MLV_ArrayType;
   case Cl::CM_IncompleteType: return MLV_IncompleteType;
+  case Cl::CM_Unknown: break;
   }
   llvm_unreachable("Unhandled modifiable type");
 }

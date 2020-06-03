@@ -39,8 +39,12 @@ union Long {
   char __partial_init;
 };
 
-void dummy(Long a, Long b, Long c, Long d, Long e) {}
+__attribute__((noinline))
+void dummy(Long a, Long b, Long c, Long d, Long e) {
+  __asm__ __volatile__ (""::"r"(a), "r"(b), "r"(c), "r"(d), "r"(e));
+}
 
+__attribute__((noinline))
 void poison_stack_and_param() {
   char x[10000];
   int y;

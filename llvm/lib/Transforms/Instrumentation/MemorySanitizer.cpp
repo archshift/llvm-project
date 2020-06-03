@@ -281,6 +281,10 @@ static cl::opt<bool> ClCheckAccessAddress("msan-check-access-address",
        cl::desc("report accesses through a pointer which has poisoned shadow"),
        cl::Hidden, cl::init(true));
 
+static cl::opt<bool> ClEagerChecks("msan-eager-checks",
+       cl::desc("check arguments at function call boundaries"),
+       cl::Hidden, cl::init(false));
+
 static cl::opt<bool> ClDumpStrictInstructions("msan-dump-strict-instructions",
        cl::desc("print out instructions with default strict semantics"),
        cl::Hidden, cl::init(false));
@@ -1088,8 +1092,7 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     PoisonUndef = SanitizeFunction && ClPoisonUndef;
     // FIXME: Consider using SpecialCaseList to specify a list of functions that
     // must always return fully initialized values. For now, we hardcode "main".
-    CheckReturnValue = F.getName() == "main"
-        || !F.hasAttribute(AttributeList::ReturnIndex, Attribute::PartialInit);
+    CheckReturnValue = F.getName() == "main";
     CheckReturnValue &= SanitizeFunction;
 
     MS.initializeCallbacks(*F.getParent());
@@ -1657,7 +1660,7 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
 
         bool FArgByVal = FArg.hasByValAttr();
         bool FArgPartialInit = FArg.hasAttribute(Attribute::PartialInit);
-        bool FArgTLBStorage = FArgByVal || FArgPartialInit;
+        bool FArgCheck = ClEagerChecks && !FArgByVal && !FArgPartialInit;
         unsigned Size =
             FArgByVal
                 ? DL.getTypeAllocSize(FArg.getType()->getPointerElementType())
@@ -1665,7 +1668,11 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
         
         if (A == &FArg) {
           bool Overflow = ArgOffset + Size > kParamTLSSize;
-          if (FArgByVal) {
+          if (FArgCheck) {
+            *ShadowPtr = getCleanShadow(V);
+            setOrigin(A, getCleanOrigin());
+            continue;
+          } else if (FArgByVal) {
             Value *Base = getShadowPtrForArgument(&FArg, EntryIRB, ArgOffset);
             // ByVal pointer itself has clean shadow. We copy the actual
             // argument shadow to the underlying memory.
@@ -1691,7 +1698,8 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
               (void)Cpy;
             }
             *ShadowPtr = getCleanShadow(V);
-          } else if (FArgPartialInit) {
+          } else {
+            // Shadow over TLS
             Value *Base = getShadowPtrForArgument(&FArg, EntryIRB, ArgOffset);
             if (Overflow) {
               // ParamTLS overflow.
@@ -1700,10 +1708,6 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
               *ShadowPtr = EntryIRB.CreateAlignedLoad(getShadowTy(&FArg), Base,
                                                       kShadowTLSAlignment);
             }
-          } else {
-            *ShadowPtr = getCleanShadow(V);
-            setOrigin(A, getCleanOrigin());
-            continue;
           }
           LLVM_DEBUG(dbgs()
                      << "  ARG:    " << FArg << " ==> " << **ShadowPtr << "\n");
@@ -1716,7 +1720,7 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
           }
         }
 
-        if (FArgTLBStorage)
+        if (!FArgCheck)
           ArgOffset += alignTo(Size, kShadowTLSAlignment);
       }
       assert(*ShadowPtr && "Could not find shadow for an argument");
@@ -3407,7 +3411,14 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
       bool ArgIsInitialized = false;
       const DataLayout &DL = F.getParent()->getDataLayout();
 
-      if (CB.paramHasAttr(i, Attribute::ByVal)) {
+      bool ByVal = CB.paramHasAttr(i, Attribute::ByVal);
+      bool PartialInit = CB.paramHasAttr(i, Attribute::PartialInit);
+      bool Check = ClEagerChecks && !ByVal && !PartialInit;
+
+      if (Check) {
+        insertShadowCheck(A, &CB);
+        continue;
+      } else if (ByVal) {
         // ByVal requires some special handling as it's too big for a single load
         assert(A->getType()->isPointerTy() &&
                "ByVal argument is not a pointer!");
@@ -3425,8 +3436,8 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
         Store = IRB.CreateMemCpy(ArgShadowBase, Alignment, AShadowPtr,
                                  Alignment, Size);
         // TODO(glider): need to copy origins.
-      } else if (CB.paramHasAttr(i, Attribute::PartialInit)) {
-        // PartialInit parameters mean we need bit-grained tracking of uninit data
+      } else {
+        // Any other parameters mean we need bit-grained tracking of uninit data
         Size = DL.getTypeAllocSize(A->getType());
         if (ArgOffset + Size > kParamTLSSize) break;
         Store = IRB.CreateAlignedStore(ArgShadow, ArgShadowBase,
@@ -3434,10 +3445,6 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
         
         Constant *Cst = dyn_cast<Constant>(ArgShadow);
         if (Cst && Cst->isNullValue()) ArgIsInitialized = true;
-      } else {
-        // Any other parameters can be eagerly checked before passing
-        insertShadowCheck(A, &CB);
-        continue;
       }
       if (MS.TrackOrigins && !ArgIsInitialized)
         IRB.CreateStore(getOrigin(A),
@@ -3461,7 +3468,7 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     if (isa<CallInst>(CB) && cast<CallInst>(CB).isMustTailCall())
       return;
 
-    if (!CB.hasRetAttr(Attribute::PartialInit)) {
+    if (ClEagerChecks && !CB.hasRetAttr(Attribute::PartialInit)) {
       setShadow(&CB, getCleanShadow(&CB));
       setOrigin(&CB, getCleanOrigin());
       return;
@@ -3519,9 +3526,13 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     // Don't emit the epilogue for musttail call returns.
     if (isAMustTailRetVal(RetVal)) return;
     Value *ShadowPtr = getShadowPtrForRetval(RetVal, IRB);
-    if (CheckReturnValue) {
+    bool RetLazyCheck = !ClEagerChecks ||
+        F.hasAttribute(AttributeList::ReturnIndex, Attribute::PartialInit);
+
+    if (CheckReturnValue || !RetLazyCheck) {
       insertShadowCheck(RetVal, &I);
-    } else {
+    }
+    if (RetLazyCheck) {
       Value *Shadow = getShadow(RetVal);
       IRB.CreateAlignedStore(Shadow, ShadowPtr, kShadowTLSAlignment);
       if (MS.TrackOrigins)

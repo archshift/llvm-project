@@ -7,7 +7,7 @@ target triple = "x86_64-pc-windows-msvc"
 
 define internal void @add({i32, i32}* %this, i32* sret %r) {
 ; CHECK-LABEL: define {{[^@]+}}@add
-; CHECK-SAME: (i32 [[THIS_0_0_VAL:%.*]], i32 [[THIS_0_1_VAL:%.*]], i32* noalias [[R:%.*]])
+; CHECK-SAME: (i32 partialinit [[THIS_0_0_VAL:%.*]], i32 partialinit [[THIS_0_1_VAL:%.*]], i32* noalias [[R:%.*]])
 ; CHECK-NEXT:    [[AB:%.*]] = add i32 [[THIS_0_0_VAL]], [[THIS_0_1_VAL]]
 ; CHECK-NEXT:    store i32 [[AB]], i32* [[R]]
 ; CHECK-NEXT:    ret void
@@ -29,7 +29,7 @@ define void @f() {
 ; CHECK-NEXT:    [[PAIR_IDX_VAL:%.*]] = load i32, i32* [[PAIR_IDX]]
 ; CHECK-NEXT:    [[PAIR_IDX1:%.*]] = getelementptr { i32, i32 }, { i32, i32 }* [[PAIR]], i64 0, i32 1
 ; CHECK-NEXT:    [[PAIR_IDX1_VAL:%.*]] = load i32, i32* [[PAIR_IDX1]]
-; CHECK-NEXT:    call void @add(i32 [[PAIR_IDX_VAL]], i32 [[PAIR_IDX1_VAL]], i32* noalias [[R]])
+; CHECK-NEXT:    call void @add(i32 partialinit [[PAIR_IDX_VAL]], i32 partialinit [[PAIR_IDX1_VAL]], i32* noalias [[R]])
 ; CHECK-NEXT:    ret void
 ;
   %r = alloca i32

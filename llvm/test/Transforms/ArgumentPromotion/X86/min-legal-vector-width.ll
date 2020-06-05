@@ -9,7 +9,7 @@ target triple = "x86_64-unknown-linux-gnu"
 ; This should promote
 define internal fastcc void @callee_avx512_legal512_prefer512_call_avx512_legal512_prefer512(<8 x i64>* %arg, <8 x i64>* readonly %arg1) #0 {
 ; CHECK-LABEL: define {{[^@]+}}@callee_avx512_legal512_prefer512_call_avx512_legal512_prefer512
-; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> [[ARG1_VAL:%.*]])
+; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> partialinit [[ARG1_VAL:%.*]])
 ; CHECK-NEXT:  bb:
 ; CHECK-NEXT:    store <8 x i64> [[ARG1_VAL]], <8 x i64>* [[ARG]]
 ; CHECK-NEXT:    ret void
@@ -29,7 +29,7 @@ define void @avx512_legal512_prefer512_call_avx512_legal512_prefer512(<8 x i64>*
 ; CHECK-NEXT:    [[TMP3:%.*]] = bitcast <8 x i64>* [[TMP]] to i8*
 ; CHECK-NEXT:    call void @llvm.memset.p0i8.i64(i8* align 32 [[TMP3]], i8 0, i64 32, i1 false)
 ; CHECK-NEXT:    [[TMP_VAL:%.*]] = load <8 x i64>, <8 x i64>* [[TMP]]
-; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer512_call_avx512_legal512_prefer512(<8 x i64>* [[TMP2]], <8 x i64> [[TMP_VAL]])
+; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer512_call_avx512_legal512_prefer512(<8 x i64>* [[TMP2]], <8 x i64> partialinit [[TMP_VAL]])
 ; CHECK-NEXT:    [[TMP4:%.*]] = load <8 x i64>, <8 x i64>* [[TMP2]], align 32
 ; CHECK-NEXT:    store <8 x i64> [[TMP4]], <8 x i64>* [[ARG]], align 2
 ; CHECK-NEXT:    ret void
@@ -48,7 +48,7 @@ bb:
 ; This should promote
 define internal fastcc void @callee_avx512_legal512_prefer256_call_avx512_legal512_prefer256(<8 x i64>* %arg, <8 x i64>* readonly %arg1) #1 {
 ; CHECK-LABEL: define {{[^@]+}}@callee_avx512_legal512_prefer256_call_avx512_legal512_prefer256
-; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> [[ARG1_VAL:%.*]])
+; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> partialinit [[ARG1_VAL:%.*]])
 ; CHECK-NEXT:  bb:
 ; CHECK-NEXT:    store <8 x i64> [[ARG1_VAL]], <8 x i64>* [[ARG]]
 ; CHECK-NEXT:    ret void
@@ -68,7 +68,7 @@ define void @avx512_legal512_prefer256_call_avx512_legal512_prefer256(<8 x i64>*
 ; CHECK-NEXT:    [[TMP3:%.*]] = bitcast <8 x i64>* [[TMP]] to i8*
 ; CHECK-NEXT:    call void @llvm.memset.p0i8.i64(i8* align 32 [[TMP3]], i8 0, i64 32, i1 false)
 ; CHECK-NEXT:    [[TMP_VAL:%.*]] = load <8 x i64>, <8 x i64>* [[TMP]]
-; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer256_call_avx512_legal512_prefer256(<8 x i64>* [[TMP2]], <8 x i64> [[TMP_VAL]])
+; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer256_call_avx512_legal512_prefer256(<8 x i64>* [[TMP2]], <8 x i64> partialinit [[TMP_VAL]])
 ; CHECK-NEXT:    [[TMP4:%.*]] = load <8 x i64>, <8 x i64>* [[TMP2]], align 32
 ; CHECK-NEXT:    store <8 x i64> [[TMP4]], <8 x i64>* [[ARG]], align 2
 ; CHECK-NEXT:    ret void
@@ -87,7 +87,7 @@ bb:
 ; This should promote
 define internal fastcc void @callee_avx512_legal512_prefer512_call_avx512_legal512_prefer256(<8 x i64>* %arg, <8 x i64>* readonly %arg1) #1 {
 ; CHECK-LABEL: define {{[^@]+}}@callee_avx512_legal512_prefer512_call_avx512_legal512_prefer256
-; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> [[ARG1_VAL:%.*]])
+; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> partialinit [[ARG1_VAL:%.*]])
 ; CHECK-NEXT:  bb:
 ; CHECK-NEXT:    store <8 x i64> [[ARG1_VAL]], <8 x i64>* [[ARG]]
 ; CHECK-NEXT:    ret void
@@ -107,7 +107,7 @@ define void @avx512_legal512_prefer512_call_avx512_legal512_prefer256(<8 x i64>*
 ; CHECK-NEXT:    [[TMP3:%.*]] = bitcast <8 x i64>* [[TMP]] to i8*
 ; CHECK-NEXT:    call void @llvm.memset.p0i8.i64(i8* align 32 [[TMP3]], i8 0, i64 32, i1 false)
 ; CHECK-NEXT:    [[TMP_VAL:%.*]] = load <8 x i64>, <8 x i64>* [[TMP]]
-; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer512_call_avx512_legal512_prefer256(<8 x i64>* [[TMP2]], <8 x i64> [[TMP_VAL]])
+; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer512_call_avx512_legal512_prefer256(<8 x i64>* [[TMP2]], <8 x i64> partialinit [[TMP_VAL]])
 ; CHECK-NEXT:    [[TMP4:%.*]] = load <8 x i64>, <8 x i64>* [[TMP2]], align 32
 ; CHECK-NEXT:    store <8 x i64> [[TMP4]], <8 x i64>* [[ARG]], align 2
 ; CHECK-NEXT:    ret void
@@ -126,7 +126,7 @@ bb:
 ; This should promote
 define internal fastcc void @callee_avx512_legal512_prefer256_call_avx512_legal512_prefer512(<8 x i64>* %arg, <8 x i64>* readonly %arg1) #0 {
 ; CHECK-LABEL: define {{[^@]+}}@callee_avx512_legal512_prefer256_call_avx512_legal512_prefer512
-; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> [[ARG1_VAL:%.*]])
+; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> partialinit [[ARG1_VAL:%.*]])
 ; CHECK-NEXT:  bb:
 ; CHECK-NEXT:    store <8 x i64> [[ARG1_VAL]], <8 x i64>* [[ARG]]
 ; CHECK-NEXT:    ret void
@@ -146,7 +146,7 @@ define void @avx512_legal512_prefer256_call_avx512_legal512_prefer512(<8 x i64>*
 ; CHECK-NEXT:    [[TMP3:%.*]] = bitcast <8 x i64>* [[TMP]] to i8*
 ; CHECK-NEXT:    call void @llvm.memset.p0i8.i64(i8* align 32 [[TMP3]], i8 0, i64 32, i1 false)
 ; CHECK-NEXT:    [[TMP_VAL:%.*]] = load <8 x i64>, <8 x i64>* [[TMP]]
-; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer256_call_avx512_legal512_prefer512(<8 x i64>* [[TMP2]], <8 x i64> [[TMP_VAL]])
+; CHECK-NEXT:    call fastcc void @callee_avx512_legal512_prefer256_call_avx512_legal512_prefer512(<8 x i64>* [[TMP2]], <8 x i64> partialinit [[TMP_VAL]])
 ; CHECK-NEXT:    [[TMP4:%.*]] = load <8 x i64>, <8 x i64>* [[TMP2]], align 32
 ; CHECK-NEXT:    store <8 x i64> [[TMP4]], <8 x i64>* [[ARG]], align 2
 ; CHECK-NEXT:    ret void
@@ -243,7 +243,7 @@ bb:
 ; This should promote
 define internal fastcc void @callee_avx2_legal256_prefer256_call_avx2_legal512_prefer256(<8 x i64>* %arg, <8 x i64>* readonly %arg1) #3 {
 ; CHECK-LABEL: define {{[^@]+}}@callee_avx2_legal256_prefer256_call_avx2_legal512_prefer256
-; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> [[ARG1_VAL:%.*]])
+; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> partialinit [[ARG1_VAL:%.*]])
 ; CHECK-NEXT:  bb:
 ; CHECK-NEXT:    store <8 x i64> [[ARG1_VAL]], <8 x i64>* [[ARG]]
 ; CHECK-NEXT:    ret void
@@ -263,7 +263,7 @@ define void @avx2_legal256_prefer256_call_avx2_legal512_prefer256(<8 x i64>* %ar
 ; CHECK-NEXT:    [[TMP3:%.*]] = bitcast <8 x i64>* [[TMP]] to i8*
 ; CHECK-NEXT:    call void @llvm.memset.p0i8.i64(i8* align 32 [[TMP3]], i8 0, i64 32, i1 false)
 ; CHECK-NEXT:    [[TMP_VAL:%.*]] = load <8 x i64>, <8 x i64>* [[TMP]]
-; CHECK-NEXT:    call fastcc void @callee_avx2_legal256_prefer256_call_avx2_legal512_prefer256(<8 x i64>* [[TMP2]], <8 x i64> [[TMP_VAL]])
+; CHECK-NEXT:    call fastcc void @callee_avx2_legal256_prefer256_call_avx2_legal512_prefer256(<8 x i64>* [[TMP2]], <8 x i64> partialinit [[TMP_VAL]])
 ; CHECK-NEXT:    [[TMP4:%.*]] = load <8 x i64>, <8 x i64>* [[TMP2]], align 32
 ; CHECK-NEXT:    store <8 x i64> [[TMP4]], <8 x i64>* [[ARG]], align 2
 ; CHECK-NEXT:    ret void
@@ -282,7 +282,7 @@ bb:
 ; This should promote
 define internal fastcc void @callee_avx2_legal512_prefer256_call_avx2_legal256_prefer256(<8 x i64>* %arg, <8 x i64>* readonly %arg1) #4 {
 ; CHECK-LABEL: define {{[^@]+}}@callee_avx2_legal512_prefer256_call_avx2_legal256_prefer256
-; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> [[ARG1_VAL:%.*]])
+; CHECK-SAME: (<8 x i64>* [[ARG:%.*]], <8 x i64> partialinit [[ARG1_VAL:%.*]])
 ; CHECK-NEXT:  bb:
 ; CHECK-NEXT:    store <8 x i64> [[ARG1_VAL]], <8 x i64>* [[ARG]]
 ; CHECK-NEXT:    ret void
@@ -302,7 +302,7 @@ define void @avx2_legal512_prefer256_call_avx2_legal256_prefer256(<8 x i64>* %ar
 ; CHECK-NEXT:    [[TMP3:%.*]] = bitcast <8 x i64>* [[TMP]] to i8*
 ; CHECK-NEXT:    call void @llvm.memset.p0i8.i64(i8* align 32 [[TMP3]], i8 0, i64 32, i1 false)
 ; CHECK-NEXT:    [[TMP_VAL:%.*]] = load <8 x i64>, <8 x i64>* [[TMP]]
-; CHECK-NEXT:    call fastcc void @callee_avx2_legal512_prefer256_call_avx2_legal256_prefer256(<8 x i64>* [[TMP2]], <8 x i64> [[TMP_VAL]])
+; CHECK-NEXT:    call fastcc void @callee_avx2_legal512_prefer256_call_avx2_legal256_prefer256(<8 x i64>* [[TMP2]], <8 x i64> partialinit [[TMP_VAL]])
 ; CHECK-NEXT:    [[TMP4:%.*]] = load <8 x i64>, <8 x i64>* [[TMP2]], align 32
 ; CHECK-NEXT:    store <8 x i64> [[TMP4]], <8 x i64>* [[ARG]], align 2
 ; CHECK-NEXT:    ret void
@@ -321,7 +321,7 @@ bb:
 ; If the arguments are scalar, its ok to promote.
 define internal i32 @scalar_callee_avx512_legal256_prefer256_call_avx512_legal512_prefer256(i32* %X, i32* %Y) #2 {
 ; CHECK-LABEL: define {{[^@]+}}@scalar_callee_avx512_legal256_prefer256_call_avx512_legal512_prefer256
-; CHECK-SAME: (i32 [[X_VAL:%.*]], i32 [[Y_VAL:%.*]])
+; CHECK-SAME: (i32 partialinit [[X_VAL:%.*]], i32 partialinit [[Y_VAL:%.*]])
 ; CHECK-NEXT:    [[C:%.*]] = add i32 [[X_VAL]], [[Y_VAL]]
 ; CHECK-NEXT:    ret i32 [[C]]
 ;
@@ -338,7 +338,7 @@ define i32 @scalar_avx512_legal256_prefer256_call_avx512_legal512_prefer256(i32*
 ; CHECK-NEXT:    store i32 1, i32* [[A]]
 ; CHECK-NEXT:    [[A_VAL:%.*]] = load i32, i32* [[A]]
 ; CHECK-NEXT:    [[B_VAL:%.*]] = load i32, i32* [[B]]
-; CHECK-NEXT:    [[C:%.*]] = call i32 @scalar_callee_avx512_legal256_prefer256_call_avx512_legal512_prefer256(i32 [[A_VAL]], i32 [[B_VAL]])
+; CHECK-NEXT:    [[C:%.*]] = call i32 @scalar_callee_avx512_legal256_prefer256_call_avx512_legal512_prefer256(i32 partialinit [[A_VAL]], i32 partialinit [[B_VAL]])
 ; CHECK-NEXT:    ret i32 [[C]]
 ;
   %A = alloca i32
@@ -350,7 +350,7 @@ define i32 @scalar_avx512_legal256_prefer256_call_avx512_legal512_prefer256(i32*
 ; If the arguments are scalar, its ok to promote.
 define internal i32 @scalar_callee_avx512_legal512_prefer256_call_avx512_legal256_prefer256(i32* %X, i32* %Y) #2 {
 ; CHECK-LABEL: define {{[^@]+}}@scalar_callee_avx512_legal512_prefer256_call_avx512_legal256_prefer256
-; CHECK-SAME: (i32 [[X_VAL:%.*]], i32 [[Y_VAL:%.*]])
+; CHECK-SAME: (i32 partialinit [[X_VAL:%.*]], i32 partialinit [[Y_VAL:%.*]])
 ; CHECK-NEXT:    [[C:%.*]] = add i32 [[X_VAL]], [[Y_VAL]]
 ; CHECK-NEXT:    ret i32 [[C]]
 ;
@@ -367,7 +367,7 @@ define i32 @scalar_avx512_legal512_prefer256_call_avx512_legal256_prefer256(i32*
 ; CHECK-NEXT:    store i32 1, i32* [[A]]
 ; CHECK-NEXT:    [[A_VAL:%.*]] = load i32, i32* [[A]]
 ; CHECK-NEXT:    [[B_VAL:%.*]] = load i32, i32* [[B]]
-; CHECK-NEXT:    [[C:%.*]] = call i32 @scalar_callee_avx512_legal512_prefer256_call_avx512_legal256_prefer256(i32 [[A_VAL]], i32 [[B_VAL]])
+; CHECK-NEXT:    [[C:%.*]] = call i32 @scalar_callee_avx512_legal512_prefer256_call_avx512_legal256_prefer256(i32 partialinit [[A_VAL]], i32 partialinit [[B_VAL]])
 ; CHECK-NEXT:    ret i32 [[C]]
 ;
   %A = alloca i32

@@ -3526,16 +3526,21 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     // Don't emit the epilogue for musttail call returns.
     if (isAMustTailRetVal(RetVal)) return;
     Value *ShadowPtr = getShadowPtrForRetval(RetVal, IRB);
-    bool RetLazyCheck = !ClEagerChecks ||
+    bool UseTLS = !ClEagerChecks ||
         F.hasAttribute(AttributeList::ReturnIndex, Attribute::PartialInit);
 
-    if (CheckReturnValue || !RetLazyCheck) {
+    Value *Shadow = getShadow(RetVal);
+    bool StoreOrigin = true;
+    if (CheckReturnValue || !UseTLS) {
       insertShadowCheck(RetVal, &I);
+      Shadow = getCleanShadow(RetVal);
+      StoreOrigin = false;
     }
-    if (RetLazyCheck) {
-      Value *Shadow = getShadow(RetVal);
+
+    // The caller still expects information passed over TLS if we pass our check
+    if (UseTLS) {
       IRB.CreateAlignedStore(Shadow, ShadowPtr, kShadowTLSAlignment);
-      if (MS.TrackOrigins)
+      if (MS.TrackOrigins && StoreOrigin)
         IRB.CreateStore(getOrigin(RetVal), getOriginPtrForRetval(IRB));
     }
   }

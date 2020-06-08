@@ -101,6 +101,12 @@ struct CGBitFieldInfo {
                                  CharUnits StorageOffset);
 };
 
+enum PartialInitTy {
+  PARTIAL_INIT_NONE = 0,
+  PARTIAL_INIT_UNION = 1,
+  PARTIAL_INIT_STRUCT_PAD = 2,
+};
+
 /// CGRecordLayout - This class handles struct and union layout info while
 /// lowering AST types to LLVM types.
 ///
@@ -145,22 +151,22 @@ private:
   /// when zero-initialized.
   bool IsZeroInitializableAsBase : 1;
 
-  /// True when this struct or union layout contains bits which are
+  /// Nonzero when this struct or union layout contains bits which are
   /// necessarily uninitialized, like some kind of padding data between
   /// struct fields or following narrow union fields.
-  bool IsPartialInit : 1;
+  PartialInitTy PartialInitFlags : 2;
 
 public:
   CGRecordLayout(llvm::StructType *CompleteObjectType,
                  llvm::StructType *BaseSubobjectType,
                  bool IsZeroInitializable,
                  bool IsZeroInitializableAsBase,
-                 bool IsPartialInit)
+                 PartialInitTy PartialInitFlags)
     : CompleteObjectType(CompleteObjectType),
       BaseSubobjectType(BaseSubobjectType),
       IsZeroInitializable(IsZeroInitializable),
       IsZeroInitializableAsBase(IsZeroInitializableAsBase),
-      IsPartialInit(IsPartialInit) {}
+      PartialInitFlags(PartialInitFlags) {}
 
   /// Return the "complete object" LLVM type associated with
   /// this record.
@@ -188,8 +194,8 @@ public:
 
   /// Check whether this struct/union may be partially initialized due
   /// to presence of padding.
-  bool isPartialInit() const {
-    return IsPartialInit;
+  PartialInitTy getPartialInit() const {
+    return PartialInitFlags;
   }
 
   /// Return llvm::StructType element number that corresponds to the

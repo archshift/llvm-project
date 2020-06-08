@@ -2077,16 +2077,16 @@ void CodeGenModule::ConstructAttributeList(
   const ABIArgInfo &RetAI = FI.getReturnInfo();
 
   // Determine if the return type could be partially initialized
-  bool RetPartialInit = false;
+  int RetPartialInit = PARTIAL_INIT_NONE;
   const Type *RetTyPtr = RetTy.getTypePtr();
   if (RetTyPtr->isRecordType()) {
     RecordDecl *RetRecord = RetTyPtr->getAsRecordDecl();
     auto &RetLayout = getTypes().getCGRecordLayout(RetRecord);
-    RetPartialInit = RetLayout.isPartialInit() || (RetAI.getPaddingType() != nullptr);
+    RetPartialInit = RetLayout.getPartialInit() || (RetAI.getPaddingType() != nullptr);
   }
 
   // If we're coercing to a type of different size, we're introducing more padding bits
-  if (RetAI.canHaveCoerceToType()) {
+  if (RetAI.canHaveCoerceToType() && RetAI.getKind() == ABIArgInfo::Direct) {
     const size_t RetRealSize = getDataLayout().getTypeSizeInBits(getTypes().ConvertType(RetTy));
     const size_t RetLowSize = getDataLayout().getTypeSizeInBits(RetAI.getCoerceToType());
     RetPartialInit |= RetRealSize != RetLowSize;
@@ -2176,19 +2176,21 @@ void CodeGenModule::ConstructAttributeList(
 
     // Decide whether the argument we're handling may have valid
     // uninitialized bits.
-    bool ArgPartialInit = false;
+    int ArgPartialInit = PARTIAL_INIT_NONE;
     const Type *ArgTyPtr = ParamType.getTypePtr();
+    llvm::Type *ArgLLTy = getTypes().ConvertType(ParamType);
+
     if (ArgTyPtr->isRecordType()) {
       RecordDecl *ArgRecord = ArgTyPtr->getAsRecordDecl();
       auto &ArgLayout = getTypes().getCGRecordLayout(ArgRecord);
-      ArgPartialInit = ArgLayout.isPartialInit();
+      ArgPartialInit |= ArgLayout.getPartialInit();
     }
 
     // If we're coercing to a type of different size, we're introducing more padding bits
-    if (AI.canHaveCoerceToType()) {
-      const size_t ArgRealSize = getDataLayout().getTypeSizeInBits(getTypes().ConvertType(ParamType));
+    if (AI.canHaveCoerceToType() && AI.getKind() == ABIArgInfo::Direct) {
+      const size_t ArgRealSize = getDataLayout().getTypeSizeInBits(ArgLLTy);
       const size_t ArgLowSize = getDataLayout().getTypeSizeInBits(AI.getCoerceToType());
-      ArgPartialInit |= ArgRealSize != ArgLowSize;
+      ArgPartialInit |= (ArgRealSize != ArgLowSize) << 1;
     }
 
 
@@ -2243,11 +2245,23 @@ void CodeGenModule::ConstructAttributeList(
       break;
     }
     case ABIArgInfo::Ignore:
-    case ABIArgInfo::CoerceAndExpand:
       break;
     
+    case ABIArgInfo::CoerceAndExpand: {
+      llvm::Type *ArgCoerceType = AI.getCoerceAndExpandType();
+
+      if (ArgCoerceType->getTypeID() == ArgLLTy->getTypeID()) {
+        // In certain cases (observed with RISCV codegen) the target will use
+        // CoerceAndExpand with a coerced type that is identical to the original
+        // one. In these cases, we treat the operation as if it's Expand.
+      } else if (ArgPartialInit) {
+        Attrs.addAttribute(llvm::Attribute::PartialInit);
+        break;
+      }
+      LLVM_FALLTHROUGH;
+    }
     case ABIArgInfo::Expand:
-      if (ArgPartialInit)
+      if (ArgPartialInit & PARTIAL_INIT_UNION)
         Attrs.addAttribute(llvm::Attribute::PartialInit);
       break;
 

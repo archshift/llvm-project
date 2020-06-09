@@ -39,6 +39,9 @@ def Builtin : EnumAttr<"builtin">;
 /// Pass structure by value.
 def ByVal : TypeAttr<"byval">;
 
+/// Structure contains necessarily uninitialized bits
+def PartialInit : EnumAttr<"partialinit">;
+
 /// Marks function as being in a cold path.
 def Cold : EnumAttr<"cold">;
 

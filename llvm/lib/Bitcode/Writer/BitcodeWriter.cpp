@@ -731,6 +731,8 @@ static uint64_t getAttrKindEncoding(Attribute::AttrKind Kind) {
     return bitc::ATTR_KIND_SANITIZE_MEMTAG;
   case Attribute::Preallocated:
     return bitc::ATTR_KIND_PREALLOCATED;
+  case Attribute::PartialInit:
+    return bitc::ATTR_KIND_PARTIALINIT;
   case Attribute::EndAttrKinds:
     llvm_unreachable("Can not encode end-attribute kinds marker.");
   case Attribute::None:

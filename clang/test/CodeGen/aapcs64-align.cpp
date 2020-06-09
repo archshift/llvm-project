@@ -75,10 +75,10 @@ void g4() {
   f4m(1, 2, 3, 4, 5, s);
 }
 // CHECK: define void @g4()
-// CHECK: call void @f4(i32 1, [2 x i64] [i64 30064771078, i64 0])
-// CHECK: void @f4m(i32 1, i32 2, i32 3, i32 4, i32 5, [2 x i64] [i64 30064771078, i64 0])
-// CHECK: declare void @f4(i32, [2 x i64])
-// CHECK: declare void @f4m(i32, i32, i32, i32, i32, [2 x i64])
+// CHECK: call void @f4(i32 1, [2 x i64] partialinit [i64 30064771078, i64 0])
+// CHECK: void @f4m(i32 1, i32 2, i32 3, i32 4, i32 5, [2 x i64] partialinit [i64 30064771078, i64 0])
+// CHECK: declare void @f4(i32, [2 x i64] partialinit)
+// CHECK: declare void @f4m(i32, i32, i32, i32, i32, [2 x i64] partialinit)
 
 
 // Packed structure, overaligned, same as above.
@@ -95,9 +95,9 @@ void f5m(int, int, int, int, int, P16);
     f5m(1, 2, 3, 4, 5, s);
 }
 // CHECK: define void @g5()
-// CHECK: call void @f5(i32 1, [2 x i64] [i64 30064771078, i64 0])
-// CHECK: void @f5m(i32 1, i32 2, i32 3, i32 4, i32 5, [2 x i64] [i64 30064771078, i64 0])
-// CHECK: declare void @f5(i32, [2 x i64])
-// CHECK: declare void @f5m(i32, i32, i32, i32, i32, [2 x i64])
+// CHECK: call void @f5(i32 1, [2 x i64] partialinit [i64 30064771078, i64 0])
+// CHECK: void @f5m(i32 1, i32 2, i32 3, i32 4, i32 5, [2 x i64] partialinit [i64 30064771078, i64 0])
+// CHECK: declare void @f5(i32, [2 x i64] partialinit)
+// CHECK: declare void @f5m(i32, i32, i32, i32, i32, [2 x i64] partialinit)
 
 }

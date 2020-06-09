@@ -48,7 +48,7 @@ void f8_2(struct s8 a0) {}
 
 // This should be passed just as s8.
 
-// CHECK-LABEL: define i64 @f9_1()
+// CHECK-LABEL: define partialinit i64 @f9_1()
 
 // FIXME: llvm-gcc expands this, this may have some value for the
 // backend in terms of optimization but doesn't change the ABI.
@@ -126,13 +126,13 @@ struct s28 { int a; int b[]; } f28(void) { while (1) {} }
 // CHECK-LABEL: define i16 @f29()
 struct s29 { struct { } a[1]; char b; char c; } f29(void) { while (1) {} }
 
-// CHECK-LABEL: define i16 @f30()
+// CHECK-LABEL: define partialinit i16 @f30()
 struct s30 { char a; char b : 4; } f30(void) { while (1) {} }
 
 // CHECK-LABEL: define float @f31()
 struct s31 { char : 0; float b; char : 0; } f31(void) { while (1) {} }
 
-// CHECK-LABEL: define i32 @f32()
+// CHECK-LABEL: define partialinit i32 @f32()
 struct s32 { char a; unsigned : 0; } f32(void) { while (1) {} }
 
 // CHECK-LABEL: define float @f33()
@@ -285,7 +285,7 @@ void f57(struct s57 x) {} void f57a(void) { f57((struct s57){1}); }
 union u58 {};
 void f58(union u58 x) {}
 
-// CHECK-LABEL: define i64 @f59()
+// CHECK-LABEL: define partialinit i64 @f59()
 struct s59 { float x __attribute((aligned(8))); };
 struct s59 f59() { while (1) {} }
 

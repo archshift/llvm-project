@@ -190,8 +190,8 @@ struct agg_novector3 pass_agg_novector3(struct agg_novector3 arg) { return arg; 
 
 struct agg_novector4 { v4i8 a __attribute__((aligned (8))); };
 struct agg_novector4 pass_agg_novector4(struct agg_novector4 arg) { return arg; }
-// CHECK-LABEL: define void @pass_agg_novector4(%struct.agg_novector4* noalias sret align 8 %{{.*}}, i64 %{{.*}})
-// CHECK-VECTOR-LABEL: define void @pass_agg_novector4(%struct.agg_novector4* noalias sret align 8 %{{.*}}, i64 %{{.*}})
+// CHECK-LABEL: define void @pass_agg_novector4(%struct.agg_novector4* noalias sret align 8 %{{.*}}, i64 partialinit %{{.*}})
+// CHECK-VECTOR-LABEL: define void @pass_agg_novector4(%struct.agg_novector4* noalias sret align 8 %{{.*}}, i64 partialinit %{{.*}})
 
 
 // Accessing variable argument lists

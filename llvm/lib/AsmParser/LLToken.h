@@ -196,6 +196,7 @@ enum Kind {
   kw_naked,
   kw_nest,
   kw_noalias,
+  kw_partialinit,
   kw_nobuiltin,
   kw_nocapture,
   kw_noduplicate,

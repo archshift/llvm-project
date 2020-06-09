@@ -4,7 +4,7 @@ target datalayout = "E-p:64:64:64-a0:0:8-f32:32:32-f64:64:64-i1:8:8-i8:8:8-i16:1
 
 define internal i32 @test(i32* %X, i32* %Y) {
 ; CHECK-LABEL: define {{[^@]+}}@test
-; CHECK-SAME: (i32 [[X_VAL:%.*]], i32 [[Y_VAL:%.*]])
+; CHECK-SAME: (i32 partialinit [[X_VAL:%.*]], i32 partialinit [[Y_VAL:%.*]])
 ; CHECK-NEXT:    [[C:%.*]] = add i32 [[X_VAL]], [[Y_VAL]]
 ; CHECK-NEXT:    ret i32 [[C]]
 ;
@@ -16,8 +16,8 @@ define internal i32 @test(i32* %X, i32* %Y) {
 
 define internal i32 @caller(i32* %B) {
 ; CHECK-LABEL: define {{[^@]+}}@caller
-; CHECK-SAME: (i32 [[B_VAL1:%.*]])
-; CHECK-NEXT:    [[C:%.*]] = call i32 @test(i32 1, i32 [[B_VAL1]])
+; CHECK-SAME: (i32 partialinit [[B_VAL1:%.*]])
+; CHECK-NEXT:    [[C:%.*]] = call i32 @test(i32 partialinit 1, i32 partialinit [[B_VAL1]])
 ; CHECK-NEXT:    ret i32 [[C]]
 ;
   %A = alloca i32
@@ -28,7 +28,7 @@ define internal i32 @caller(i32* %B) {
 
 define i32 @callercaller() {
 ; CHECK-LABEL: define {{[^@]+}}@callercaller()
-; CHECK-NEXT:    [[X:%.*]] = call i32 @caller(i32 2)
+; CHECK-NEXT:    [[X:%.*]] = call i32 @caller(i32 partialinit 2)
 ; CHECK-NEXT:    ret i32 [[X]]
 ;
   %B = alloca i32

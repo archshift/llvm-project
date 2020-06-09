@@ -15,13 +15,13 @@ struct PP_Var {
   union PP_VarValue value;
 };
 
-// CHECK: define { i64, i64 } @f0()
+// CHECK: define partialinit { i64, i64 } @f0()
 struct PP_Var f0() {
   struct PP_Var result = { 0, 0, 0 };
   return result;
 }
 
-// CHECK-LABEL: define void @f1(i64 %p1.coerce0, i64 %p1.coerce1)
+// CHECK-LABEL: define void @f1(i64 partialinit %p1.coerce0, i64 partialinit %p1.coerce1)
 void f1(struct PP_Var p1) { while(1) {} }
 
 // long doubles are 64 bits on NaCl
@@ -34,8 +34,8 @@ long double f5(void) {
 void f6(char a0, short a1, int a2, long long a3, void *a4) {
 }
 
-// CHECK-LABEL: define i64 @f8_1()
-// CHECK-LABEL: define void @f8_2(i64 %a0.coerce)
+// CHECK-LABEL: define partialinit i64 @f8_1()
+// CHECK-LABEL: define void @f8_2(i64 partialinit %a0.coerce)
 union u8 {
   long double a;
   int b;
@@ -50,11 +50,11 @@ struct s9 { int a; int b; int : 0; } f9(void) { while (1) {} }
 struct s10 { int a; int b; int : 0; };
 void f10(struct s10 a0) {}
 
-// CHECK-LABEL: define double @f11()
+// CHECK-LABEL: define partialinit double @f11()
 union { long double a; float b; } f11() { while (1) {} }
 
-// CHECK-LABEL: define i32 @f12_0()
-// CHECK-LABEL: define void @f12_1(i32 %a0.coerce)
+// CHECK-LABEL: define partialinit i32 @f12_0()
+// CHECK-LABEL: define void @f12_1(i32 partialinit %a0.coerce)
 struct s12 { int a __attribute__((aligned(16))); };
 struct s12 f12_0(void) { while (1) {} }
 void f12_1(struct s12 a0) {}
@@ -76,7 +76,7 @@ struct __attribute__((aligned(32))) s20 {
 void f20(struct s20 x) {}
 
 
-// CHECK: declare void @func(i64)
+// CHECK: declare void @func(i64 partialinit)
 typedef struct _str {
   union {
     long double a;

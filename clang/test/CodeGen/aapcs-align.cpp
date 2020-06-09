@@ -56,10 +56,10 @@ void g2() {
   f2m(1, 2, 3, 4, 5, s);
 }
 // CHECK: define void @g2
-// CHECK: call void @f2(i32 1, [4 x i32] [i32 6, i32 7
-// CHECK: call void @f2m(i32 1, i32 2, i32 3, i32 4, i32 5, [4 x i32] [i32 6, i32 7
-// CHECK: declare void @f2(i32, [4 x i32])
-// CHECK: declare void @f2m(i32, i32, i32, i32, i32, [4 x i32])
+// CHECK: call void @f2(i32 1, [4 x i32] partialinit [i32 6, i32 7
+// CHECK: call void @f2m(i32 1, i32 2, i32 3, i32 4, i32 5, [4 x i32] partialinit [i32 6, i32 7
+// CHECK: declare void @f2(i32, [4 x i32] partialinit)
+// CHECK: declare void @f2m(i32, i32, i32, i32, i32, [4 x i32] partialinit)
 
 // Increased natural alignment.
 struct SF8 {
@@ -134,8 +134,8 @@ void g6() {
   f6m(1, 2, 3, 4, 5, s);
 }
 // CHECK: define void @g6
-// CHECK: call void @f6(i32 1, [4 x i32] [i32 6, i32 7, i32 0, i32 0])
-// CHECK: call void @f6m(i32 1, i32 2, i32 3, i32 4, i32 5, [4 x i32] [i32 6, i32 7, i32 0, i32 0])
-// CHECK: declare void @f6(i32, [4 x i32])
-// CHECK: declare void @f6m(i32, i32, i32, i32, i32, [4 x i32])
+// CHECK: call void @f6(i32 1, [4 x i32] partialinit [i32 6, i32 7, i32 0, i32 0])
+// CHECK: call void @f6m(i32 1, i32 2, i32 3, i32 4, i32 5, [4 x i32] partialinit [i32 6, i32 7, i32 0, i32 0])
+// CHECK: declare void @f6(i32, [4 x i32] partialinit)
+// CHECK: declare void @f6m(i32, i32, i32, i32, i32, [4 x i32] partialinit)
 }

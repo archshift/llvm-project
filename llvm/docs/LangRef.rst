@@ -1638,6 +1638,15 @@ example:
     This attribute by itself does not imply restrictions on
     inter-procedural optimizations.  All of the semantic effects the
     patching may have to be separately conveyed via the linkage type.
+``"partialinit"``
+    If the module flag ``"DisallowPoisonedCallArguments"`` is enabled,
+    the backend may look for this attribute on function call arguments
+    and return values. When ``"partialinit"`` is present, the tagged
+    type may legally incorporate uninitialized bits, such as when the
+    passed type is a struct containing padding bits, or a union of
+    differently-sized fields. When this attribute is absent at a call
+    site, the backend may infer that a type must be fully initialized
+    at the function call boundary. 
 ``"probe-stack"``
     This attribute indicates that the function will trigger a guard region
     in the end of the stack. It ensures that accesses to the stack must be
@@ -3656,6 +3665,9 @@ behavior. Notably this includes (but is not limited to):
 -  The condition operand of a :ref:`br <i_br>` instruction.
 -  The callee operand of a :ref:`call <i_call>` or :ref:`invoke <i_invoke>`
    instruction.
+-  If the module flag ``DisallowPoisonedCallArguments`` is enabled,
+   arguments and return values of function calls, unless those operands
+   are marked with the ``partialinit`` attribute.
 
 Here are some examples:
 

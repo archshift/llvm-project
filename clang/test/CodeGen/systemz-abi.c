@@ -132,8 +132,8 @@ struct agg_longdouble pass_agg_longdouble(struct agg_longdouble arg) { return ar
 
 struct agg_float_a8 { float a __attribute__((aligned (8))); };
 struct agg_float_a8 pass_agg_float_a8(struct agg_float_a8 arg) { return arg; }
-// HARD-FLOAT-LABEL: define void @pass_agg_float_a8(%struct.agg_float_a8* noalias sret align 8 %{{.*}}, double %{{.*}})
-// SOFT-FLOAT-LABEL: define void @pass_agg_float_a8(%struct.agg_float_a8* noalias sret align 8 %{{.*}}, i64 %{{.*}})
+// HARD-FLOAT-LABEL: define void @pass_agg_float_a8(%struct.agg_float_a8* noalias sret align 8 %{{.*}}, double partialinit %{{.*}})
+// SOFT-FLOAT-LABEL: define void @pass_agg_float_a8(%struct.agg_float_a8* noalias sret align 8 %{{.*}}, i64 partialinit %{{.*}})
 
 struct agg_float_a16 { float a __attribute__((aligned (16))); };
 struct agg_float_a16 pass_agg_float_a16(struct agg_float_a16 arg) { return arg; }

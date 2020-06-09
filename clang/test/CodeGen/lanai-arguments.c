@@ -62,7 +62,7 @@ union simple_union {
   char b;
 };
 // Unions should be passed inreg.
-// CHECK: define void @f9(i32 inreg %s.coerce)
+// CHECK: define void @f9(i32 inreg partialinit %s.coerce)
 void f9(union simple_union s) {}
 
 typedef struct {
@@ -71,5 +71,5 @@ typedef struct {
   int b8 : 8;
 } bitfield1;
 // Bitfields should be passed inreg.
-// CHECK: define void @f10(i32 inreg %bf1.coerce)
+// CHECK: define void @f10(i32 inreg partialinit %bf1.coerce)
 void f10(bitfield1 bf1) {}

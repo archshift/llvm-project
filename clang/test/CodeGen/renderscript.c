@@ -40,8 +40,8 @@ typedef struct {short s; char c;} sShortChar;
 // CHECK-RS64: void @argChar3([3 x i8] %s.coerce)
 void argChar3(sChar3 s) {}
 
-// CHECK-RS32: void @argShortChar([2 x i16] %s.coerce)
-// CHECK-RS64: void @argShortChar([2 x i16] %s.coerce)
+// CHECK-RS32: void @argShortChar([2 x i16] partialinit %s.coerce)
+// CHECK-RS64: void @argShortChar([2 x i16] partialinit %s.coerce)
 void argShortChar(sShortChar s) {}
 
 // =============================================================================
@@ -53,8 +53,8 @@ void argShortChar(sShortChar s) {}
 // CHECK-RS64: [3 x i8] @retChar3()
 sChar3 retChar3() { sChar3 r; return r; }
 
-// CHECK-RS32: [2 x i16] @retShortChar()
-// CHECK-RS64: [2 x i16] @retShortChar()
+// CHECK-RS32: partialinit [2 x i16] @retShortChar()
+// CHECK-RS64: partialinit [2 x i16] @retShortChar()
 sShortChar retShortChar() { sShortChar r; return r; }
 
 // =============================================================================
@@ -66,16 +66,16 @@ typedef struct {short s1; char c; short s2; } sShortCharShort;
 typedef struct {int i; short s; char c; } sIntShortChar;
 typedef struct {long l; int i; } sLongInt;
 
-// CHECK-RS32: void @argShortCharShort([3 x i16] %s.coerce)
-// CHECK-RS64: void @argShortCharShort([3 x i16] %s.coerce)
+// CHECK-RS32: void @argShortCharShort([3 x i16] partialinit %s.coerce)
+// CHECK-RS64: void @argShortCharShort([3 x i16] partialinit %s.coerce)
 void argShortCharShort(sShortCharShort s) {}
 
-// CHECK-RS32: void @argIntShortChar([2 x i32] %s.coerce)
-// CHECK-RS64: void @argIntShortChar([2 x i32] %s.coerce)
+// CHECK-RS32: void @argIntShortChar([2 x i32] partialinit %s.coerce)
+// CHECK-RS64: void @argIntShortChar([2 x i32] partialinit %s.coerce)
 void argIntShortChar(sIntShortChar s) {}
 
-// CHECK-RS32: void @argLongInt([2 x i64] %s.coerce)
-// CHECK-RS64: void @argLongInt([2 x i64] %s.coerce)
+// CHECK-RS32: void @argLongInt([2 x i64] partialinit %s.coerce)
+// CHECK-RS64: void @argLongInt([2 x i64] partialinit %s.coerce)
 void argLongInt(sLongInt s) {}
 
 // =============================================================================
@@ -107,7 +107,7 @@ typedef struct {long l1, l2; char c; } sLong2Char;
 // CHECK-RS64: void @argInt5(%struct.sInt5* %s)
 void argInt5(sInt5 s) {}
 
-// CHECK-RS32: void @argLong2Char([3 x i64] %s.coerce)
+// CHECK-RS32: void @argLong2Char([3 x i64] partialinit %s.coerce)
 // CHECK-RS64: void @argLong2Char(%struct.sLong2Char* %s)
 void argLong2Char(sLong2Char s) {}
 

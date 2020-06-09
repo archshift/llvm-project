@@ -4,5 +4,5 @@
 
 // CHECK64: define {{.*}}void @_Z3foou6__bf16(bfloat %b)
 // CHECK32-HARD: define {{.*}}void @_Z3foou6__bf16(bfloat %b)
-// CHECK32-SOFTFP: define {{.*}}void @_Z3foou6__bf16(i32 %b.coerce)
+// CHECK32-SOFTFP: define {{.*}}void @_Z3foou6__bf16(i32 partialinit %b.coerce)
 void foo(__bf16 b) {}

@@ -145,15 +145,20 @@ private:
   /// when zero-initialized.
   bool IsZeroInitializableAsBase : 1;
 
+  /// True when this struct or union layout contains bits which are
+  /// necessarily uninitialized, like some kind of padding data between
+  /// struct fields or following narrow union fields.
+  bool IsPartialInit : 1;
+
 public:
   CGRecordLayout(llvm::StructType *CompleteObjectType,
-                 llvm::StructType *BaseSubobjectType,
-                 bool IsZeroInitializable,
-                 bool IsZeroInitializableAsBase)
-    : CompleteObjectType(CompleteObjectType),
-      BaseSubobjectType(BaseSubobjectType),
-      IsZeroInitializable(IsZeroInitializable),
-      IsZeroInitializableAsBase(IsZeroInitializableAsBase) {}
+                 llvm::StructType *BaseSubobjectType, bool IsZeroInitializable,
+                 bool IsZeroInitializableAsBase, bool IsPartialInit)
+      : CompleteObjectType(CompleteObjectType),
+        BaseSubobjectType(BaseSubobjectType),
+        IsZeroInitializable(IsZeroInitializable),
+        IsZeroInitializableAsBase(IsZeroInitializableAsBase),
+        IsPartialInit(IsPartialInit) {}
 
   /// Return the "complete object" LLVM type associated with
   /// this record.
@@ -178,6 +183,10 @@ public:
   bool isZeroInitializableAsBase() const {
     return IsZeroInitializableAsBase;
   }
+
+  /// Check whether this struct/union may be partially initialized due
+  /// to presence of padding.
+  bool isPartialInit() const { return IsPartialInit; }
 
   /// Return llvm::StructType element number that corresponds to the
   /// field FD.

@@ -5,9 +5,9 @@
 __fp16 g;
 
 void t1(__fp16 a) { g = a; }
-// SOFT: define void @t1(i32 [[PARAM:%.*]])
+// SOFT: define void @t1(i32 partialinit [[PARAM:%.*]])
 // SOFT: [[TRUNC:%.*]] = trunc i32 [[PARAM]] to i16
-// HARD: define arm_aapcs_vfpcc void @t1(float [[PARAM:%.*]])
+// HARD: define arm_aapcs_vfpcc void @t1(float partialinit [[PARAM:%.*]])
 // HARD: [[BITCAST:%.*]] = bitcast float [[PARAM]] to i32
 // HARD: [[TRUNC:%.*]] = trunc i32 [[BITCAST]] to i16
 // CHECK: store i16 [[TRUNC]], i16* bitcast (half* @g to i16*)
@@ -15,8 +15,8 @@ void t1(__fp16 a) { g = a; }
 // NATIVE: store half [[PARAM]], half* @g
 
 __fp16 t2() { return g; }
-// SOFT: define i32 @t2()
-// HARD: define arm_aapcs_vfpcc float @t2()
+// SOFT: define partialinit i32 @t2()
+// HARD: define arm_aapcs_vfpcc partialinit float @t2()
 // NATIVE: define half @t2()
 // CHECK: [[LOAD:%.*]] = load i16, i16* bitcast (half* @g to i16*)
 // CHECK: [[ZEXT:%.*]] = zext i16 [[LOAD]] to i32
@@ -29,9 +29,9 @@ __fp16 t2() { return g; }
 _Float16 h;
 
 void t3(_Float16 a) { h = a; }
-// SOFT: define void @t3(i32 [[PARAM:%.*]])
+// SOFT: define void @t3(i32 partialinit [[PARAM:%.*]])
 // SOFT: [[TRUNC:%.*]] = trunc i32 [[PARAM]] to i16
-// HARD: define arm_aapcs_vfpcc void @t3(float [[PARAM:%.*]])
+// HARD: define arm_aapcs_vfpcc void @t3(float partialinit [[PARAM:%.*]])
 // HARD: [[BITCAST:%.*]] = bitcast float [[PARAM]] to i32
 // HARD: [[TRUNC:%.*]] = trunc i32 [[BITCAST]] to i16
 // CHECK: store i16 [[TRUNC]], i16* bitcast (half* @h to i16*)
@@ -39,8 +39,8 @@ void t3(_Float16 a) { h = a; }
 // NATIVE: store half [[PARAM]], half* @h
 
 _Float16 t4() { return h; }
-// SOFT: define i32 @t4()
-// HARD: define arm_aapcs_vfpcc float @t4()
+// SOFT: define partialinit i32 @t4()
+// HARD: define arm_aapcs_vfpcc partialinit float @t4()
 // NATIVE: define half @t4()
 // CHECK: [[LOAD:%.*]] = load i16, i16* bitcast (half* @h to i16*)
 // CHECK: [[ZEXT:%.*]] = zext i16 [[LOAD]] to i32

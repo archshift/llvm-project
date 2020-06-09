@@ -12,7 +12,7 @@ define i32 @fn2() local_unnamed_addr {
 ; CHECK-NEXT:    [[TMP3:%.*]] = inttoptr i64 [[TMP2]] to i32*
 ; CHECK-NEXT:    [[DOTIDX:%.*]] = getelementptr i32, i32* [[TMP3]], i64 -1
 ; CHECK-NEXT:    [[DOTIDX_VAL:%.*]] = load i32, i32* [[DOTIDX]], align 4
-; CHECK-NEXT:    call fastcc void @fn1(i32 [[DOTIDX_VAL]])
+; CHECK-NEXT:    call fastcc void @fn1(i32 partialinit [[DOTIDX_VAL]])
 ; CHECK-NEXT:    ret i32 undef
 ;
   %1 = load i32, i32* @b, align 4
@@ -24,7 +24,7 @@ define i32 @fn2() local_unnamed_addr {
 
 define internal fastcc void @fn1(i32* nocapture readonly) unnamed_addr {
 ; CHECK-LABEL: define {{[^@]+}}@fn1
-; CHECK-SAME: (i32 [[DOT18446744073709551615_VAL:%.*]]) unnamed_addr
+; CHECK-SAME: (i32 partialinit [[DOT18446744073709551615_VAL:%.*]]) unnamed_addr
 ; CHECK-NEXT:    store i32 [[DOT18446744073709551615_VAL]], i32* @a, align 4
 ; CHECK-NEXT:    ret void
 ;

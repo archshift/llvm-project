@@ -38,7 +38,7 @@ T f = a;
 void foo(T a = T()) {
   return;
 }
-// CHECK: define{{ hidden | }}[6 x i64] @{{.+}}bar{{.+}}()
+// CHECK: define{{ hidden | }}partialinit [6 x i64] @{{.+}}bar{{.+}}()
 T bar() {
 // CHECK:      bitcast [[T]]* %{{.+}} to [6 x i64]*
 // CHECK-NEXT: load [6 x i64], [6 x i64]* %{{.+}},
@@ -47,7 +47,7 @@ T bar() {
 }
 // CHECK: define{{ hidden | }}void @{{.+}}baz{{.+}}()
 void baz() {
-// CHECK:      call [6 x i64] @{{.+}}bar{{.+}}()
+// CHECK:      call partialinit [6 x i64] @{{.+}}bar{{.+}}()
 // CHECK-NEXT: bitcast [[T]]* %{{.+}} to [6 x i64]*
 // CHECK-NEXT: store [6 x i64] %{{.+}}, [6 x i64]* %{{.+}},
   T t = bar();
@@ -58,7 +58,7 @@ T1 f1 = a1;
 void foo1(T1 a = T1()) {
   return;
 }
-// CHECK: define{{ hidden | }}[[T1]] @{{.+}}bar1{{.+}}()
+// CHECK: define{{ hidden | }}partialinit [[T1]] @{{.+}}bar1{{.+}}()
 T1 bar1() {
 // CHECK:      load [[T1]], [[T1]]*
 // CHECK-NEXT: ret [[T1]]
@@ -66,7 +66,7 @@ T1 bar1() {
 }
 // CHECK: define{{ hidden | }}void @{{.+}}baz1{{.+}}()
 void baz1() {
-// CHECK: call [[T1]] @{{.+}}bar1{{.+}}()
+// CHECK: call partialinit [[T1]] @{{.+}}bar1{{.+}}()
   T1 t = bar1();
 }
 #pragma omp end declare target

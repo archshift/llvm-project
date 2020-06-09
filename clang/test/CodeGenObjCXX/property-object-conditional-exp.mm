@@ -22,7 +22,7 @@ extern "C" bool CGRectIsEmpty(CGRect);
     CGRect dataRect;
     CGRect virtualBounds;
 
-// CHECK: [[SRC:%.*]] = call { i8*, i32 } bitcast (i8* (i8*, i8*, ...)* @objc_msgSend
+// CHECK: [[SRC:%.*]] = call partialinit { i8*, i32 } bitcast (i8* (i8*, i8*, ...)* @objc_msgSend
 // CHECK-NEXT: bitcast
 // CHECK-NEXT:getelementptr inbounds { i8*, i32 }, { i8*, i32 }* [[SRC:%.*]]
 // CHECK-NEXT:extractvalue

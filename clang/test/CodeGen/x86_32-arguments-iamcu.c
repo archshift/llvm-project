@@ -37,7 +37,7 @@ typedef  struct st12_t {
 // CHECK-LABEL: define void @smallStructs(i32 %st1.coerce, i32 %st2.coerce, i32 %st3.coerce)
 void smallStructs(st4_t st1, st4_t st2, st4_t st3) {}
 
-// CHECK-LABEL: define void @paddedStruct(i32 %i1, i32 %st.coerce0, i32 %st.coerce1, i32 %st4.0)
+// CHECK-LABEL: define void @paddedStruct(i32 %i1, i32 partialinit %st.coerce0, i32 partialinit %st.coerce1, i32 %st4.0)
 void paddedStruct(int i1, st5_t st, st4_t st4) {}
 
 // CHECK-LABEL: define void @largeStructBegin(%struct.st12_t* byval(%struct.st12_t) align 4 %st)
@@ -49,13 +49,13 @@ void largeStructMiddle(int i1, st12_t st, int i2, int i3) {}
 // CHECK-LABEL: define void @largeStructEnd(i32 %i1, i32 %i2, i32 %i3, i32 %st.0, i32 %st.1, i32 %st.2)
 void largeStructEnd(int i1, int i2, int i3, st12_t st) {}
 
-// CHECK-LABEL: define i24 @retNonPow2Struct(i32 %r.coerce)
+// CHECK-LABEL: define i24 @retNonPow2Struct(i32 partialinit %r.coerce)
 st3_t retNonPow2Struct(st3_t r) { return r; }
 
 // CHECK-LABEL: define i32 @retSmallStruct(i32 %r.coerce)
 st4_t retSmallStruct(st4_t r) { return r; }
 
-// CHECK-LABEL: define i64 @retPaddedStruct(i32 %r.coerce0, i32 %r.coerce1)
+// CHECK-LABEL: define partialinit i64 @retPaddedStruct(i32 partialinit %r.coerce0, i32 partialinit %r.coerce1)
 st5_t retPaddedStruct(st5_t r) { return r; }
 
 // CHECK-LABEL: define void @retLargeStruct(%struct.st12_t* noalias sret align 4 %agg.result, i32 %i1, %struct.st12_t* byval(%struct.st12_t) align 4 %r)

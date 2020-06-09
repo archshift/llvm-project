@@ -15,7 +15,7 @@ v2i16 test_v2i16(v2i16 x)
   return x;
 }
 
-// CHECK: define i64 @test_v3i16(i64 %x.coerce)
+// CHECK: define partialinit i64 @test_v3i16(i64 partialinit %x.coerce)
 v3i16 test_v3i16(v3i16 x)
 {
   return x;

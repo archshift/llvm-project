@@ -6,7 +6,7 @@ declare void @sink(i32)
 
 define internal void @test(i32** %X) !dbg !2 {
 ; CHECK-LABEL: define {{[^@]+}}@test
-; CHECK-SAME: (i32 [[X_VAL_VAL:%.*]]) !dbg !3
+; CHECK-SAME: (i32 partialinit [[X_VAL_VAL:%.*]]) !dbg !3
 ; CHECK-NEXT:    call void @sink(i32 [[X_VAL_VAL]])
 ; CHECK-NEXT:    ret void
 ;
@@ -20,7 +20,7 @@ define internal void @test(i32** %X) !dbg !2 {
 
 define internal void @test_byval(%struct.pair* byval %P) {
 ; CHECK-LABEL: define {{[^@]+}}@test_byval
-; CHECK-SAME: (i32 [[P_0:%.*]], i32 [[P_1:%.*]])
+; CHECK-SAME: (i32 partialinit [[P_0:%.*]], i32 partialinit [[P_1:%.*]])
 ; CHECK-NEXT:    [[P:%.*]] = alloca [[STRUCT_PAIR:%.*]], align 8
 ; CHECK-NEXT:    [[DOT0:%.*]] = getelementptr [[STRUCT_PAIR]], %struct.pair* [[P]], i32 0, i32 0
 ; CHECK-NEXT:    store i32 [[P_0]], i32* [[DOT0]], align 4
@@ -36,12 +36,12 @@ define void @caller(i32** %Y, %struct.pair* %P) {
 ; CHECK-SAME: (i32** [[Y:%.*]], %struct.pair* [[P:%.*]])
 ; CHECK-NEXT:    [[Y_VAL:%.*]] = load i32*, i32** [[Y]], align 8, !dbg !4
 ; CHECK-NEXT:    [[Y_VAL_VAL:%.*]] = load i32, i32* [[Y_VAL]], align 8, !dbg !4
-; CHECK-NEXT:    call void @test(i32 [[Y_VAL_VAL]]), !dbg !4
+; CHECK-NEXT:    call void @test(i32 partialinit [[Y_VAL_VAL]]), !dbg !4
 ; CHECK-NEXT:    [[P_0:%.*]] = getelementptr [[STRUCT_PAIR:%.*]], %struct.pair* [[P]], i32 0, i32 0, !dbg !5
 ; CHECK-NEXT:    [[P_0_VAL:%.*]] = load i32, i32* [[P_0]], align 4, !dbg !5
 ; CHECK-NEXT:    [[P_1:%.*]] = getelementptr [[STRUCT_PAIR]], %struct.pair* [[P]], i32 0, i32 1, !dbg !5
 ; CHECK-NEXT:    [[P_1_VAL:%.*]] = load i32, i32* [[P_1]], align 4, !dbg !5
-; CHECK-NEXT:    call void @test_byval(i32 [[P_0_VAL]], i32 [[P_1_VAL]]), !dbg !5
+; CHECK-NEXT:    call void @test_byval(i32 partialinit [[P_0_VAL]], i32 partialinit [[P_1_VAL]]), !dbg !5
 ; CHECK-NEXT:    ret void
 ;
   call void @test(i32** %Y), !dbg !1

@@ -11,7 +11,7 @@ declare i8* @foo(%pair*)
 
 define internal void @bar(%pair* byval %Data) {
 ; CHECK-LABEL: define {{[^@]+}}@bar
-; CHECK-SAME: (i32 [[DATA_0:%.*]], i32 [[DATA_1:%.*]])
+; CHECK-SAME: (i32 partialinit [[DATA_0:%.*]], i32 partialinit [[DATA_1:%.*]])
 ; CHECK-NEXT:    [[DATA:%.*]] = alloca [[PAIR:%.*]], align 8
 ; CHECK-NEXT:    [[DOT0:%.*]] = getelementptr [[PAIR]], %pair* [[DATA]], i32 0, i32 0
 ; CHECK-NEXT:    store i32 [[DATA_0]], i32* [[DOT0]], align 4
@@ -31,7 +31,7 @@ define void @zed(%pair* byval %Data) {
 ; CHECK-NEXT:    [[DATA_0_VAL:%.*]] = load i32, i32* [[DATA_0]], align 4
 ; CHECK-NEXT:    [[DATA_1:%.*]] = getelementptr [[PAIR]], %pair* [[DATA]], i32 0, i32 1
 ; CHECK-NEXT:    [[DATA_1_VAL:%.*]] = load i32, i32* [[DATA_1]], align 4
-; CHECK-NEXT:    call void @bar(i32 [[DATA_0_VAL]], i32 [[DATA_1_VAL]])
+; CHECK-NEXT:    call void @bar(i32 partialinit [[DATA_0_VAL]], i32 partialinit [[DATA_1_VAL]])
 ; CHECK-NEXT:    ret void
 ;
   call void @bar(%pair* byval %Data)

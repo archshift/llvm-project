@@ -136,11 +136,11 @@ struct float_int8_zbf_s f_ret_float_int8_zbf_s() {
   return (struct float_int8_zbf_s){1.0, 2};
 }
 
-// CHECK: define void @f_float_int8_s_arg_insufficient_gprs(i32 signext %a, i32 signext %b, i32 signext %c, i32 signext %d, i32 signext %e, i32 signext %f, i32 signext %g, i32 signext %h, i64 %i.coerce)
+// CHECK: define void @f_float_int8_s_arg_insufficient_gprs(i32 signext %a, i32 signext %b, i32 signext %c, i32 signext %d, i32 signext %e, i32 signext %f, i32 signext %g, i32 signext %h, i64 partialinit %i.coerce)
 void f_float_int8_s_arg_insufficient_gprs(int a, int b, int c, int d, int e,
                                           int f, int g, int h, struct float_int8_s i) {}
 
-// CHECK: define void @f_struct_float_int8_insufficient_fprs(float %a, float %b, float %c, float %d, float %e, float %f, float %g, float %h, i64 %i.coerce)
+// CHECK: define void @f_struct_float_int8_insufficient_fprs(float %a, float %b, float %c, float %d, float %e, float %f, float %g, float %h, i64 partialinit %i.coerce)
 void f_struct_float_int8_insufficient_fprs(float a, float b, float c, float d,
                                            float e, float f, float g, float h, struct float_int8_s i) {}
 
@@ -262,20 +262,20 @@ struct floatarr2_tricky4_s f_ret_floatarr2_tricky4_s() {
 
 struct int_float_int_s { int a; float b; int c; };
 
-// CHECK: define void @f_int_float_int_s_arg([2 x i64] %a.coerce)
+// CHECK: define void @f_int_float_int_s_arg([2 x i64] partialinit %a.coerce)
 void f_int_float_int_s_arg(struct int_float_int_s a) {}
 
-// CHECK: define [2 x i64] @f_ret_int_float_int_s()
+// CHECK: define partialinit [2 x i64] @f_ret_int_float_int_s()
 struct int_float_int_s f_ret_int_float_int_s() {
   return (struct int_float_int_s){1, 2.0, 3};
 }
 
 struct char_char_float_s { char a; char b; float c; };
 
-// CHECK-LABEL: define void @f_char_char_float_s_arg(i64 %a.coerce)
+// CHECK-LABEL: define void @f_char_char_float_s_arg(i64 partialinit %a.coerce)
 void f_char_char_float_s_arg(struct char_char_float_s a) {}
 
-// CHECK: define i64 @f_ret_char_char_float_s()
+// CHECK: define partialinit i64 @f_ret_char_char_float_s()
 struct char_char_float_s f_ret_char_char_float_s() {
   return (struct char_char_float_s){1, 2, 3.0};
 }
@@ -285,10 +285,10 @@ struct char_char_float_s f_ret_char_char_float_s() {
 
 union float_u { float a; };
 
-// CHECK: define void @f_float_u_arg(i64 %a.coerce)
+// CHECK: define void @f_float_u_arg(i64 partialinit %a.coerce)
 void f_float_u_arg(union float_u a) {}
 
-// CHECK: define i64 @f_ret_float_u()
+// CHECK: define partialinit i64 @f_ret_float_u()
 union float_u f_ret_float_u() {
   return (union float_u){1.0};
 }

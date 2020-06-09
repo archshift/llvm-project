@@ -93,12 +93,12 @@ struct one_bitfield {
   int d : 3;
 };
 test(one_bitfield);
-// CHECK: define i32 @_Z7forward12one_bitfield(i32 returned %{{.*}})
+// CHECK: define partialinit i32 @_Z7forward12one_bitfield(i32 partialinit returned %{{.*}})
 //
 // CHECK: define void @_Z17test_one_bitfieldv()
-// CHECK: %[[call:.*]] = call i32 @_Z16def_one_bitfieldv()
-// CHECK: call void @_Z3use12one_bitfield(i32 %[[call]])
+// CHECK: %[[call:.*]] = call partialinit i32 @_Z16def_one_bitfieldv()
+// CHECK: call void @_Z3use12one_bitfield(i32 partialinit %[[call]])
 // CHECK: ret void
 //
-// CHECK: declare void @_Z3use12one_bitfield(i32)
-// CHECK: declare i32 @_Z16def_one_bitfieldv()
+// CHECK: declare void @_Z3use12one_bitfield(i32 partialinit)
+// CHECK: declare partialinit i32 @_Z16def_one_bitfieldv()

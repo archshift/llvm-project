@@ -61,7 +61,7 @@ void ParamPassing(_ExtInt(129) a, _ExtInt(128) b, _ExtInt(64) c) {}
 // ARM: define arm_aapcscc void @ParamPassing(i129* byval(i129) align 8 %{{.+}}, i128* byval(i128) align 8 %{{.+}}, i64 %{{.+}})
 
 void ParamPassing2(_ExtInt(129) a, _ExtInt(127) b, _ExtInt(63) c) {}
-// LIN64: define void @ParamPassing2(i129* byval(i129) align 8 %{{.+}}, i64 %{{.+}}, i64 %{{.+}}, i64 %{{.+}})
+// LIN64: define void @ParamPassing2(i129* byval(i129) align 8 %{{.+}}, i64 partialinit %{{.+}}, i64 partialinit %{{.+}}, i64 partialinit %{{.+}})
 // WIN64: define dso_local void @ParamPassing2(i129* %{{.+}}, i127* %{{.+}}, i63 %{{.+}})
 // LIN32: define void @ParamPassing2(i129* %{{.+}}, i127* %{{.+}}, i63 %{{.+}})
 // WIN32: define dso_local void @ParamPassing2(i129* %{{.+}}, i127* %{{.+}}, i63 %{{.+}})
@@ -120,7 +120,7 @@ void ParamPassing3(_ExtInt(15) a, _ExtInt(31) b) {}
 // ARM: define arm_aapcscc void @ParamPassing3(i15 signext %{{.+}}, i31 signext %{{.+}})
 
 _ExtInt(63) ReturnPassing(){}
-// LIN64: define i64 @ReturnPassing(
+// LIN64: define partialinit i64 @ReturnPassing(
 // WIN64: define dso_local i63 @ReturnPassing(
 // LIN32: define i63 @ReturnPassing(
 // WIN32: define dso_local i63 @ReturnPassing(
@@ -178,7 +178,7 @@ _ExtInt(64) ReturnPassing2(){}
 // ARM: define arm_aapcscc i64 @ReturnPassing2(
 
 _ExtInt(127) ReturnPassing3(){}
-// LIN64: define { i64, i64 } @ReturnPassing3(
+// LIN64: define partialinit { i64, i64 } @ReturnPassing3(
 // WIN64: define dso_local void @ReturnPassing3(i127* noalias sret
 // LIN32: define void @ReturnPassing3(i127* noalias sret
 // WIN32: define dso_local void @ReturnPassing3(i127* noalias sret

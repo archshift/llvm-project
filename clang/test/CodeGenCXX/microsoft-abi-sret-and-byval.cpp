@@ -169,7 +169,7 @@ void small_arg_with_dtor(SmallWithDtor s) {}
 // WIN64: define dso_local void @"?small_arg_with_dtor@@YAXUSmallWithDtor@@@Z"(i32 %s.coerce) {{.*}} {
 // WIN64:   call void @"??1SmallWithDtor@@QEAA@XZ"
 // WIN64: }
-// WOA64: define dso_local void @"?small_arg_with_dtor@@YAXUSmallWithDtor@@@Z"(i64 %s.coerce) {{.*}} {
+// WOA64: define dso_local void @"?small_arg_with_dtor@@YAXUSmallWithDtor@@@Z"(i64 partialinit %s.coerce) {{.*}} {
 // WOA64:   call void @"??1SmallWithDtor@@QEAA@XZ"(%struct.SmallWithDtor* %s)
 // WOA64: }
 
@@ -181,7 +181,7 @@ void small_arg_with_dtor(SmallWithDtor s) {}
 
 // Test that the eligible non-aggregate is passed directly, but returned
 // indirectly on ARM64 Windows.
-// WOA64: define dso_local void @"?small_arg_with_private_member@@YA?AUSmallWithPrivate@@U1@@Z"(%struct.SmallWithPrivate* inreg noalias sret align 4 %agg.result, i64 %s.coerce) {{.*}} {
+// WOA64: define dso_local void @"?small_arg_with_private_member@@YA?AUSmallWithPrivate@@U1@@Z"(%struct.SmallWithPrivate* inreg noalias sret align 4 %agg.result, i64 partialinit %s.coerce) {{.*}} {
 SmallWithPrivate small_arg_with_private_member(SmallWithPrivate s) { return s; }
 
 void call_small_arg_with_dtor() {
@@ -303,12 +303,12 @@ class Class {
   void thiscall_method_arg(Empty s) {}
   // LINUX: define {{.*}} void @_ZN5Class19thiscall_method_argE5Empty(%class.Class* %this)
   // WIN32: define {{.*}} void @"?thiscall_method_arg@Class@@QAEXUEmpty@@@Z"(%class.Class* %this, %struct.Empty* byval(%struct.Empty) align 4 %s)
-  // WIN64: define linkonce_odr dso_local void @"?thiscall_method_arg@Class@@QEAAXUEmpty@@@Z"(%class.Class* %this, i8 %s.coerce)
+  // WIN64: define linkonce_odr dso_local void @"?thiscall_method_arg@Class@@QEAAXUEmpty@@@Z"(%class.Class* %this, i8 partialinit %s.coerce)
 
   void thiscall_method_arg(EmptyWithCtor s) {}
   // LINUX: define {{.*}} void @_ZN5Class19thiscall_method_argE13EmptyWithCtor(%class.Class* %this)
   // WIN32: define {{.*}} void @"?thiscall_method_arg@Class@@QAEXUEmptyWithCtor@@@Z"(%class.Class* %this, %struct.EmptyWithCtor* byval(%struct.EmptyWithCtor) align 4 %s)
-  // WIN64: define linkonce_odr dso_local void @"?thiscall_method_arg@Class@@QEAAXUEmptyWithCtor@@@Z"(%class.Class* %this, i8 %s.coerce)
+  // WIN64: define linkonce_odr dso_local void @"?thiscall_method_arg@Class@@QEAAXUEmptyWithCtor@@@Z"(%class.Class* %this, i8 partialinit %s.coerce)
 
   void thiscall_method_arg(Small s) {}
   // LINUX: define {{.*}} void @_ZN5Class19thiscall_method_argE5Small(%class.Class* %this, i32 %s.0)

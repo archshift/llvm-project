@@ -99,7 +99,7 @@ union simple_union {
 // Unions should be passed as byval structs.
 // WEBASSEMBLY32: define void @union_arg(%union.simple_union* byval(%union.simple_union) align 4 %s)
 // WEBASSEMBLY64: define void @union_arg(%union.simple_union* byval(%union.simple_union) align 4 %s)
-// EXPERIMENTAL-MV: define void @union_arg(i32 %s.0)
+// EXPERIMENTAL-MV: define void @union_arg(i32 partialinit %s.0)
 void union_arg(union simple_union s) {}
 
 // Unions should be returned sret and not simplified by the frontend.
@@ -109,7 +109,7 @@ void union_arg(union simple_union s) {}
 // WEBASSEMBLY64: ret void
 
 // The experimental multivalue ABI returns them by value, though.
-// EXPERIMENTAL-MV: define %union.simple_union @union_ret()
+// EXPERIMENTAL-MV: define partialinit %union.simple_union @union_ret()
 // EXPERIMENTAL-MV: ret %union.simple_union %0
 union simple_union union_ret() {
   union simple_union bar;
@@ -133,7 +133,7 @@ void bitfield_arg(bitfield1 bf1) {}
 // WEBASSEMBLY64: define void @bitfield_ret(%struct.bitfield1* noalias sret align 4 %agg.result)
 
 // Except, of course, in the experimental multivalue ABI
-// EXPERIMENTAL-MV: define %struct.bitfield1 @bitfield_ret()
+// EXPERIMENTAL-MV: define partialinit %struct.bitfield1 @bitfield_ret()
 bitfield1 bitfield_ret() {
   bitfield1 baz;
   return baz;

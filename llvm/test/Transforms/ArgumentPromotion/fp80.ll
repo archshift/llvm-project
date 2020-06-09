@@ -19,7 +19,7 @@ define void @run() {
 ; CHECK-NEXT:    [[TMP0:%.*]] = tail call i8 @UseLongDoubleUnsafely(%union.u* byval align 16 bitcast (%struct.s* @b to %union.u*))
 ; CHECK-NEXT:    [[DOT0:%.*]] = getelementptr [[UNION_U:%.*]], %union.u* bitcast (%struct.s* @b to %union.u*), i32 0, i32 0
 ; CHECK-NEXT:    [[DOT0_VAL:%.*]] = load x86_fp80, x86_fp80* [[DOT0]]
-; CHECK-NEXT:    [[TMP1:%.*]] = tail call x86_fp80 @UseLongDoubleSafely(x86_fp80 [[DOT0_VAL]])
+; CHECK-NEXT:    [[TMP1:%.*]] = tail call x86_fp80 @UseLongDoubleSafely(x86_fp80 partialinit [[DOT0_VAL]])
 ; CHECK-NEXT:    [[TMP2:%.*]] = call i64 @AccessPaddingOfStruct(%struct.Foo* @a)
 ; CHECK-NEXT:    [[TMP3:%.*]] = call i64 @CaptureAStruct(%struct.Foo* @a)
 ; CHECK-NEXT:    ret void
@@ -50,7 +50,7 @@ entry:
 
 define internal x86_fp80 @UseLongDoubleSafely(%union.u* byval align 16 %arg) {
 ; CHECK-LABEL: define {{[^@]+}}@UseLongDoubleSafely
-; CHECK-SAME: (x86_fp80 [[ARG_0:%.*]])
+; CHECK-SAME: (x86_fp80 partialinit [[ARG_0:%.*]])
 ; CHECK-NEXT:    [[ARG:%.*]] = alloca [[UNION_U:%.*]], align 16
 ; CHECK-NEXT:    [[DOT0:%.*]] = getelementptr [[UNION_U]], %union.u* [[ARG]], i32 0, i32 0
 ; CHECK-NEXT:    store x86_fp80 [[ARG_0]], x86_fp80* [[DOT0]]

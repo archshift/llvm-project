@@ -46,7 +46,7 @@ bb:
 
 define internal fastcc void @promote_avx2(<4 x i64>* %arg, <4 x i64>* readonly %arg1) #0 {
 ; CHECK-LABEL: define {{[^@]+}}@promote_avx2
-; CHECK-SAME: (<4 x i64>* [[ARG:%.*]], <4 x i64> [[ARG1_VAL:%.*]])
+; CHECK-SAME: (<4 x i64>* [[ARG:%.*]], <4 x i64> partialinit [[ARG1_VAL:%.*]])
 ; CHECK-NEXT:  bb:
 ; CHECK-NEXT:    store <4 x i64> [[ARG1_VAL]], <4 x i64>* [[ARG]]
 ; CHECK-NEXT:    ret void
@@ -66,7 +66,7 @@ define void @promote(<4 x i64>* %arg) #0 {
 ; CHECK-NEXT:    [[TMP3:%.*]] = bitcast <4 x i64>* [[TMP]] to i8*
 ; CHECK-NEXT:    call void @llvm.memset.p0i8.i64(i8* align 32 [[TMP3]], i8 0, i64 32, i1 false)
 ; CHECK-NEXT:    [[TMP_VAL:%.*]] = load <4 x i64>, <4 x i64>* [[TMP]]
-; CHECK-NEXT:    call fastcc void @promote_avx2(<4 x i64>* [[TMP2]], <4 x i64> [[TMP_VAL]])
+; CHECK-NEXT:    call fastcc void @promote_avx2(<4 x i64>* [[TMP2]], <4 x i64> partialinit [[TMP_VAL]])
 ; CHECK-NEXT:    [[TMP4:%.*]] = load <4 x i64>, <4 x i64>* [[TMP2]], align 32
 ; CHECK-NEXT:    store <4 x i64> [[TMP4]], <4 x i64>* [[ARG]], align 2
 ; CHECK-NEXT:    ret void

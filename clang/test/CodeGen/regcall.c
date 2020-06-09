@@ -107,10 +107,10 @@ typedef float __attribute__((ext_vector_type(3))) v3f32;
 struct OddSizeHVA { v3f32 x, y; };
 
 void __regcall odd_size_hva(struct OddSizeHVA a) {}
-// Win32: define dso_local x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> %a.0, <3 x float> %a.1)
-// Win64: define dso_local x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> %a.0, <3 x float> %a.1)
-// Lin32: define x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> %a.0, <3 x float> %a.1)
-// Lin64: define x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> %a.coerce0, <3 x float> %a.coerce1)
+// Win32: define dso_local x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> partialinit %a.0, <3 x float> partialinit %a.1)
+// Win64: define dso_local x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> partialinit %a.0, <3 x float> partialinit %a.1)
+// Lin32: define x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> partialinit %a.0, <3 x float> partialinit %a.1)
+// Lin64: define x86_regcallcc void @__regcall3__odd_size_hva(<3 x float> partialinit %a.coerce0, <3 x float> partialinit %a.coerce1)
 
 struct HFA6 { __m128 f[4]; };
 struct HFA6 __regcall ret_reg_reused(struct HFA6 a, struct HFA6 b, struct HFA6 c, struct HFA6 d){ struct HFA6 h; return h;}

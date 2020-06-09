@@ -3,7 +3,7 @@
 
 define internal i32 @deref(i32* %x) nounwind {
 ; CHECK-LABEL: define {{[^@]+}}@deref
-; CHECK-SAME: (i32 [[X_VAL:%.*]])
+; CHECK-SAME: (i32 partialinit [[X_VAL:%.*]])
 ; CHECK-NEXT:  entry:
 ; CHECK-NEXT:    ret i32 [[X_VAL]]
 ;
@@ -19,7 +19,7 @@ define i32 @f(i32 %x) {
 ; CHECK-NEXT:    [[X_ADDR:%.*]] = alloca i32
 ; CHECK-NEXT:    store i32 [[X]], i32* [[X_ADDR]], align 4
 ; CHECK-NEXT:    [[X_ADDR_VAL:%.*]] = load i32, i32* [[X_ADDR]], align 4
-; CHECK-NEXT:    [[TMP1:%.*]] = call i32 @deref(i32 [[X_ADDR_VAL]])
+; CHECK-NEXT:    [[TMP1:%.*]] = call i32 @deref(i32 partialinit [[X_ADDR_VAL]])
 ; CHECK-NEXT:    ret i32 [[TMP1]]
 ;
 entry:

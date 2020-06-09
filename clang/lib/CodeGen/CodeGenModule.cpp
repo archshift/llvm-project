@@ -601,6 +601,9 @@ void CodeGenModule::Release() {
                                   llvm::DenormalMode::IEEE);
   }
 
+  // Emit `partialinit` attributes for padded function arguments/return values
+  getModule().addModuleFlag(llvm::Module::Error, "DisallowPoisonedCallArguments", 1);
+
   // Emit OpenCL specific module metadata: OpenCL/SPIR version.
   if (LangOpts.OpenCL) {
     EmitOpenCLMetadata();

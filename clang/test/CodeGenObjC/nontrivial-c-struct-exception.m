@@ -16,12 +16,12 @@ typedef struct {
 // CHECK: define void @testStrongException()
 // CHECK: %[[AGG_TMP:.*]] = alloca %[[STRUCT_STRONG]], align 8
 // CHECK: %[[AGG_TMP1:.*]] = alloca %[[STRUCT_STRONG]], align 8
-// CHECK: %[[CALL:.*]] = call [2 x i64] @genStrong()
+// CHECK: %[[CALL:.*]] = call partialinit [2 x i64] @genStrong()
 // CHECK: %[[V0:.*]] = bitcast %[[STRUCT_STRONG]]* %[[AGG_TMP]] to [2 x i64]*
 // CHECK: store [2 x i64] %[[CALL]], [2 x i64]* %[[V0]], align 8
-// CHECK: invoke [2 x i64] @genStrong()
+// CHECK: invoke partialinit [2 x i64] @genStrong()
 
-// CHECK: call void @calleeStrong([2 x i64] %{{.*}}, [2 x i64] %{{.*}})
+// CHECK: call void @calleeStrong([2 x i64] partialinit %{{.*}}, [2 x i64] partialinit %{{.*}})
 // CHECK-NEXT: ret void
 
 // CHECK: landingpad { i8*, i32 }

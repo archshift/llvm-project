@@ -422,7 +422,7 @@ void test_move_assignment_StrongOuter2(StrongOuter2 *p) {
   *p = getStrongOuter2();
 }
 
-// CHECK: define void @test_parameter_StrongSmall([2 x i64] %[[A_COERCE:.*]])
+// CHECK: define void @test_parameter_StrongSmall([2 x i64] partialinit %[[A_COERCE:.*]])
 // CHECK: %[[A:.*]] = alloca %[[STRUCT_STRONGSMALL]], align 8
 // CHECK: %[[V0:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[A]] to [2 x i64]*
 // CHECK: store [2 x i64] %[[A_COERCE]], [2 x i64]* %[[V0]], align 8
@@ -433,7 +433,7 @@ void test_move_assignment_StrongOuter2(StrongOuter2 *p) {
 void test_parameter_StrongSmall(StrongSmall a) {
 }
 
-// CHECK: define void @test_argument_StrongSmall([2 x i64] %[[A_COERCE:.*]])
+// CHECK: define void @test_argument_StrongSmall([2 x i64] partialinit %[[A_COERCE:.*]])
 // CHECK: %[[A:.*]] = alloca %[[STRUCT_STRONGSMALL]], align 8
 // CHECK: %[[TEMP_LVALUE:.*]] = alloca %[[STRUCT_STRONGSMALL]], align 8
 // CHECK: %[[V0:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[A]] to [2 x i64]*
@@ -443,7 +443,7 @@ void test_parameter_StrongSmall(StrongSmall a) {
 // CHECK: call void @__copy_constructor_8_8_t0w4_s8(i8** %[[V1]], i8** %[[V2]])
 // CHECK: %[[V3:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[TEMP_LVALUE]] to [2 x i64]*
 // CHECK: %[[V4:.*]] = load [2 x i64], [2 x i64]* %[[V3]], align 8
-// CHECK: call void @calleeStrongSmall([2 x i64] %[[V4]])
+// CHECK: call void @calleeStrongSmall([2 x i64] partialinit %[[V4]])
 // CHECK: %[[V5:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[A]] to i8**
 // CHECK: call void @__destructor_8_s8(i8** %[[V5]])
 // CHECK: ret void
@@ -452,7 +452,7 @@ void test_argument_StrongSmall(StrongSmall a) {
   calleeStrongSmall(a);
 }
 
-// CHECK: define [2 x i64] @test_return_StrongSmall([2 x i64] %[[A_COERCE:.*]])
+// CHECK: define partialinit [2 x i64] @test_return_StrongSmall([2 x i64] partialinit %[[A_COERCE:.*]])
 // CHECK: %[[RETVAL:.*]] = alloca %[[STRUCT_STRONGSMALL]], align 8
 // CHECK: %[[A:.*]] = alloca %[[STRUCT_STRONGSMALL]], align 8
 // CHECK: %[[V0:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[A]] to [2 x i64]*
@@ -472,7 +472,7 @@ StrongSmall test_return_StrongSmall(StrongSmall a) {
 
 // CHECK: define void @test_destructor_ignored_result()
 // CHECK: %[[COERCE:.*]] = alloca %[[STRUCT_STRONGSMALL]], align 8
-// CHECK: %[[CALL:.*]] = call [2 x i64] @getStrongSmall()
+// CHECK: %[[CALL:.*]] = call partialinit [2 x i64] @getStrongSmall()
 // CHECK: %[[V0:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[COERCE]] to [2 x i64]*
 // CHECK: store [2 x i64] %[[CALL]], [2 x i64]* %[[V0]], align 8
 // CHECK: %[[V1:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[COERCE]] to i8**
@@ -485,7 +485,7 @@ void test_destructor_ignored_result(void) {
 
 // CHECK: define void @test_destructor_ignored_result2(%{{.*}}* %[[C:.*]])
 // CHECK: %[[TMP:.*]] = alloca %[[STRUCT_STRONGSMALL]], align 8
-// CHECK: %[[CALL:.*]] = call [2 x i64]{{.*}}@objc_msgSend
+// CHECK: %[[CALL:.*]] = call partialinit [2 x i64]{{.*}}@objc_msgSend
 // CHECK: %[[V5:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[TMP]] to [2 x i64]*
 // CHECK: store [2 x i64] %[[CALL]], [2 x i64]* %[[V5]], align 8
 // CHECK: %[[V6:.*]] = bitcast %[[STRUCT_STRONGSMALL]]* %[[TMP]] to i8**

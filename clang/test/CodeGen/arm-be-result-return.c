@@ -15,7 +15,7 @@ union Us callee_us() { return us; }
 void caller_us() {
   us = callee_us();
 // CHECK-LABEL: caller_us()
-// CHECK: call i32
+// CHECK: call partialinit i32
 // CHECK: lshr i32
 // CHECK: trunc i32
 }
@@ -30,7 +30,7 @@ struct Ss callee_ss() { return ss; }
 void caller_ss() {
   ss = callee_ss();
 // CHECK-LABEL: caller_ss()
-// CHECK: call i32
+// CHECK: call partialinit i32
 // CHECK: lshr i32
 // CHECK: trunc i32
 }

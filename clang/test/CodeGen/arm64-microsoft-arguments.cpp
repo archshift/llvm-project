@@ -43,7 +43,7 @@ S3 f3() {
 // Pass and return aggregate (of size < 16 bytes) with non-trivial destructor.
 // Passed directly but returned indirectly.
 // CHECK: define {{.*}} void {{.*}}f4{{.*}}(%struct.S4* inreg noalias sret align 4 %agg.result)
-// CHECK: call void {{.*}}func4{{.*}}(%struct.S4* inreg sret align 4 %agg.result, [2 x i64] %5)
+// CHECK: call void {{.*}}func4{{.*}}(%struct.S4* inreg sret align 4 %agg.result, [2 x i64] partialinit %5)
 struct S4 {
   int a[3];
   ~S4();
@@ -57,7 +57,7 @@ S4 f4() {
 
 // Pass and return from instance method called from instance method.
 // CHECK: define {{.*}} void @{{.*}}bar@Q1{{.*}}(%class.Q1* %this, %class.P1* inreg noalias sret align 1 %agg.result)
-// CHECK: call void {{.*}}foo@P1{{.*}}(%class.P1* %ref.tmp, %class.P1* inreg sret align 1 %agg.result, i8 %1)
+// CHECK: call void {{.*}}foo@P1{{.*}}(%class.P1* %ref.tmp, %class.P1* inreg sret align 1 %agg.result, i8 partialinit %1)
 
 class P1 {
 public:
@@ -76,7 +76,7 @@ P1 Q1::bar() {
 
 // Pass and return from instance method called from free function.
 // CHECK: define {{.*}} void {{.*}}bar{{.*}}()
-// CHECK: call void {{.*}}foo@P2{{.*}}(%class.P2* %ref.tmp, %class.P2* inreg sret align 1 %retval, i8 %0)
+// CHECK: call void {{.*}}foo@P2{{.*}}(%class.P2* %ref.tmp, %class.P2* inreg sret align 1 %retval, i8 partialinit %0)
 class P2 {
 public:
   P2 foo(P2 x);
@@ -104,8 +104,8 @@ S5 f5() {
 
 // Pass and return an object with a non-trivial explicitly defaulted constructor
 // (passed directly, returned directly)
-// CHECK: define {{.*}} i64 @"?f6@@YA?AUS6@@XZ"()
-// CHECK: call i64 {{.*}}func6{{.*}}(i64 {{.*}})
+// CHECK: define {{.*}} partialinit i64 @"?f6@@YA?AUS6@@XZ"()
+// CHECK: call partialinit i64 {{.*}}func6{{.*}}(i64 partialinit {{.*}})
 struct S6a {
   S6a();
 };
@@ -123,8 +123,8 @@ S6 f6() {
 
 // Pass and return an object with a non-trivial implicitly defaulted constructor
 // (passed directly, returned directly)
-// CHECK: define {{.*}} i64 @"?f7@@YA?AUS7@@XZ"()
-// CHECK: call i64 {{.*}}func7{{.*}}(i64 {{.*}})
+// CHECK: define {{.*}} partialinit i64 @"?f7@@YA?AUS7@@XZ"()
+// CHECK: call partialinit i64 {{.*}}func7{{.*}}(i64 partialinit {{.*}})
 struct S7 {
   S6a x;
 };

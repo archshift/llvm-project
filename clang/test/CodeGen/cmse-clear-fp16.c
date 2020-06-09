@@ -44,16 +44,16 @@ void f1() {
 
 // CHECK-NOPT-SOFT: %[[V0:.*]] = load i32
 // CHECK-NOPT-SOFT: %[[V1:.*]] = and i32 %[[V0]], 65535
-// CHECK-NOPT-SOFT: call {{.*}} void {{.*}}(i32 %[[V1]])
+// CHECK-NOPT-SOFT: call {{.*}} void {{.*}}(i32 partialinit %[[V1]])
 
 // CHECK-OPT-SOFT: %[[V1:.*]] = zext i16 {{.*}} to i32
-// CHECK-OPT-SOFT: call {{.*}} void {{.*}}(i32 %[[V1]])
+// CHECK-OPT-SOFT: call {{.*}} void {{.*}}(i32 partialinit %[[V1]])
 
 // CHECK-NOPT-HARD: %[[V0:.*]] = bitcast float {{.*}} to i32
 // CHECK-NOPT-HARD: %[[V1:.*]] = and i32 %[[V0]], 65535
 // CHECK-NOPT-HARD: %[[V2:.*]] = bitcast i32 %[[V1]] to float
-// CHECK-NOPT-HARD: call {{.*}}(float %[[V2]])
+// CHECK-NOPT-HARD: call {{.*}}(float partialinit %[[V2]])
 
 // CHECK-OPT-HARD: %[[V0:.*]] = zext i16 {{.*}} to i32
 // CHECK-OPT-HARD: %[[V1:.*]] = bitcast i32 %[[V0]] to float
-// CHECK-OPT-HARD: call {{.*}}(float %[[V1]])
+// CHECK-OPT-HARD: call {{.*}}(float partialinit %[[V1]])

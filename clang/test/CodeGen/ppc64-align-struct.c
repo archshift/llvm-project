@@ -15,17 +15,17 @@ void test1 (int x, struct test1 y)
 {
 }
 
-// CHECK: define void @test2(i32 signext %x, [1 x i128] %y.coerce)
+// CHECK: define void @test2(i32 signext %x, [1 x i128] partialinit %y.coerce)
 void test2 (int x, struct test2 y)
 {
 }
 
-// CHECK: define void @test3(i32 signext %x, [2 x i128] %y.coerce)
+// CHECK: define void @test3(i32 signext %x, [2 x i128] partialinit %y.coerce)
 void test3 (int x, struct test3 y)
 {
 }
 
-// CHECK: define void @test4(i32 signext %x, [2 x i64] %y.coerce)
+// CHECK: define void @test4(i32 signext %x, [2 x i64] partialinit %y.coerce)
 void test4 (int x, struct test4 y)
 {
 }

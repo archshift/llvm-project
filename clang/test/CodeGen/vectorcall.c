@@ -97,8 +97,8 @@ typedef float __attribute__((ext_vector_type(3))) v3f32;
 struct OddSizeHVA { v3f32 x, y; };
 
 void __vectorcall odd_size_hva(struct OddSizeHVA a) {}
-// X32: define dso_local x86_vectorcallcc void @"\01odd_size_hva@@32"(%struct.OddSizeHVA inreg %a.coerce)
-// X64: define dso_local x86_vectorcallcc void @"\01odd_size_hva@@32"(%struct.OddSizeHVA inreg %a.coerce)
+// X32: define dso_local x86_vectorcallcc void @"\01odd_size_hva@@32"(%struct.OddSizeHVA inreg partialinit %a.coerce)
+// X64: define dso_local x86_vectorcallcc void @"\01odd_size_hva@@32"(%struct.OddSizeHVA inreg partialinit %a.coerce)
 
 // The Vectorcall ABI only allows passing the first 6 items in registers in x64, so this shouldn't
 // consider 'p7' as a register.  Instead p5 gets put into the register on the second pass.

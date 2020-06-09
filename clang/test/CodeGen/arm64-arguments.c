@@ -7,27 +7,27 @@ char f0(void) {
 
 // Struct as return type. Aggregates <= 16 bytes are passed directly and round
 // up to multiple of 8 bytes.
-// CHECK: define i64 @f1()
+// CHECK: define partialinit i64 @f1()
 struct s1 { char f0; };
 struct s1 f1(void) {}
 
-// CHECK: define i64 @f2()
+// CHECK: define partialinit i64 @f2()
 struct s2 { short f0; };
 struct s2 f2(void) {}
 
-// CHECK: define i64 @f3()
+// CHECK: define partialinit i64 @f3()
 struct s3 { int f0; };
 struct s3 f3(void) {}
 
-// CHECK: define i64 @f4()
+// CHECK: define partialinit i64 @f4()
 struct s4 { struct s4_0 { int f0; } f0; };
 struct s4 f4(void) {}
 
-// CHECK: define i64 @f5()
+// CHECK: define partialinit i64 @f5()
 struct s5 { struct { } f0; int f1; };
 struct s5 f5(void) {}
 
-// CHECK: define i64 @f6()
+// CHECK: define partialinit i64 @f6()
 struct s6 { int f0[1]; };
 struct s6 f6(void) {}
 
@@ -39,19 +39,19 @@ struct s7 f7(void) {}
 struct s8 { struct { int : 0; } f0[1]; };
 struct s8 f8(void) {}
 
-// CHECK: define i64 @f9()
+// CHECK: define partialinit i64 @f9()
 struct s9 { int f0; int : 0; };
 struct s9 f9(void) {}
 
-// CHECK: define i64 @f10()
+// CHECK: define partialinit i64 @f10()
 struct s10 { int f0; int : 0; int : 0; };
 struct s10 f10(void) {}
 
-// CHECK: define i64 @f11()
+// CHECK: define partialinit i64 @f11()
 struct s11 { int : 0; int f0; };
 struct s11 f11(void) {}
 
-// CHECK: define i64 @f12()
+// CHECK: define partialinit i64 @f12()
 union u12 { char f0; short f1; int f2; };
 union u12 f12(void) {}
 
@@ -69,28 +69,28 @@ void f15(struct s7 a0) {}
 // CHECK: define void @f16()
 void f16(struct s8 a0) {}
 
-// CHECK: define i64 @f17()
+// CHECK: define partialinit i64 @f17()
 struct s17 { short f0 : 13; char f1 : 4; };
 struct s17 f17(void) {}
 
-// CHECK: define i64 @f18()
+// CHECK: define partialinit i64 @f18()
 struct s18 { short f0; char f1 : 4; };
 struct s18 f18(void) {}
 
-// CHECK: define i64 @f19()
+// CHECK: define partialinit i64 @f19()
 struct s19 { int f0; struct s8 f1; };
 struct s19 f19(void) {}
 
-// CHECK: define i64 @f20()
+// CHECK: define partialinit i64 @f20()
 struct s20 { struct s8 f1; int f0; };
 struct s20 f20(void) {}
 
-// CHECK: define i64 @f21()
+// CHECK: define partialinit i64 @f21()
 struct s21 { struct {} f1; int f0 : 4; };
 struct s21 f21(void) {}
 
-// CHECK: define i64 @f22()
-// CHECK: define i64 @f23()
+// CHECK: define partialinit i64 @f22()
+// CHECK: define partialinit i64 @f23()
 // CHECK: define i64 @f24()
 // CHECK: define [2 x i64] @f25()
 // CHECK: define { float, float } @f26()
@@ -102,11 +102,11 @@ _Complex long long  f25(void) {}
 _Complex float      f26(void) {}
 _Complex double     f27(void) {}
 
-// CHECK: define i64 @f28()
+// CHECK: define partialinit i64 @f28()
 struct s28 { _Complex char f0; };
 struct s28 f28() {}
 
-// CHECK: define i64 @f29()
+// CHECK: define partialinit i64 @f29()
 struct s29 { _Complex short f0; };
 struct s29 f29() {}
 
@@ -116,7 +116,7 @@ struct s30 f30() {}
 
 struct s31 { char x; };
 void f31(struct s31 s) { }
-// CHECK: define void @f31(i64 %s.coerce)
+// CHECK: define void @f31(i64 partialinit %s.coerce)
 // CHECK: %s = alloca %struct.s31, align 1
 // CHECK: trunc i64 %s.coerce to i8
 // CHECK: store i8 %{{.*}},
@@ -136,7 +136,7 @@ void g34(struct s34 *s) { f34(*s); }
 // CHECK: @g34(%struct.s34* %s)
 // CHECK: %[[a:.*]] = load i8, i8* %{{.*}}
 // CHECK: zext i8 %[[a]] to i64
-// CHECK: call void @f34(i64 %{{.*}})
+// CHECK: call void @f34(i64 partialinit %{{.*}})
 
 /*
  * Check that va_arg accesses stack according to ABI alignment
@@ -272,7 +272,7 @@ typedef struct s38 s38_no_align;
 // passing structs in registers
 __attribute__ ((noinline))
 int f38(int i, s38_no_align s1, s38_no_align s2) {
-// CHECK: define i32 @f38(i32 %i, i64 %s1.coerce, i64 %s2.coerce)
+// CHECK: define i32 @f38(i32 %i, i64 partialinit %s1.coerce, i64 partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s38, align 4
 // CHECK: %s2 = alloca %struct.s38, align 4
 // CHECK: store i64 %s1.coerce, i64* %{{.*}}, align 4
@@ -289,14 +289,14 @@ int caller38() {
 // CHECK: define i32 @caller38()
 // CHECK: %[[a:.*]] = load i64, i64* bitcast (%struct.s38* @g38 to i64*), align 4
 // CHECK: %[[b:.*]] = load i64, i64* bitcast (%struct.s38* @g38_2 to i64*), align 4
-// CHECK: call i32 @f38(i32 3, i64 %[[a]], i64 %[[b]])
+// CHECK: call i32 @f38(i32 3, i64 partialinit %[[a]], i64 partialinit %[[b]])
   return f38(3, g38, g38_2);
 }
 // passing structs on stack
 __attribute__ ((noinline))
 int f38_stack(int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8,
               int i9, s38_no_align s1, s38_no_align s2) {
-// CHECK: define i32 @f38_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, i64 %s1.coerce, i64 %s2.coerce)
+// CHECK: define i32 @f38_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, i64 partialinit %s1.coerce, i64 partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s38, align 4
 // CHECK: %s2 = alloca %struct.s38, align 4
 // CHECK: store i64 %s1.coerce, i64* %{{.*}}, align 4
@@ -311,7 +311,7 @@ int caller38_stack() {
 // CHECK: define i32 @caller38_stack()
 // CHECK: %[[a:.*]] = load i64, i64* bitcast (%struct.s38* @g38 to i64*), align 4
 // CHECK: %[[b:.*]] = load i64, i64* bitcast (%struct.s38* @g38_2 to i64*), align 4
-// CHECK: call i32 @f38_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i64 %[[a]], i64 %[[b]])
+// CHECK: call i32 @f38_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i64 partialinit %[[a]], i64 partialinit %[[b]])
   return f38_stack(1, 2, 3, 4, 5, 6, 7, 8, 9, g38, g38_2);
 }
 
@@ -325,7 +325,7 @@ typedef struct s39 s39_with_align;
 // passing aligned structs in registers
 __attribute__ ((noinline))
 int f39(int i, s39_with_align s1, s39_with_align s2) {
-// CHECK: define i32 @f39(i32 %i, i128 %s1.coerce, i128 %s2.coerce)
+// CHECK: define i32 @f39(i32 %i, i128 partialinit %s1.coerce, i128 partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s39, align 16
 // CHECK: %s2 = alloca %struct.s39, align 16
 // CHECK: store i128 %s1.coerce, i128* %{{.*}}, align 16
@@ -342,14 +342,14 @@ int caller39() {
 // CHECK: define i32 @caller39()
 // CHECK: %[[a:.*]] = load i128, i128* bitcast (%struct.s39* @g39 to i128*), align 16
 // CHECK: %[[b:.*]] = load i128, i128* bitcast (%struct.s39* @g39_2 to i128*), align 16
-// CHECK: call i32 @f39(i32 3, i128 %[[a]], i128 %[[b]])
+// CHECK: call i32 @f39(i32 3, i128 partialinit %[[a]], i128 partialinit %[[b]])
   return f39(3, g39, g39_2);
 }
 // passing aligned structs on stack
 __attribute__ ((noinline))
 int f39_stack(int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8,
               int i9, s39_with_align s1, s39_with_align s2) {
-// CHECK: define i32 @f39_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, i128 %s1.coerce, i128 %s2.coerce)
+// CHECK: define i32 @f39_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, i128 partialinit %s1.coerce, i128 partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s39, align 16
 // CHECK: %s2 = alloca %struct.s39, align 16
 // CHECK: store i128 %s1.coerce, i128* %{{.*}}, align 16
@@ -364,7 +364,7 @@ int caller39_stack() {
 // CHECK: define i32 @caller39_stack()
 // CHECK: %[[a:.*]] = load i128, i128* bitcast (%struct.s39* @g39 to i128*), align 16
 // CHECK: %[[b:.*]] = load i128, i128* bitcast (%struct.s39* @g39_2 to i128*), align 16
-// CHECK: call i32 @f39_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i128 %[[a]], i128 %[[b]])
+// CHECK: call i32 @f39_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i128 partialinit %[[a]], i128 partialinit %[[b]])
   return f39_stack(1, 2, 3, 4, 5, 6, 7, 8, 9, g39, g39_2);
 }
 
@@ -380,7 +380,7 @@ typedef struct s40 s40_no_align;
 // passing structs in registers
 __attribute__ ((noinline))
 int f40(int i, s40_no_align s1, s40_no_align s2) {
-// CHECK: define i32 @f40(i32 %i, [2 x i64] %s1.coerce, [2 x i64] %s2.coerce)
+// CHECK: define i32 @f40(i32 %i, [2 x i64] partialinit %s1.coerce, [2 x i64] partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s40, align 4
 // CHECK: %s2 = alloca %struct.s40, align 4
 // CHECK: store [2 x i64] %s1.coerce, [2 x i64]* %{{.*}}, align 4
@@ -397,14 +397,14 @@ int caller40() {
 // CHECK: define i32 @caller40()
 // CHECK: %[[a:.*]] = load [2 x i64], [2 x i64]* bitcast (%struct.s40* @g40 to [2 x i64]*), align 4
 // CHECK: %[[b:.*]] = load [2 x i64], [2 x i64]* bitcast (%struct.s40* @g40_2 to [2 x i64]*), align 4
-// CHECK: call i32 @f40(i32 3, [2 x i64] %[[a]], [2 x i64] %[[b]])
+// CHECK: call i32 @f40(i32 3, [2 x i64] partialinit %[[a]], [2 x i64] partialinit %[[b]])
   return f40(3, g40, g40_2);
 }
 // passing structs on stack
 __attribute__ ((noinline))
 int f40_stack(int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8,
               int i9, s40_no_align s1, s40_no_align s2) {
-// CHECK: define i32 @f40_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, [2 x i64] %s1.coerce, [2 x i64] %s2.coerce)
+// CHECK: define i32 @f40_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, [2 x i64] partialinit %s1.coerce, [2 x i64] partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s40, align 4
 // CHECK: %s2 = alloca %struct.s40, align 4
 // CHECK: store [2 x i64] %s1.coerce, [2 x i64]* %{{.*}}, align 4
@@ -419,7 +419,7 @@ int caller40_stack() {
 // CHECK: define i32 @caller40_stack()
 // CHECK: %[[a:.*]] = load [2 x i64], [2 x i64]* bitcast (%struct.s40* @g40 to [2 x i64]*), align 4
 // CHECK: %[[b:.*]] = load [2 x i64], [2 x i64]* bitcast (%struct.s40* @g40_2 to [2 x i64]*), align 4
-// CHECK: call i32 @f40_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, [2 x i64] %[[a]], [2 x i64] %[[b]])
+// CHECK: call i32 @f40_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, [2 x i64] partialinit %[[a]], [2 x i64] partialinit %[[b]])
   return f40_stack(1, 2, 3, 4, 5, 6, 7, 8, 9, g40, g40_2);
 }
 
@@ -435,7 +435,7 @@ typedef struct s41 s41_with_align;
 // passing aligned structs in registers
 __attribute__ ((noinline))
 int f41(int i, s41_with_align s1, s41_with_align s2) {
-// CHECK: define i32 @f41(i32 %i, i128 %s1.coerce, i128 %s2.coerce)
+// CHECK: define i32 @f41(i32 %i, i128 partialinit %s1.coerce, i128 partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s41, align 16
 // CHECK: %s2 = alloca %struct.s41, align 16
 // CHECK: store i128 %s1.coerce, i128* %{{.*}}, align 16
@@ -452,14 +452,14 @@ int caller41() {
 // CHECK: define i32 @caller41()
 // CHECK: %[[a:.*]] = load i128, i128* bitcast (%struct.s41* @g41 to i128*), align 16
 // CHECK: %[[b:.*]] = load i128, i128* bitcast (%struct.s41* @g41_2 to i128*), align 16
-// CHECK: call i32 @f41(i32 3, i128 %[[a]], i128 %[[b]])
+// CHECK: call i32 @f41(i32 3, i128 partialinit %[[a]], i128 partialinit %[[b]])
   return f41(3, g41, g41_2);
 }
 // passing aligned structs on stack
 __attribute__ ((noinline))
 int f41_stack(int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8,
               int i9, s41_with_align s1, s41_with_align s2) {
-// CHECK: define i32 @f41_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, i128 %s1.coerce, i128 %s2.coerce)
+// CHECK: define i32 @f41_stack(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i32 %i8, i32 %i9, i128 partialinit %s1.coerce, i128 partialinit %s2.coerce)
 // CHECK: %s1 = alloca %struct.s41, align 16
 // CHECK: %s2 = alloca %struct.s41, align 16
 // CHECK: store i128 %s1.coerce, i128* %{{.*}}, align 16
@@ -474,7 +474,7 @@ int caller41_stack() {
 // CHECK: define i32 @caller41_stack()
 // CHECK: %[[a:.*]] = load i128, i128* bitcast (%struct.s41* @g41 to i128*), align 16
 // CHECK: %[[b:.*]] = load i128, i128* bitcast (%struct.s41* @g41_2 to i128*), align 16
-// CHECK: call i32 @f41_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i128 %[[a]], i128 %[[b]])
+// CHECK: call i32 @f41_stack(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i32 8, i32 9, i128 partialinit %[[a]], i128 partialinit %[[b]])
   return f41_stack(1, 2, 3, 4, 5, 6, 7, 8, 9, g41, g41_2);
 }
 
@@ -597,24 +597,24 @@ int caller43_stack() {
 __attribute__ ((noinline))
 int f40_split(int i, int i2, int i3, int i4, int i5, int i6, int i7,
               s40_no_align s1, s40_no_align s2) {
-// CHECK: define i32 @f40_split(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, [2 x i64] %s1.coerce, [2 x i64] %s2.coerce)
+// CHECK: define i32 @f40_split(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, [2 x i64] partialinit %s1.coerce, [2 x i64] partialinit %s2.coerce)
   return s1.i + s2.i + i + i2 + i3 + i4 + i5 + i6 + i7 + s1.s + s2.s;
 }
 int caller40_split() {
 // CHECK: define i32 @caller40_split()
-// CHECK: call i32 @f40_split(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, [2 x i64] %{{.*}} [2 x i64] %{{.*}})
+// CHECK: call i32 @f40_split(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, [2 x i64] partialinit %{{.*}} [2 x i64] partialinit %{{.*}})
   return f40_split(1, 2, 3, 4, 5, 6, 7, g40, g40_2);
 }
 
 __attribute__ ((noinline))
 int f41_split(int i, int i2, int i3, int i4, int i5, int i6, int i7,
               s41_with_align s1, s41_with_align s2) {
-// CHECK: define i32 @f41_split(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i128 %s1.coerce, i128 %s2.coerce)
+// CHECK: define i32 @f41_split(i32 %i, i32 %i2, i32 %i3, i32 %i4, i32 %i5, i32 %i6, i32 %i7, i128 partialinit %s1.coerce, i128 partialinit %s2.coerce)
   return s1.i + s2.i + i + i2 + i3 + i4 + i5 + i6 + i7 + s1.s + s2.s;
 }
 int caller41_split() {
 // CHECK: define i32 @caller41_split()
-// CHECK: call i32 @f41_split(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i128 %{{.*}}, i128 %{{.*}})
+// CHECK: call i32 @f41_split(i32 1, i32 2, i32 3, i32 4, i32 5, i32 6, i32 7, i128 partialinit %{{.*}}, i128 partialinit %{{.*}})
   return f41_split(1, 2, 3, 4, 5, 6, 7, g41, g41_2);
 }
 

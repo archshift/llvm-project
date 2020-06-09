@@ -13,7 +13,7 @@ __bf16 test_ret_bf16(__bf16 v) {
 // CHECK32-HARD: ret bfloat %v
 // CHECK64-HARD: define bfloat @test_ret_bf16(bfloat returned %v) {{.*}} {
 // CHECK64-HARD: ret bfloat %v
-// CHECK32-SOFTFP: define i32 @test_ret_bf16(i32 [[V0:.*]]) {{.*}} {
+// CHECK32-SOFTFP: define partialinit i32 @test_ret_bf16(i32 partialinit [[V0:.*]]) {{.*}} {
 // CHECK32-SOFTFP: %tmp2.0.insert.ext = and i32 [[V0]], 65535
 // CHECK32-SOFTFP: ret i32 %tmp2.0.insert.ext
 // CHECK64-SOFTFP: define bfloat @test_ret_bf16(bfloat returned %v) {{.*}} {

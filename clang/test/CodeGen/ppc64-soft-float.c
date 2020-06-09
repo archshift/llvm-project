@@ -37,35 +37,35 @@ struct f1 func_f1(struct f1 x) { return x; }
 // CHECK-BE: define void @func_f2(%struct.f2* noalias sret align 4 %agg.result, i64 %x.coerce)
 struct f2 func_f2(struct f2 x) { return x; }
 
-// CHECK-LE: define { i64, i64 } @func_f3([2 x i64] %x.coerce)
-// CHECK-BE: define void @func_f3(%struct.f3* noalias sret align 4 %agg.result, [2 x i64] %x.coerce)
+// CHECK-LE: define partialinit { i64, i64 } @func_f3([2 x i64] partialinit %x.coerce)
+// CHECK-BE: define void @func_f3(%struct.f3* noalias sret align 4 %agg.result, [2 x i64] partialinit %x.coerce)
 struct f3 func_f3(struct f3 x) { return x; }
 
 // CHECK-LE: define { i64, i64 } @func_f4([2 x i64] %x.coerce)
 // CHECK-BE: define void @func_f4(%struct.f4* noalias sret align 4 %agg.result, [2 x i64] %x.coerce)
 struct f4 func_f4(struct f4 x) { return x; }
 
-// CHECK: define void @func_f5(%struct.f5* noalias sret align 4 %agg.result, [3 x i64] %x.coerce)
+// CHECK: define void @func_f5(%struct.f5* noalias sret align 4 %agg.result, [3 x i64] partialinit %x.coerce)
 struct f5 func_f5(struct f5 x) { return x; }
 
 // CHECK: define void @func_f6(%struct.f6* noalias sret align 4 %agg.result, [3 x i64] %x.coerce)
 struct f6 func_f6(struct f6 x) { return x; }
 
-// CHECK: define void @func_f7(%struct.f7* noalias sret align 4 %agg.result, [4 x i64] %x.coerce)
+// CHECK: define void @func_f7(%struct.f7* noalias sret align 4 %agg.result, [4 x i64] partialinit %x.coerce)
 struct f7 func_f7(struct f7 x) { return x; }
 
 // CHECK: define void @func_f8(%struct.f8* noalias sret align 4 %agg.result, [4 x i64] %x.coerce)
 struct f8 func_f8(struct f8 x) { return x; }
 
-// CHECK: define void @func_f9(%struct.f9* noalias sret align 4 %agg.result, [5 x i64] %x.coerce)
+// CHECK: define void @func_f9(%struct.f9* noalias sret align 4 %agg.result, [5 x i64] partialinit %x.coerce)
 struct f9 func_f9(struct f9 x) { return x; }
 
 // CHECK-LE: define i64 @func_fab(i64 %x.coerce)
 // CHECK-BE: define void @func_fab(%struct.fab* noalias sret align 4 %agg.result, i64 %x.coerce)
 struct fab func_fab(struct fab x) { return x; }
 
-// CHECK-LE: define { i64, i64 } @func_fabc([2 x i64] %x.coerce)
-// CHECK-BE: define void @func_fabc(%struct.fabc* noalias sret align 4 %agg.result, [2 x i64] %x.coerce)
+// CHECK-LE: define partialinit { i64, i64 } @func_fabc([2 x i64] partialinit %x.coerce)
+// CHECK-BE: define void @func_fabc(%struct.fabc* noalias sret align 4 %agg.result, [2 x i64] partialinit %x.coerce)
 struct fabc func_fabc(struct fabc x) { return x; }
 
 // CHECK-LE: define { i64, i64 } @func_f2a2b([2 x i64] %x.coerce)
@@ -94,8 +94,8 @@ void call_f2(void) { global_f2 = func_f2(global_f2); }
 // CHECK: %[[TMP2:[^ ]+]] = bitcast [2 x i64]* %[[TMP1]] to i8*
 // CHECK: call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %[[TMP2]], i8* align 4 bitcast (%struct.f3* @global_f3 to i8*), i64 12, i1 false)
 // CHECK: %[[TMP3:[^ ]+]] = load [2 x i64], [2 x i64]* %[[TMP1]]
-// CHECK-LE: call { i64, i64 } @func_f3([2 x i64] %[[TMP3]])
-// CHECK-BE: call void @func_f3(%struct.f3* sret align 4 %[[TMP0]], [2 x i64] %[[TMP3]])
+// CHECK-LE: call partialinit { i64, i64 } @func_f3([2 x i64] partialinit %[[TMP3]])
+// CHECK-BE: call void @func_f3(%struct.f3* sret align 4 %[[TMP0]], [2 x i64] partialinit %[[TMP3]])
 struct f3 global_f3;
 void call_f3(void) { global_f3 = func_f3(global_f3); }
 
@@ -113,7 +113,7 @@ void call_f4(void) { global_f4 = func_f4(global_f4); }
 // CHECK: %[[TMP2:[^ ]+]] = bitcast [3 x i64]* %[[TMP1]] to i8*
 // CHECK: call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %[[TMP2]], i8* align 4 bitcast (%struct.f5* @global_f5 to i8*), i64 20, i1 false)
 // CHECK: %[[TMP3:[^ ]+]] = load [3 x i64], [3 x i64]* %[[TMP1]]
-// CHECK: call void @func_f5(%struct.f5* sret align 4 %[[TMP0]], [3 x i64] %[[TMP3]])
+// CHECK: call void @func_f5(%struct.f5* sret align 4 %[[TMP0]], [3 x i64] partialinit %[[TMP3]])
 struct f5 global_f5;
 void call_f5(void) { global_f5 = func_f5(global_f5); }
 
@@ -130,7 +130,7 @@ void call_f6(void) { global_f6 = func_f6(global_f6); }
 // CHECK: %[[TMP2:[^ ]+]] = bitcast [4 x i64]* %[[TMP1]] to i8*
 // CHECK: call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %[[TMP2]], i8* align 4 bitcast (%struct.f7* @global_f7 to i8*), i64 28, i1 false)
 // CHECK: %[[TMP3:[^ ]+]] = load [4 x i64], [4 x i64]* %[[TMP1]], align 8
-// CHECK: call void @func_f7(%struct.f7* sret align 4 %[[TMP0]], [4 x i64] %[[TMP3]])
+// CHECK: call void @func_f7(%struct.f7* sret align 4 %[[TMP0]], [4 x i64] partialinit %[[TMP3]])
 struct f7 global_f7;
 void call_f7(void) { global_f7 = func_f7(global_f7); }
 
@@ -146,7 +146,7 @@ void call_f8(void) { global_f8 = func_f8(global_f8); }
 // CHECK: %[[TMP2:[^ ]+]] = bitcast [5 x i64]* %[[TMP1]] to i8*
 // CHECK: call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %[[TMP2]], i8* align 4 bitcast (%struct.f9* @global_f9 to i8*), i64 36, i1 false)
 // CHECK: %[[TMP3:[^ ]+]] = load [5 x i64], [5 x i64]* %[[TMP1]]
-// CHECK: call void @func_f9(%struct.f9* sret align 4 %{{[^ ]+}}, [5 x i64] %[[TMP3]])
+// CHECK: call void @func_f9(%struct.f9* sret align 4 %{{[^ ]+}}, [5 x i64] partialinit %[[TMP3]])
 struct f9 global_f9;
 void call_f9(void) { global_f9 = func_f9(global_f9); }
 
@@ -164,8 +164,8 @@ void call_fab(void) { global_fab = func_fab(global_fab); }
 // CHECK: %[[TMP2:[^ ]+]] = bitcast [2 x i64]* %[[TMP0]] to i8*
 // CHECK: call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %[[TMP2]], i8* align 4 bitcast (%struct.fabc* @global_fabc to i8*), i64 12, i1 false)
 // CHECK: %[[TMP3:[^ ]+]] = load [2 x i64], [2 x i64]* %[[TMP0]], align 8
-// CHECK-LE: %call = call { i64, i64 } @func_fabc([2 x i64] %[[TMP3]])
-// CHECK-BE: call void @func_fabc(%struct.fabc* sret align 4 %[[TMPX]], [2 x i64] %[[TMP3]])
+// CHECK-LE: %call = call partialinit { i64, i64 } @func_fabc([2 x i64] partialinit %[[TMP3]])
+// CHECK-BE: call void @func_fabc(%struct.fabc* sret align 4 %[[TMPX]], [2 x i64] partialinit %[[TMP3]])
 struct fabc global_fabc;
 void call_fabc(void) { global_fabc = func_fabc(global_fabc); }
 

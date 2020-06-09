@@ -2075,6 +2075,23 @@ void CodeGenModule::ConstructAttributeList(
 
   QualType RetTy = FI.getReturnType();
   const ABIArgInfo &RetAI = FI.getReturnInfo();
+
+  // Determine if the return type could be partially initialized
+  bool RetPartialInit = false;
+  const Type *RetTyPtr = RetTy.getTypePtr();
+  if (RetTyPtr->isRecordType()) {
+    RecordDecl *RetRecord = RetTyPtr->getAsRecordDecl();
+    auto &RetLayout = getTypes().getCGRecordLayout(RetRecord);
+    RetPartialInit = RetLayout.isPartialInit() || (RetAI.getPaddingType() != nullptr);
+  }
+
+  // If we're coercing to a type of different size, we're introducing more padding bits
+  if (RetAI.canHaveCoerceToType()) {
+    const size_t RetRealSize = getDataLayout().getTypeSizeInBits(getTypes().ConvertType(RetTy));
+    const size_t RetLowSize = getDataLayout().getTypeSizeInBits(RetAI.getCoerceToType());
+    RetPartialInit |= RetRealSize != RetLowSize;
+  }
+
   switch (RetAI.getKind()) {
   case ABIArgInfo::Extend:
     if (RetAI.isSignExt())
@@ -2085,6 +2102,8 @@ void CodeGenModule::ConstructAttributeList(
   case ABIArgInfo::Direct:
     if (RetAI.getInReg())
       RetAttrs.addAttribute(llvm::Attribute::InReg);
+    if (RetPartialInit)
+      RetAttrs.addAttribute(llvm::Attribute::PartialInit);
     break;
   case ABIArgInfo::Ignore:
     break;
@@ -2155,6 +2174,24 @@ void CodeGenModule::ConstructAttributeList(
       }
     }
 
+    // Decide whether the argument we're handling may have valid
+    // uninitialized bits.
+    bool ArgPartialInit = false;
+    const Type *ArgTyPtr = ParamType.getTypePtr();
+    if (ArgTyPtr->isRecordType()) {
+      RecordDecl *ArgRecord = ArgTyPtr->getAsRecordDecl();
+      auto &ArgLayout = getTypes().getCGRecordLayout(ArgRecord);
+      ArgPartialInit = ArgLayout.isPartialInit();
+    }
+
+    // If we're coercing to a type of different size, we're introducing more padding bits
+    if (AI.canHaveCoerceToType()) {
+      const size_t ArgRealSize = getDataLayout().getTypeSizeInBits(getTypes().ConvertType(ParamType));
+      const size_t ArgLowSize = getDataLayout().getTypeSizeInBits(AI.getCoerceToType());
+      ArgPartialInit |= ArgRealSize != ArgLowSize;
+    }
+
+
     // 'restrict' -> 'noalias' is done in EmitFunctionProlog when we
     // have the corresponding parameter variable.  It doesn't make
     // sense to do it here because parameters are so messed up.
@@ -2170,6 +2207,8 @@ void CodeGenModule::ConstructAttributeList(
         Attrs.addAttribute(llvm::Attribute::Nest);
       else if (AI.getInReg())
         Attrs.addAttribute(llvm::Attribute::InReg);
+      if (ArgPartialInit)
+        Attrs.addAttribute(llvm::Attribute::PartialInit);
       break;
 
     case ABIArgInfo::Indirect: {
@@ -2204,8 +2243,12 @@ void CodeGenModule::ConstructAttributeList(
       break;
     }
     case ABIArgInfo::Ignore:
-    case ABIArgInfo::Expand:
     case ABIArgInfo::CoerceAndExpand:
+      break;
+    
+    case ABIArgInfo::Expand:
+      if (ArgPartialInit)
+        Attrs.addAttribute(llvm::Attribute::PartialInit);
       break;
 
     case ABIArgInfo::InAlloca:

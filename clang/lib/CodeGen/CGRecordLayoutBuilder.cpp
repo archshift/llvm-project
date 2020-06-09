@@ -158,8 +158,10 @@ struct CGRecordLowering {
     return Types.isZeroInitializable(RD);
   }
   void appendPaddingBytes(CharUnits Size) {
-    if (!Size.isZero())
+    if (!Size.isZero()) {
       FieldTypes.push_back(getByteArrayType(Size));
+      PartialInit = true;
+    }
   }
   uint64_t getFieldBitOffset(const FieldDecl *FD) {
     return Layout.getFieldOffset(FD->getFieldIndex());
@@ -185,6 +187,8 @@ struct CGRecordLowering {
   void clipTailPadding();
   /// Determines if we need a packed llvm struct.
   void determinePacked(bool NVBaseType);
+  /// Determines if this struct's members have any sort of padding.
+  void determineMemberPartialInit();
   /// Inserts padding everywhere it's needed.
   void insertPadding();
   /// Fills out the structures that are ultimately consumed.
@@ -207,6 +211,9 @@ struct CGRecordLowering {
   bool IsZeroInitializable : 1;
   bool IsZeroInitializableAsBase : 1;
   bool Packed : 1;
+  // Lowered type necessarily features uninitialized data (padding of some
+  // kind, as between struct fields or appended to narrower union fields)
+  bool PartialInit : 1;
 private:
   CGRecordLowering(const CGRecordLowering &) = delete;
   void operator =(const CGRecordLowering &) = delete;
@@ -219,7 +226,7 @@ CGRecordLowering::CGRecordLowering(CodeGenTypes &Types, const RecordDecl *D,
       RD(dyn_cast<CXXRecordDecl>(D)),
       Layout(Types.getContext().getASTRecordLayout(D)),
       DataLayout(Types.getDataLayout()), IsZeroInitializable(true),
-      IsZeroInitializableAsBase(true), Packed(Packed) {}
+      IsZeroInitializableAsBase(true), Packed(Packed), PartialInit(false) {}
 
 void CGRecordLowering::setBitFieldInfo(
     const FieldDecl *FD, CharUnits StartOffset, llvm::Type *StorageType) {
@@ -280,6 +287,7 @@ void CGRecordLowering::lower(bool NVBaseType) {
   insertPadding();
   Members.pop_back();
   calculateZeroInit();
+  determineMemberPartialInit();
   fillOutputFields();
 }
 
@@ -303,6 +311,20 @@ void CGRecordLowering::lowerUnion() {
     }
     Fields[Field->getCanonicalDecl()] = 0;
     llvm::Type *FieldType = getStorageType(Field);
+
+    bool SizeChanged = StorageType && getSize(FieldType) != getSize(StorageType);
+    QualType FieldTypePtr = Field->getType();
+    // If fields have different sizes, we note that this union may have
+    // uninitialized bits when used with the smaller variant.
+    if (SizeChanged) {
+      PartialInit = true;
+    } else if (FieldTypePtr->isRecordType()) {
+      // Recurse
+      RecordDecl *FieldRecord = FieldTypePtr->getAsRecordDecl();
+      auto &FieldLayout = Types.getCGRecordLayout(FieldRecord);
+      PartialInit |= FieldLayout.isPartialInit();
+    }
+
     // Compute zero-initializable status.
     // This union might not be zero initialized: it may contain a pointer to
     // data member which might have some exotic initialization sequence.
@@ -319,6 +341,7 @@ void CGRecordLowering::lowerUnion() {
         StorageType = FieldType;
       }
     }
+
     // Because our union isn't zero initializable, we won't be getting a better
     // storage type.
     if (!IsZeroInitializable)
@@ -466,7 +489,12 @@ CGRecordLowering::accumulateBitFields(RecordDecl::field_iterator Field,
     }
 
     // We've hit a break-point in the run and need to emit a storage field.
-    llvm::Type *Type = getIntNType(Tail - StartBitOffset);
+    uint64_t TypeWidth = Tail - StartBitOffset;
+    llvm::Type *Type = getIntNType(TypeWidth);
+
+    if (DataLayout.getTypeAllocSizeInBits(Type) != TypeWidth)
+      PartialInit = true;
+
     // Add the storage member to the record and set the bitfield info for all of
     // the bitfields in the run.  Bitfields get the offset of their storage but
     // come afterward and remain there after a stable sort.
@@ -646,6 +674,51 @@ void CGRecordLowering::determinePacked(bool NVBaseType) {
     Members.back().Data = getIntNType(Context.toBits(Alignment));
 }
 
+void CGRecordLowering::determineMemberPartialInit() {
+  auto hasTailPadding = [&](QualType FieldTypePtr) {
+      llvm::Type *LLTy = Types.ConvertType(FieldTypePtr);
+      if (FieldTypePtr->hasBooleanRepresentation())
+        return false;
+      return DataLayout.getTypeAllocSizeInBits(LLTy) != DataLayout.getTypeSizeInBits(LLTy);
+  };
+
+  auto isPartialInit = [&](QualType FieldTypePtr){
+    assert(FieldTypePtr.getTypePtrOrNull() != nullptr);
+
+    if (hasTailPadding(FieldTypePtr))
+      return true;
+
+    // If there's any padding between array elements, flag that.
+    // Also check that array base types aren't partialinit
+    while (FieldTypePtr->isArrayType()) {
+      FieldTypePtr = FieldTypePtr
+          ->getAsArrayTypeUnsafe()
+          ->getElementType();
+      if (hasTailPadding(FieldTypePtr))
+        return true;
+    }
+    if (!FieldTypePtr->isRecordType())
+      return false;
+    if (CXXRecordDecl *CXXRecord = FieldTypePtr->getAsCXXRecordDecl()) {
+      if (CXXRecord->isEmpty())
+        return false;
+    }
+
+    RecordDecl *FieldRecord = FieldTypePtr->getAsRecordDecl();
+    assert(FieldRecord);
+    auto &FieldLayout = Types.getCGRecordLayout(FieldRecord);
+    return FieldLayout.isPartialInit();
+  };
+
+  // Recursively check for partialinit fields
+  for (const auto &Member : Members) {
+    if (!Member.Data || !Member.FD)
+      continue;
+    QualType FieldType = Member.FD->getType();
+    PartialInit |= isPartialInit(FieldType);
+  }
+}
+
 void CGRecordLowering::insertPadding() {
   std::vector<std::pair<CharUnits, CharUnits> > Padding;
   CharUnits Size = CharUnits::Zero();
@@ -656,6 +729,7 @@ void CGRecordLowering::insertPadding() {
       continue;
     CharUnits Offset = Member->Offset;
     assert(Offset >= Size);
+
     // Insert padding if we need to.
     if (Offset !=
         Size.alignTo(Packed ? CharUnits::One() : getAlignment(Member->Data)))
@@ -664,6 +738,7 @@ void CGRecordLowering::insertPadding() {
   }
   if (Padding.empty())
     return;
+  PartialInit = true;
   // Add the padding to the Members list and sort it.
   for (std::vector<std::pair<CharUnits, CharUnits> >::const_iterator
         Pad = Padding.begin(), PadEnd = Padding.end();
@@ -757,10 +832,12 @@ CodeGenTypes::ComputeRecordLayout(const RecordDecl *D, llvm::StructType *Ty) {
   // signifies that the type is no longer opaque and record layout is complete,
   // but we may need to recursively layout D while laying D out as a base type.
   Ty->setBody(Builder.FieldTypes, Builder.Packed);
+  bool TyPadded = Builder.DataLayout.getStructLayout(Ty)->hasPadding();
 
   auto RL = std::make_unique<CGRecordLayout>(
       Ty, BaseTy, (bool)Builder.IsZeroInitializable,
-      (bool)Builder.IsZeroInitializableAsBase);
+      (bool)Builder.IsZeroInitializableAsBase,
+      (bool)Builder.PartialInit || TyPadded);
 
   RL->NonVirtualBases.swap(Builder.NonVirtualBases);
   RL->CompleteObjectVirtualBases.swap(Builder.VirtualBases);

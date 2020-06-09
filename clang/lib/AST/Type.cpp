@@ -2744,6 +2744,19 @@ bool Type::isSpecifierType() const {
   }
 }
 
+bool Type::hasBooleanRepresentation() const {
+  if (isBooleanType())
+    return true;
+
+  if (const EnumType *ET = getAs<EnumType>())
+    return ET->getDecl()->getIntegerType()->isBooleanType();
+
+  if (const AtomicType *AT = getAs<AtomicType>())
+    return AT->getValueType()->hasBooleanRepresentation();
+
+  return false;
+}
+
 ElaboratedTypeKeyword
 TypeWithKeyword::getKeywordForTypeSpec(unsigned TypeSpec) {
   switch (TypeSpec) {

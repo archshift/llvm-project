@@ -106,13 +106,13 @@ void UnderlyingTypeUsage(AsEnumUnderlyingType Param) {
 }
 
 unsigned _ExtInt(33) ManglingTestRetParam(unsigned _ExtInt(33) Param) {
-// LIN: define i64 @_Z20ManglingTestRetParamU7_ExtIntILi33EEj(i64 %
+// LIN: define partialinit i64 @_Z20ManglingTestRetParamU7_ExtIntILi33EEj(i64 partialinit %
 // WIN: define dso_local i33 @"?ManglingTestRetParam@@YAU?$_UExtInt@$0CB@@__clang@@U12@@Z"(i33
   return 0;
 }
 
 _ExtInt(33) ManglingTestRetParam(_ExtInt(33) Param) {
-// LIN: define i64 @_Z20ManglingTestRetParamU7_ExtIntILi33EEi(i64 %
+// LIN: define partialinit i64 @_Z20ManglingTestRetParamU7_ExtIntILi33EEi(i64 partialinit %
 // WIN: define dso_local i33 @"?ManglingTestRetParam@@YAU?$_ExtInt@$0CB@@__clang@@U12@@Z"(i33
   return 0;
 }

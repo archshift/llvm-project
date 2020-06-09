@@ -17,7 +17,7 @@ struct Empty {};
 
 // CHECK: define i32 @empty_arg(i32 %a)
 // CHECK-GNU-C: define i32 @empty_arg(i32 %a)
-// CHECK-GNU-CXX: define i32 @empty_arg(i8 %e.coerce, i32 %a)
+// CHECK-GNU-CXX: define i32 @empty_arg(i8 partialinit %e.coerce, i32 %a)
 EXTERNC int empty_arg(struct Empty e, int a) {
   return a;
 }
@@ -53,7 +53,7 @@ struct SortOfEmpty {
 
 // CHECK: define i32 @sort_of_empty_arg(i32 %a)
 // CHECK-GNU-C: define i32 @sort_of_empty_arg(i32 %a)
-// CHECK-GNU-CXX: define i32 @sort_of_empty_arg(i8 %e.coerce, i32 %a)
+// CHECK-GNU-CXX: define i32 @sort_of_empty_arg(i8 partialinit %e.coerce, i32 %a)
 EXTERNC int sort_of_empty_arg(struct Empty e, int a) {
   return a;
 }

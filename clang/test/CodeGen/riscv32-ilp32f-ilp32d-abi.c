@@ -136,11 +136,11 @@ struct float_int8_zbf_s f_ret_float_int8_zbf_s() {
   return (struct float_int8_zbf_s){1.0, 2};
 }
 
-// CHECK: define void @f_float_int8_s_arg_insufficient_gprs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %f, i32 %g, i32 %h, [2 x i32] %i.coerce)
+// CHECK: define void @f_float_int8_s_arg_insufficient_gprs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %f, i32 %g, i32 %h, [2 x i32] partialinit %i.coerce)
 void f_float_int8_s_arg_insufficient_gprs(int a, int b, int c, int d, int e,
                                           int f, int g, int h, struct float_int8_s i) {}
 
-// CHECK: define void @f_struct_float_int8_insufficient_fprs(float %a, float %b, float %c, float %d, float %e, float %f, float %g, float %h, [2 x i32] %i.coerce)
+// CHECK: define void @f_struct_float_int8_insufficient_fprs(float %a, float %b, float %c, float %d, float %e, float %f, float %g, float %h, [2 x i32] partialinit %i.coerce)
 void f_struct_float_int8_insufficient_fprs(float a, float b, float c, float d,
                                            float e, float f, float g, float h, struct float_int8_s i) {}
 
@@ -253,10 +253,10 @@ struct int64_float_s f_ret_int64_float_s() {
 
 struct char_char_float_s { char a; char b; float c; };
 
-// CHECK-LABEL: define void @f_char_char_float_s_arg([2 x i32] %a.coerce)
+// CHECK-LABEL: define void @f_char_char_float_s_arg([2 x i32] partialinit %a.coerce)
 void f_char_char_float_s_arg(struct char_char_float_s a) {}
 
-// CHECK: define [2 x i32] @f_ret_char_char_float_s()
+// CHECK: define partialinit [2 x i32] @f_ret_char_char_float_s()
 struct char_char_float_s f_ret_char_char_float_s() {
   return (struct char_char_float_s){1, 2, 3.0};
 }

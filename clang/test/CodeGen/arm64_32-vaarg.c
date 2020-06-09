@@ -103,7 +103,7 @@ typedef struct {
 // alignment must be passed via "[N x i32]" to be correctly allocated in the
 // backend.
 short test_threeshorts(ThreeShorts input, va_list *mylist) {
-// CHECK-LABEL: define signext i16 @test_threeshorts([2 x i32] %input
+// CHECK-LABEL: define signext i16 @test_threeshorts([2 x i32] partialinit %input
 
 // CHECK: [[START:%.*]] = load i8*, i8** %mylist
 // CHECK: [[NEXT:%.*]] = getelementptr inbounds i8, i8* [[START]], i32 8

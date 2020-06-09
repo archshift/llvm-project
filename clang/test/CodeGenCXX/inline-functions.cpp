@@ -146,5 +146,5 @@ struct S {
 
 __attribute__((used)) inline S<int> Foo() { return S<int>(); }
 // NORMAL-LABEL: define linkonce_odr void @_ZN7PR229593FooEv(
-// MSVCCOMPAT-LABEL: define linkonce_odr dso_local i8 @"?Foo@PR22959@@YA?AU?$S@H@1@XZ"(
+// MSVCCOMPAT-LABEL: define linkonce_odr dso_local partialinit i8 @"?Foo@PR22959@@YA?AU?$S@H@1@XZ"(
 }

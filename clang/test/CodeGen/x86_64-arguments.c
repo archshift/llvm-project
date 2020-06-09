@@ -66,8 +66,8 @@ void f10(struct s10 a0) {}
 // CHECK-LABEL: define void @f11(%union.anon* noalias sret align 16 %agg.result)
 union { long double a; float b; } f11() { while (1) {} }
 
-// CHECK-LABEL: define i32 @f12_0()
-// CHECK-LABEL: define void @f12_1(i32 %a0.coerce)
+// CHECK-LABEL: define partialinit i32 @f12_0()
+// CHECK-LABEL: define void @f12_1(i32 partialinit %a0.coerce)
 struct s12 { int a __attribute__((aligned(16))); };
 struct s12 f12_0(void) { while (1) {} }
 void f12_1(struct s12 a0) {}
@@ -144,7 +144,7 @@ struct f23S {
 
 
 void f23(int A, struct f23S B) {
-  // CHECK-LABEL: define void @f23(i32 %A, i64 %B.coerce0, i32 %B.coerce1)
+  // CHECK-LABEL: define void @f23(i32 %A, i64 partialinit %B.coerce0, i32 partialinit %B.coerce1)
 }
 
 struct f24s { long a; int b; };
@@ -152,7 +152,7 @@ struct f24s { long a; int b; };
 struct f23S f24(struct f23S *X, struct f24s *P2) {
   return *X;
   
-  // CHECK: define { i64, i32 } @f24(%struct.f23S* %X, %struct.f24s* %P2)
+  // CHECK: define partialinit { i64, i32 } @f24(%struct.f23S* %X, %struct.f24s* %P2)
 }
 
 // rdar://8248065
@@ -216,7 +216,7 @@ struct f28c {
   int y;
 };
 void f28(struct f28c C) {
-  // CHECK-LABEL: define void @f28(double %C.coerce0, i32 %C.coerce1)
+  // CHECK-LABEL: define void @f28(double partialinit %C.coerce0, i32 partialinit %C.coerce1)
 }
 
 struct f29a {
@@ -227,20 +227,20 @@ struct f29a {
 };
 
 void f29a(struct f29a A) {
-  // CHECK-LABEL: define void @f29a(double %A.coerce0, i32 %A.coerce1)
+  // CHECK-LABEL: define void @f29a(double partialinit %A.coerce0, i32 partialinit %A.coerce1)
 }
 
 // rdar://8249586
 struct S0 { char f0[8]; char f2; char f3; char f4; };
 void f30(struct S0 p_4) {
-  // CHECK-LABEL: define void @f30(i64 %p_4.coerce0, i24 %p_4.coerce1)
+  // CHECK-LABEL: define void @f30(i64 partialinit %p_4.coerce0, i24 partialinit %p_4.coerce1)
 }
 
 // Pass the third element as a float when followed by tail padding.
 // rdar://8251384
 struct f31foo { float a, b, c; };
 float f31(struct f31foo X) {
-  // CHECK-LABEL: define float @f31(<2 x float> %X.coerce0, float %X.coerce1)
+  // CHECK-LABEL: define float @f31(<2 x float> partialinit %X.coerce0, float partialinit %X.coerce1)
   return X.c;
 }
 

@@ -51,7 +51,7 @@ double varargs_vec_3c(int fixed, ...) {
 
 double test_3c(__char3 *in) {
 // CHECK: test_3c
-// CHECK: call double (i32, ...) @varargs_vec_3c(i32 3, i32 {{%.*}})
+// CHECK: call double (i32, ...) @varargs_vec_3c(i32 3, i32 partialinit {{%.*}})
   return varargs_vec_3c(3, *in);
 }
 
@@ -91,7 +91,7 @@ double varargs_vec_5c(int fixed, ...) {
 
 double test_5c(__char5 *in) {
 // CHECK: test_5c
-// CHECK: call double (i32, ...) @varargs_vec_5c(i32 5, <2 x i32> {{%.*}})
+// CHECK: call double (i32, ...) @varargs_vec_5c(i32 5, <2 x i32> partialinit {{%.*}})
   return varargs_vec_5c(5, *in);
 }
 
@@ -113,7 +113,7 @@ double varargs_vec_9c(int fixed, ...) {
 
 double test_9c(__char9 *in) {
 // CHECK: test_9c
-// CHECK: call double (i32, ...) @varargs_vec_9c(i32 9, <4 x i32> {{%.*}})
+// CHECK: call double (i32, ...) @varargs_vec_9c(i32 9, <4 x i32> partialinit {{%.*}})
   return varargs_vec_9c(9, *in);
 }
 
@@ -153,7 +153,7 @@ double varargs_vec_3s(int fixed, ...) {
 
 double test_3s(__short3 *in) {
 // CHECK: test_3s
-// CHECK: call double (i32, ...) @varargs_vec_3s(i32 3, <2 x i32> {{%.*}})
+// CHECK: call double (i32, ...) @varargs_vec_3s(i32 3, <2 x i32> partialinit {{%.*}})
   return varargs_vec_3s(3, *in);
 }
 
@@ -175,7 +175,7 @@ double varargs_vec_5s(int fixed, ...) {
 
 double test_5s(__short5 *in) {
 // CHECK: test_5s
-// CHECK: call double (i32, ...) @varargs_vec_5s(i32 5, <4 x i32> {{%.*}})
+// CHECK: call double (i32, ...) @varargs_vec_5s(i32 5, <4 x i32> partialinit {{%.*}})
   return varargs_vec_5s(5, *in);
 }
 
@@ -197,7 +197,7 @@ double varargs_vec_3i(int fixed, ...) {
 
 double test_3i(__int3 *in) {
 // CHECK: test_3i
-// CHECK: call double (i32, ...) @varargs_vec_3i(i32 3, <4 x i32> {{%.*}})
+// CHECK: call double (i32, ...) @varargs_vec_3i(i32 3, <4 x i32> partialinit {{%.*}})
   return varargs_vec_3i(3, *in);
 }
 
@@ -301,7 +301,7 @@ double test(__char3 *c3, __char5 *c5, __char9 *c9, __char19 *c19,
             __short3 *s3, __short5 *s5, __int3 *i3, __int5 *i5,
             __double3 *d3) {
   double ret = varargs_vec(3, *c3, *c5, *c9, *c19, *s3, *s5, *i3, *i5, *d3);
-// CHECK: call double (i32, ...) @varargs_vec(i32 3, i32 {{%.*}}, <2 x i32> {{%.*}}, <4 x i32> {{%.*}}, <19 x i8>* {{%.*}}, <2 x i32> {{%.*}}, <4 x i32> {{%.*}}, <4 x i32> {{%.*}}, <5 x i32>* {{%.*}}, <3 x double>* {{%.*}})
+// CHECK: call double (i32, ...) @varargs_vec(i32 3, i32 partialinit {{%.*}}, <2 x i32> partialinit {{%.*}}, <4 x i32> partialinit {{%.*}}, <19 x i8>* {{%.*}}, <2 x i32> partialinit {{%.*}}, <4 x i32> partialinit {{%.*}}, <4 x i32> partialinit {{%.*}}, <5 x i32>* {{%.*}}, <3 x double>* {{%.*}})
   return ret;
 }
 
@@ -317,7 +317,7 @@ __attribute__((noinline)) double args_vec_3c(int fixed, __char3 c3) {
 
 double fixed_3c(__char3 *in) {
 // CHECK: fixed_3c
-// CHECK: call double @args_vec_3c(i32 3, i32 {{%.*}})
+// CHECK: call double @args_vec_3c(i32 3, i32 partialinit {{%.*}})
   return args_vec_3c(3, *in);
 }
 
@@ -333,7 +333,7 @@ __attribute__((noinline)) double args_vec_5c(int fixed, __char5 c5) {
 
 double fixed_5c(__char5 *in) {
 // CHECK: fixed_5c
-// CHECK: call double @args_vec_5c(i32 5, <2 x i32> {{%.*}})
+// CHECK: call double @args_vec_5c(i32 5, <2 x i32> partialinit {{%.*}})
   return args_vec_5c(5, *in);
 }
 
@@ -349,7 +349,7 @@ __attribute__((noinline)) double args_vec_9c(int fixed, __char9 c9) {
 
 double fixed_9c(__char9 *in) {
 // CHECK: fixed_9c
-// CHECK: call double @args_vec_9c(i32 9, <4 x i32> {{%.*}})
+// CHECK: call double @args_vec_9c(i32 9, <4 x i32> partialinit {{%.*}})
   return args_vec_9c(9, *in);
 }
 
@@ -379,7 +379,7 @@ __attribute__((noinline)) double args_vec_3s(int fixed, __short3 c3) {
 
 double fixed_3s(__short3 *in) {
 // CHECK: fixed_3s
-// CHECK: call double @args_vec_3s(i32 3, <2 x i32> {{%.*}})
+// CHECK: call double @args_vec_3s(i32 3, <2 x i32> partialinit {{%.*}})
   return args_vec_3s(3, *in);
 }
 
@@ -395,7 +395,7 @@ __attribute__((noinline)) double args_vec_5s(int fixed, __short5 c5) {
 
 double fixed_5s(__short5 *in) {
 // CHECK: fixed_5s
-// CHECK: call double @args_vec_5s(i32 5, <4 x i32> {{%.*}})
+// CHECK: call double @args_vec_5s(i32 5, <4 x i32> partialinit {{%.*}})
   return args_vec_5s(5, *in);
 }
 
@@ -411,7 +411,7 @@ __attribute__((noinline)) double args_vec_3i(int fixed, __int3 c3) {
 
 double fixed_3i(__int3 *in) {
 // CHECK: fixed_3i
-// CHECK: call double @args_vec_3i(i32 3, <4 x i32> {{%.*}})
+// CHECK: call double @args_vec_3i(i32 3, <4 x i32> partialinit {{%.*}})
   return args_vec_3i(3, *in);
 }
 

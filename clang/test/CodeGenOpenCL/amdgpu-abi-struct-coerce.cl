@@ -228,7 +228,7 @@ __kernel void kernel_nested_single_element_struct_arg(nested_single_element_stru
 // CHECK: void @kernel_struct_arg(%struct.struct_arg %arg1.coerce)
 __kernel void kernel_struct_arg(struct_arg_t arg1) { }
 
-// CHECK: void @kernel_struct_padding_arg(%struct.struct_padding_arg %arg1.coerce)
+// CHECK: void @kernel_struct_padding_arg(%struct.struct_padding_arg partialinit %arg1.coerce)
 __kernel void kernel_struct_padding_arg(struct_padding_arg arg1) { }
 
 // CHECK: void @kernel_test_struct_of_arrays_arg(%struct.struct_of_arrays_arg %arg1.coerce)
@@ -243,10 +243,10 @@ __kernel void test_kernel_transparent_union_arg(transparent_u u) { }
 // CHECK: void @kernel_single_array_element_struct_arg(%struct.single_array_element_struct_arg %arg1.coerce)
 __kernel void kernel_single_array_element_struct_arg(single_array_element_struct_arg_t arg1) { }
 
-// CHECK: void @kernel_single_struct_element_struct_arg(%struct.single_struct_element_struct_arg %arg1.coerce)
+// CHECK: void @kernel_single_struct_element_struct_arg(%struct.single_struct_element_struct_arg partialinit %arg1.coerce)
 __kernel void kernel_single_struct_element_struct_arg(single_struct_element_struct_arg_t arg1) { }
 
-// CHECK: void @kernel_different_size_type_pair_arg(%struct.different_size_type_pair %arg1.coerce)
+// CHECK: void @kernel_different_size_type_pair_arg(%struct.different_size_type_pair partialinit %arg1.coerce)
 __kernel void kernel_different_size_type_pair_arg(different_size_type_pair arg1) { }
 
 // CHECK: define void @func_f32_arg(float %arg)
@@ -279,7 +279,7 @@ void func_nested_single_element_struct_arg(nested_single_element_struct_arg_t ar
 // CHECK: void @func_struct_arg(i32 %arg1.coerce0, float %arg1.coerce1, i32 %arg1.coerce2)
 void func_struct_arg(struct_arg_t arg1) { }
 
-// CHECK: void @func_struct_padding_arg(i8 %arg1.coerce0, i64 %arg1.coerce1)
+// CHECK: void @func_struct_padding_arg(i8 partialinit %arg1.coerce0, i64 partialinit %arg1.coerce1)
 void func_struct_padding_arg(struct_padding_arg arg1) { }
 
 // CHECK: define void @func_struct_char_x8([2 x i32] %arg.coerce)
@@ -288,7 +288,7 @@ void func_struct_char_x8(struct_char_x8 arg) { }
 // CHECK: define void @func_struct_char_x4(i32 %arg.coerce)
 void func_struct_char_x4(struct_char_x4 arg) { }
 
-// CHECK: define void @func_struct_char_x3(i32 %arg.coerce)
+// CHECK: define void @func_struct_char_x3(i32 partialinit %arg.coerce)
 void func_struct_char_x3(struct_char_x3 arg) { }
 
 // CHECK: define void @func_struct_char_x2(i16 %arg.coerce)
@@ -303,10 +303,10 @@ void func_transparent_union_arg(transparent_u u) { }
 // CHECK: void @func_single_array_element_struct_arg([4 x i32] %arg1.coerce)
 void func_single_array_element_struct_arg(single_array_element_struct_arg_t arg1) { }
 
-// CHECK: void @func_single_struct_element_struct_arg(%struct.inner %arg1.coerce)
+// CHECK: void @func_single_struct_element_struct_arg(%struct.inner partialinit %arg1.coerce)
 void func_single_struct_element_struct_arg(single_struct_element_struct_arg_t arg1) { }
 
-// CHECK: void @func_different_size_type_pair_arg(i64 %arg1.coerce0, i32 %arg1.coerce1)
+// CHECK: void @func_different_size_type_pair_arg(i64 partialinit %arg1.coerce0, i32 partialinit %arg1.coerce1)
 void func_different_size_type_pair_arg(different_size_type_pair arg1) { }
 
 // CHECK: void @func_flexible_array_arg(%struct.flexible_array addrspace(5)* nocapture byval(%struct.flexible_array) align 4 %arg)
@@ -349,7 +349,7 @@ struct_arg_t func_struct_ret()
   return s;
 }
 
-// CHECK: define %struct.struct_padding_arg @func_struct_padding_ret()
+// CHECK: define partialinit %struct.struct_padding_arg @func_struct_padding_ret()
 // CHECK: ret %struct.struct_padding_arg zeroinitializer
 struct_padding_arg func_struct_padding_ret()
 {
@@ -373,7 +373,7 @@ struct_char_x4 func_struct_char_x4_ret()
   return s;
 }
 
-// CHECK: define i32 @func_struct_char_x3_ret()
+// CHECK: define partialinit i32 @func_struct_char_x3_ret()
 // CHECK: ret i32 0
 struct_char_x3 func_struct_char_x3_ret()
 {
@@ -433,7 +433,7 @@ transparent_u func_transparent_union_ret()
   return u;
 }
 
-// CHECK: define %struct.different_size_type_pair @func_different_size_type_pair_ret()
+// CHECK: define partialinit %struct.different_size_type_pair @func_different_size_type_pair_ret()
 different_size_type_pair func_different_size_type_pair_ret()
 {
   different_size_type_pair s = { 0 };
@@ -454,19 +454,19 @@ void func_reg_state_lo(int4 arg0, int4 arg1, int4 arg2, int arg3, struct_arg_t s
 void func_reg_state_hi(int4 arg0, int4 arg1, int4 arg2, int arg3, int arg4, struct_arg_t s) { }
 
 // XXX - Why don't the inner structs flatten?
-// CHECK: define void @func_reg_state_num_regs_nested_struct(<4 x i32> %arg0, i32 %arg1, i32 %arg2.coerce0, %struct.nested %arg2.coerce1, i32 %arg3.coerce0, %struct.nested %arg3.coerce1, %struct.num_regs_nested_struct addrspace(5)* nocapture byval(%struct.num_regs_nested_struct) align 8 %arg4)
+// CHECK: define void @func_reg_state_num_regs_nested_struct(<4 x i32> %arg0, i32 %arg1, i32 partialinit %arg2.coerce0, %struct.nested partialinit %arg2.coerce1, i32 partialinit %arg3.coerce0, %struct.nested partialinit %arg3.coerce1, %struct.num_regs_nested_struct addrspace(5)* nocapture byval(%struct.num_regs_nested_struct) align 8 %arg4)
 void func_reg_state_num_regs_nested_struct(int4 arg0, int arg1, num_regs_nested_struct arg2, num_regs_nested_struct arg3, num_regs_nested_struct arg4) { }
 
-// CHECK: define void @func_double_nested_struct_arg(<4 x i32> %arg0, i32 %arg1, i32 %arg2.coerce0, %struct.double_nested %arg2.coerce1, i16 %arg2.coerce2)
+// CHECK: define void @func_double_nested_struct_arg(<4 x i32> %arg0, i32 %arg1, i32 partialinit %arg2.coerce0, %struct.double_nested partialinit %arg2.coerce1, i16 partialinit %arg2.coerce2)
 void func_double_nested_struct_arg(int4 arg0, int arg1, double_nested_struct arg2) { }
 
-// CHECK: define %struct.double_nested_struct @func_double_nested_struct_ret(<4 x i32> %arg0, i32 %arg1)
+// CHECK: define partialinit %struct.double_nested_struct @func_double_nested_struct_ret(<4 x i32> %arg0, i32 %arg1)
 double_nested_struct func_double_nested_struct_ret(int4 arg0, int arg1) {
   double_nested_struct s = { 0 };
   return s;
 }
 
-// CHECK: define void @func_large_struct_padding_arg_direct(i8 %arg.coerce0, i32 %arg.coerce1, i8 %arg.coerce2, i32 %arg.coerce3, i8 %arg.coerce4, i8 %arg.coerce5, i16 %arg.coerce6, i16 %arg.coerce7, [3 x i8] %arg.coerce8, i64 %arg.coerce9, i32 %arg.coerce10, i8 %arg.coerce11, i32 %arg.coerce12, i16 %arg.coerce13, i8 %arg.coerce14)
+// CHECK: define void @func_large_struct_padding_arg_direct(i8 partialinit %arg.coerce0, i32 partialinit %arg.coerce1, i8 partialinit %arg.coerce2, i32 partialinit %arg.coerce3, i8 partialinit %arg.coerce4, i8 partialinit %arg.coerce5, i16 partialinit %arg.coerce6, i16 partialinit %arg.coerce7, [3 x i8] partialinit %arg.coerce8, i64 partialinit %arg.coerce9, i32 partialinit %arg.coerce10, i8 partialinit %arg.coerce11, i32 partialinit %arg.coerce12, i16 partialinit %arg.coerce13, i8 partialinit %arg.coerce14)
 void func_large_struct_padding_arg_direct(large_struct_padding arg) { }
 
 // CHECK: define void @func_large_struct_padding_arg_store(%struct.large_struct_padding addrspace(1)* nocapture %out, %struct.large_struct_padding addrspace(5)* nocapture readonly byval(%struct.large_struct_padding) align 8 %arg)
@@ -479,7 +479,7 @@ void v3i32_reg_count(int3 arg1, int3 arg2, int3 arg3, int3 arg4, struct_arg_t ar
 
 // Function signature from blender, nothing should be passed byval. The v3i32
 // should not count as 4 passed registers.
-// CHECK: define void @v3i32_pair_reg_count(%struct.int3_pair addrspace(5)* nocapture %arg0, <3 x i32> %arg1.coerce0, <3 x i32> %arg1.coerce1, <3 x i32> %arg2, <3 x i32> %arg3.coerce0, <3 x i32> %arg3.coerce1, <3 x i32> %arg4, float %arg5)
+// CHECK: define void @v3i32_pair_reg_count(%struct.int3_pair addrspace(5)* nocapture %arg0, <3 x i32> partialinit %arg1.coerce0, <3 x i32> partialinit %arg1.coerce1, <3 x i32> %arg2, <3 x i32> partialinit %arg3.coerce0, <3 x i32> partialinit %arg3.coerce1, <3 x i32> %arg4, float %arg5)
 void v3i32_pair_reg_count(int3_pair *arg0, int3_pair arg1, int3 arg2, int3_pair arg3, int3 arg4, float arg5) { }
 
 // Each short4 should fit pack into 2 registers.

@@ -73,7 +73,7 @@ void f15_0() {
 // CHECK-LE: %cmse.clear1 = and i32 {{.*}}, 134215708
 // CHECK-BE: %cmse.clear1 = and i32 {{.*}}, 941621216
 // CHECK: %[[R1:.*]] = insertvalue [2 x i32] %[[R0]], i32 %cmse.clear1, 1
-// CHECK: call {{.*}} void %[[FN]]([2 x i32] %[[R1]])
+// CHECK: call {{.*}} void %[[FN]]([2 x i32] partialinit %[[R1]])
 
 void __attribute__((cmse_nonsecure_call)) (*g15_1)(int, int, int, T15);
 void f15_1() {
@@ -87,7 +87,7 @@ void f15_1() {
 // CHECK-LE: %cmse.clear1 = and i32 {{.*}}, 134215708
 // CHECK-BE: %cmse.clear1 = and i32 {{.*}}, 941621216
 // CHECK: %[[R1:.*]] = insertvalue [2 x i32] %[[R0]], i32 %cmse.clear1, 1
-// CHECK: call {{.*}} void %[[FN]](i32 0, i32 1, i32 2, [2 x i32] %[[R1]])
+// CHECK: call {{.*}} void %[[FN]](i32 0, i32 1, i32 2, [2 x i32] partialinit %[[R1]])
 
 // LE: 11111111 ........ 11111111 11111111 1111.... ...11111 ........ .111111.
 // LE: 0xff00fffff01f007e/9079291968726434047
@@ -111,7 +111,7 @@ void f16_0() {
 // CHECK-LE: %cmse.clear = and i64 {{.*}}, 9079291968726434047
 // CHECK-BE: %cmse.clear = and i64 {{.*}}, -71776123088273282
 // CHECK: %[[R:.*]] = insertvalue [1 x i64] undef, i64 %cmse.clear, 0
-// CHECK: call {{.*}} void %0([1 x i64] %[[R]])
+// CHECK: call {{.*}} void %0([1 x i64] partialinit %[[R]])
 
 
 // LE0: 1111..11 .......1 1111..11 .......1 1111..11 .......1 1111..11 .......1
@@ -150,7 +150,7 @@ void f18() {
 // CHECK-LE: %cmse.clear3 = and i32 {{.*}}, 16777215
 // CHECK-BE: %cmse.clear3 = and i32 {{.*}}, -256
 // CHECK:    %[[R3:.*]] = insertvalue [4 x i32] %[[R2]], i32 %cmse.clear3, 3
-// CHECK:    call {{.*}} void %[[FN]]([4 x i32] %[[R3]])
+// CHECK:    call {{.*}} void %[[FN]]([4 x i32] partialinit %[[R3]])
 
 // LE: 11111111 11111111 ..111... ..111... 0x3838ffff/943259647
 // BE: 11111111 11111111 ...111.. ...111.. 0xffff1c1c/-58340
@@ -171,7 +171,7 @@ void f19() {
 // CHECK-LE: %cmse.clear = and i32 {{.*}}, 943259647
 // CHECK-BE: %cmse.clear = and i32 {{.*}}, -58340
 // CHECK:    %[[R:.*]] = insertvalue [1 x i32] undef, i32 %cmse.clear, 0
-// CHECK:    call {{.*}} void %[[FN]]([1 x i32] %[[R]])
+// CHECK:    call {{.*}} void %[[FN]]([1 x i32] partialinit %[[R]])
 
 
 typedef struct T20 {

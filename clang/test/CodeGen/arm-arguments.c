@@ -67,8 +67,8 @@ struct s10 f10(void) {}
 struct s11 { int : 0; int f0; };
 struct s11 f11(void) {}
 
-// APCS-GNU-LABEL: define i32 @f12()
-// AAPCS-LABEL: define arm_aapcscc i32 @f12()
+// APCS-GNU-LABEL: define partialinit i32 @f12()
+// AAPCS-LABEL: define arm_aapcscc partialinit i32 @f12()
 union u12 { char f0; short f1; int f2; };
 union u12 f12(void) {}
 
@@ -94,13 +94,13 @@ void f15(struct s7 a0) {}
 // AAPCS-LABEL: define arm_aapcscc void @f16()
 void f16(struct s8 a0) {}
 
-// APCS-GNU-LABEL: define i32 @f17()
-// AAPCS-LABEL: define arm_aapcscc i32 @f17()
+// APCS-GNU-LABEL: define partialinit i32 @f17()
+// AAPCS-LABEL: define arm_aapcscc partialinit i32 @f17()
 struct s17 { short f0 : 13; char f1 : 4; };
 struct s17 f17(void) {}
 
-// APCS-GNU-LABEL: define i32 @f18()
-// AAPCS-LABEL: define arm_aapcscc i32 @f18()
+// APCS-GNU-LABEL: define partialinit i32 @f18()
+// AAPCS-LABEL: define arm_aapcscc partialinit i32 @f18()
 struct s18 { short f0; char f1 : 4; };
 struct s18 f18(void) {}
 
@@ -116,8 +116,8 @@ struct s19 f19(void) {}
 struct s20 { struct s8 f1; int f0; };
 struct s20 f20(void) {}
 
-// APCS-GNU-LABEL: define i8 @f21()
-// AAPCS-LABEL: define arm_aapcscc i32 @f21()
+// APCS-GNU-LABEL: define partialinit i8 @f21()
+// AAPCS-LABEL: define arm_aapcscc partialinit i32 @f21()
 struct s21 { struct {} f1; int f0 : 4; };
 struct s21 f21(void) {}
 
@@ -158,11 +158,11 @@ struct s30 f30() {}
 // PR11905
 struct s31 { char x; };
 void f31(struct s31 s) { }
-// AAPCS: @f31([1 x i32] %s.coerce)
+// AAPCS: @f31([1 x i32] partialinit %s.coerce)
 // AAPCS: %s = alloca %struct.s31, align 1
 // AAPCS: [[TEMP:%.*]] = alloca [1 x i32], align 4
 // AAPCS: store [1 x i32] %s.coerce, [1 x i32]* [[TEMP]], align 4
-// APCS-GNU: @f31([1 x i32] %s.coerce)
+// APCS-GNU: @f31([1 x i32] partialinit %s.coerce)
 // APCS-GNU: %s = alloca %struct.s31, align 1
 // APCS-GNU: [[TEMP:%.*]] = alloca [1 x i32], align 4
 // APCS-GNU: store [1 x i32] %s.coerce, [1 x i32]* [[TEMP]], align 4

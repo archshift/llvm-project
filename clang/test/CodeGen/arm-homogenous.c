@@ -151,15 +151,15 @@ extern union_with_struct_with_fundamental_elems returns_union_with_struct_with_f
 
 void test_union_with_struct_with_fundamental_elems(void) {
   takes_union_with_struct_with_fundamental_elems(g_u_s_fe);
-// CHECK: call arm_aapcs_vfpcc  void @takes_union_with_struct_with_fundamental_elems(%union.union_with_struct_with_fundamental_elems {{.*}})
+// CHECK: call arm_aapcs_vfpcc  void @takes_union_with_struct_with_fundamental_elems(%union.union_with_struct_with_fundamental_elems partialinit {{.*}})
 }
-// CHECK: declare arm_aapcs_vfpcc void @takes_union_with_struct_with_fundamental_elems(%union.union_with_struct_with_fundamental_elems)
+// CHECK: declare arm_aapcs_vfpcc void @takes_union_with_struct_with_fundamental_elems(%union.union_with_struct_with_fundamental_elems partialinit)
 
 void test_return_union_with_struct_with_fundamental_elems(void) {
   g_u_s_fe = returns_union_with_struct_with_fundamental_elems();
-// CHECK: call arm_aapcs_vfpcc  %union.union_with_struct_with_fundamental_elems @returns_union_with_struct_with_fundamental_elems()
+// CHECK: call arm_aapcs_vfpcc  partialinit %union.union_with_struct_with_fundamental_elems @returns_union_with_struct_with_fundamental_elems()
 }
-// CHECK: declare arm_aapcs_vfpcc %union.union_with_struct_with_fundamental_elems @returns_union_with_struct_with_fundamental_elems()
+// CHECK: declare arm_aapcs_vfpcc partialinit %union.union_with_struct_with_fundamental_elems @returns_union_with_struct_with_fundamental_elems()
 
 // Make sure HAs that can be partially fit into VFP registers will be allocated
 // on stack and that later VFP candidates will go on stack as well.

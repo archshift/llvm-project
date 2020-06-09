@@ -270,7 +270,7 @@ struct AnyS { bool b; };
 void f(const bool&);
 AnyS g();
 void h() {
-  // CHECK: call i8 @_ZN2N51gEv()
+  // CHECK: call partialinit i8 @_ZN2N51gEv()
   // CHECK: call void @_ZN2N51fERKb(i8*
   f(g().b);
 }

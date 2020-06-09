@@ -72,14 +72,14 @@ typedef struct {
   short y;
 } PaddedSmallStruct;
 
-// CHECK: define i32 @return_padded_small_struct()
+// CHECK: define partialinit i32 @return_padded_small_struct()
 PaddedSmallStruct return_padded_small_struct() {}
 
 typedef struct {
   char arr[7];
 } OddlySizedStruct;
 
-// CHECK: define [2 x i32] @return_oddly_sized_struct()
+// CHECK: define partialinit [2 x i32] @return_oddly_sized_struct()
 OddlySizedStruct return_oddly_sized_struct() {}
 
 // CHECK: define <4 x float> @test_va_arg_vec(i8* %l)

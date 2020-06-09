@@ -143,11 +143,11 @@ struct double_int8_zbf_s f_ret_double_int8_zbf_s() {
   return (struct double_int8_zbf_s){1.0, 2};
 }
 
-// CHECK: define void @f_double_int8_s_arg_insufficient_gprs(i32 signext %a, i32 signext %b, i32 signext %c, i32 signext %d, i32 signext %e, i32 signext %f, i32 signext %g, i32 signext %h, [2 x i64] %i.coerce)
+// CHECK: define void @f_double_int8_s_arg_insufficient_gprs(i32 signext %a, i32 signext %b, i32 signext %c, i32 signext %d, i32 signext %e, i32 signext %f, i32 signext %g, i32 signext %h, [2 x i64] partialinit %i.coerce)
 void f_double_int8_s_arg_insufficient_gprs(int a, int b, int c, int d, int e,
                                           int f, int g, int h, struct double_int8_s i) {}
 
-// CHECK: define void @f_struct_double_int8_insufficient_fprs(float %a, double %b, double %c, double %d, double %e, double %f, double %g, double %h, [2 x i64] %i.coerce)
+// CHECK: define void @f_struct_double_int8_insufficient_fprs(float %a, double %b, double %c, double %d, double %e, double %f, double %g, double %h, [2 x i64] partialinit %i.coerce)
 void f_struct_double_int8_insufficient_fprs(float a, double b, double c, double d,
                                            double e, double f, double g, double h, struct double_int8_s i) {}
 
@@ -250,10 +250,10 @@ struct int_double_int_s f_ret_int_double_int_s() {
 
 struct char_char_double_s { char a; char b; double c; };
 
-// CHECK-LABEL: define void @f_char_char_double_s_arg([2 x i64] %a.coerce)
+// CHECK-LABEL: define void @f_char_char_double_s_arg([2 x i64] partialinit %a.coerce)
 void f_char_char_double_s_arg(struct char_char_double_s a) {}
 
-// CHECK: define [2 x i64] @f_ret_char_char_double_s()
+// CHECK: define partialinit [2 x i64] @f_ret_char_char_double_s()
 struct char_char_double_s f_ret_char_char_double_s() {
   return (struct char_char_double_s){1, 2, 3.0};
 }

@@ -27,7 +27,7 @@ void f_struct_with_mdp_too_much(struct_with_mdp_too_much a) {
 
 // A struct with <= 8 bytes before a member function pointer should still
 // be allowed in registers, since the member function pointer is only 8 bytes.
-// CHECK-LABEL: define void @{{.*}}f_struct_with_mfp_0{{.*}}(i64 %a.coerce0, i32 %a.coerce1)
+// CHECK-LABEL: define void @{{.*}}f_struct_with_mfp_0{{.*}}(i64 partialinit %a.coerce0, i32 partialinit %a.coerce1)
 struct struct_with_mfp_0 { char *a; test_struct_mfp b; };
 void f_struct_with_mfp_0(struct_with_mfp_0 a) { (void)a; }
 
@@ -46,12 +46,12 @@ void f_struct_with_mfp_too_much(struct_with_mfp_too_much a, int x) {
 /* Struct containing an empty struct */
 typedef struct { int* a; test_struct x; double *b; } struct_with_empty;
 
-// CHECK-LABEL: define void @{{.*}}f_pass_struct_with_empty{{.*}}(i64 %x{{.*}}, double* %x
+// CHECK-LABEL: define void @{{.*}}f_pass_struct_with_empty{{.*}}(i64 partialinit %x{{.*}}, double* partialinit %x
 void f_pass_struct_with_empty(struct_with_empty x) {
   (void) x;
 }
 
-// CHECK-LABEL: define { i64, double* } @{{.*}}f_return_struct_with_empty
+// CHECK-LABEL: define partialinit { i64, double* } @{{.*}}f_return_struct_with_empty
 struct_with_empty f_return_struct_with_empty() {
   return {0, {}, 0};
 }

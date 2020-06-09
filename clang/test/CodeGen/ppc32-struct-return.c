@@ -80,7 +80,7 @@ Six ret6(void) { return (Six){12, 34, 56}; }
 Seven ret7(void) { return (Seven){"abcdefg"}; }
 
 // CHECK-AIX-LABEL: define void @ret8(%struct.Eight* noalias sret {{[^,]*}})
-// CHECK-SVR4-LABEL: define i64 @ret8()
+// CHECK-SVR4-LABEL: define partialinit i64 @ret8()
 Eight ret8(void) { return (Eight){123, 'a'}; }
 
 // CHECK-AIX-LABEL: define void @ret9(%struct.Nine* noalias sret {{[^,]*}})

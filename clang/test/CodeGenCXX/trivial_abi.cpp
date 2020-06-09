@@ -173,7 +173,7 @@ void testIgnoredLarge() {
   testReturnLarge();
 }
 
-// CHECK: define i64 @_Z20testReturnHasTrivialv()
+// CHECK: define partialinit i64 @_Z20testReturnHasTrivialv()
 // CHECK: %[[RETVAL:.*]] = alloca %[[STRUCT_TRIVIAL:.*]], align 4
 // CHECK: %[[COERCE_DIVE:.*]] = getelementptr inbounds %[[STRUCT_TRIVIAL]], %[[STRUCT_TRIVIAL]]* %[[RETVAL]], i32 0, i32 0
 // CHECK: %[[V0:.*]] = load i32, i32* %[[COERCE_DIVE]], align 4

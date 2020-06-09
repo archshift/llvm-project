@@ -1876,6 +1876,20 @@ static void addNoBuiltinAttributes(llvm::AttrBuilder &FuncAttrs,
   llvm::for_each(NBA->builtinNames(), AddNoBuiltinAttr);
 }
 
+static bool DidCoerce(llvm::Type *Orig, const ABIArgInfo &AI) {
+  if (!AI.canHaveCoerceToType())
+    return false;
+  llvm::Type *CoerceLLTy = AI.getCoerceToType();
+  if (CoerceLLTy == Orig)
+    return false;
+  if (Orig->isStructTy() && CoerceLLTy->isStructTy()) {
+    llvm::StructType *OrigStruct = cast<llvm::StructType>(Orig);
+    llvm::StructType *CoerceStruct = cast<llvm::StructType>(CoerceLLTy);
+    return !OrigStruct->isLayoutIdentical(CoerceStruct);
+  }
+  return true;
+}
+
 /// Construct the IR attribute list of a function or call.
 ///
 /// When adding an attribute, please consider where it should be handled:
@@ -2075,22 +2089,39 @@ void CodeGenModule::ConstructAttributeList(
 
   QualType RetTy = FI.getReturnType();
   const ABIArgInfo &RetAI = FI.getReturnInfo();
+  const Type *RetTyPtr = RetTy.getTypePtr();
+  llvm::Type *RetLLTy = getTypes().ConvertTypeForMem(RetTy);
 
   // Determine if the return type could be partially initialized
   int RetPartialInit = PARTIAL_INIT_NONE;
-  const Type *RetTyPtr = RetTy.getTypePtr();
   if (RetTyPtr->isRecordType()) {
     RecordDecl *RetRecord = RetTyPtr->getAsRecordDecl();
     auto &RetLayout = getTypes().getCGRecordLayout(RetRecord);
-    RetPartialInit = RetLayout.getPartialInit() || (RetAI.getPaddingType() != nullptr);
+    RetPartialInit |= RetLayout.getPartialInit();
+    if (RetAI.getPaddingType() != nullptr) {
+      RetPartialInit |= PARTIAL_INIT_PADDING_FIELD;
+    }
   }
 
+  bool RetCoerced = DidCoerce(RetLLTy, RetAI);
   // If we're coercing to a type of different size, we're introducing more padding bits
-  if (RetAI.canHaveCoerceToType() && RetAI.getKind() == ABIArgInfo::Direct) {
-    const size_t RetRealSize = getDataLayout().getTypeSizeInBits(getTypes().ConvertType(RetTy));
-    const size_t RetLowSize = getDataLayout().getTypeSizeInBits(RetAI.getCoerceToType());
-    RetPartialInit |= RetRealSize != RetLowSize;
+  if (RetCoerced) {
+    const size_t RetRealSize = getDataLayout().getTypeSizeInBits(RetLLTy);
+    const size_t RetLoweredSize = getDataLayout().getTypeSizeInBits(RetAI.getCoerceToType());
+    RetPartialInit |= (RetRealSize != RetLoweredSize) << 1;
   }
+
+  llvm::errs() << "out type: ";
+  RetLLTy->print(llvm::errs(), true);
+  llvm::errs() << " of size " << getDataLayout().getTypeStoreSize(RetLLTy) << "."
+    << " Partialinit? " << (RetPartialInit & 3)
+    << " Coerced? " << RetCoerced;
+  if (RetCoerced) {
+    llvm::errs() << " to ";
+    RetAI.getCoerceToType()->print(llvm::errs(), true);
+  }
+  llvm::errs() << "\n";
+
 
   switch (RetAI.getKind()) {
   case ABIArgInfo::Extend:
@@ -2098,13 +2129,19 @@ void CodeGenModule::ConstructAttributeList(
       RetAttrs.addAttribute(llvm::Attribute::SExt);
     else
       RetAttrs.addAttribute(llvm::Attribute::ZExt);
-    LLVM_FALLTHROUGH;
+    if (RetAI.getInReg())
+      RetAttrs.addAttribute(llvm::Attribute::InReg);
+    break;
+
   case ABIArgInfo::Direct:
     if (RetAI.getInReg())
       RetAttrs.addAttribute(llvm::Attribute::InReg);
-    if (RetPartialInit)
+    LLVM_FALLTHROUGH;
+  case ABIArgInfo::CoerceAndExpand:
+    if ((RetCoerced && RetPartialInit) || (RetPartialInit & (PARTIAL_INIT_UNION | PARTIAL_INIT_PADDING_FIELD)))
       RetAttrs.addAttribute(llvm::Attribute::PartialInit);
     break;
+
   case ABIArgInfo::Ignore:
     break;
 
@@ -2115,9 +2152,6 @@ void CodeGenModule::ConstructAttributeList(
       .removeAttribute(llvm::Attribute::ReadNone);
     break;
   }
-
-  case ABIArgInfo::CoerceAndExpand:
-    break;
 
   case ABIArgInfo::Expand:
     llvm_unreachable("Invalid ABI kind for return argument");
@@ -2163,6 +2197,8 @@ void CodeGenModule::ConstructAttributeList(
     QualType ParamType = I->type;
     const ABIArgInfo &AI = I->info;
     llvm::AttrBuilder Attrs;
+    const Type *ArgTyPtr = ParamType.getTypePtr();
+    llvm::Type *ArgLLTy = getTypes().ConvertTypeForMem(ParamType);
 
     // Add attribute for padding argument, if necessary.
     if (IRFunctionArgs.hasPaddingArg(ArgNo)) {
@@ -2177,24 +2213,21 @@ void CodeGenModule::ConstructAttributeList(
     // Decide whether the argument we're handling may have valid
     // uninitialized bits.
     int ArgPartialInit = PARTIAL_INIT_NONE;
-    const Type *ArgTyPtr = ParamType.getTypePtr();
-    llvm::Type *ArgLLTy = getTypes().ConvertType(ParamType);
-
     if (ArgTyPtr->isRecordType()) {
       RecordDecl *ArgRecord = ArgTyPtr->getAsRecordDecl();
       auto &ArgLayout = getTypes().getCGRecordLayout(ArgRecord);
       ArgPartialInit |= ArgLayout.getPartialInit();
     }
 
+    bool ArgCoerced = DidCoerce(ArgLLTy, AI);
     // If we're coercing to a type of different size, we're introducing more padding bits
-    if (AI.canHaveCoerceToType() && AI.getKind() == ABIArgInfo::Direct) {
+    if (ArgCoerced) {
       const size_t ArgRealSize = getDataLayout().getTypeSizeInBits(ArgLLTy);
       const size_t ArgLowSize = getDataLayout().getTypeSizeInBits(AI.getCoerceToType());
       ArgPartialInit |= (ArgRealSize != ArgLowSize) << 1;
     }
 
-
-    // 'restrict' -> 'noalias' is done in EmitFunctionProlog when we
+    // 'restrict' -> 'noalias' is done in EmitFunctionProlog partialinit when we
     // have the corresponding parameter variable.  It doesn't make
     // sense to do it here because parameters are so messed up.
     switch (AI.getKind()) {
@@ -2209,7 +2242,7 @@ void CodeGenModule::ConstructAttributeList(
         Attrs.addAttribute(llvm::Attribute::Nest);
       else if (AI.getInReg())
         Attrs.addAttribute(llvm::Attribute::InReg);
-      if (ArgPartialInit)
+      if ((ArgCoerced && ArgPartialInit) || ArgPartialInit & (PARTIAL_INIT_UNION | PARTIAL_INIT_PADDING_FIELD))
         Attrs.addAttribute(llvm::Attribute::PartialInit);
       break;
 
@@ -2247,21 +2280,14 @@ void CodeGenModule::ConstructAttributeList(
     case ABIArgInfo::Ignore:
       break;
     
-    case ABIArgInfo::CoerceAndExpand: {
-      llvm::Type *ArgCoerceType = AI.getCoerceAndExpandType();
-
-      if (ArgCoerceType->getTypeID() == ArgLLTy->getTypeID()) {
-        // In certain cases (observed with RISCV codegen) the target will use
-        // CoerceAndExpand with a coerced type that is identical to the original
-        // one. In these cases, we treat the operation as if it's Expand.
-      } else if (ArgPartialInit) {
+    case ABIArgInfo::CoerceAndExpand:
+      if (ArgCoerced && ArgPartialInit) {
         Attrs.addAttribute(llvm::Attribute::PartialInit);
         break;
       }
       LLVM_FALLTHROUGH;
-    }
     case ABIArgInfo::Expand:
-      if (ArgPartialInit & PARTIAL_INIT_UNION)
+      if (ArgPartialInit & (PARTIAL_INIT_UNION | PARTIAL_INIT_PADDING_FIELD))
         Attrs.addAttribute(llvm::Attribute::PartialInit);
       break;
 

@@ -213,7 +213,7 @@ struct CGRecordLowering {
   bool Packed : 1;
   // Lowered type necessarily features uninitialized data (padding of some
   // kind, as between struct fields or appended to narrower union fields)
-  int PartialInitFlags : 2;
+  int PartialInitFlags : 3;
 private:
   CGRecordLowering(const CGRecordLowering &) = delete;
   void operator =(const CGRecordLowering &) = delete;
@@ -741,7 +741,7 @@ void CGRecordLowering::insertPadding() {
   }
   if (Padding.empty())
     return;
-  PartialInitFlags |= PARTIAL_INIT_STRUCT_PAD;
+  PartialInitFlags |= PARTIAL_INIT_PADDING_FIELD;
   // Add the padding to the Members list and sort it.
   for (std::vector<std::pair<CharUnits, CharUnits> >::const_iterator
         Pad = Padding.begin(), PadEnd = Padding.end();
@@ -837,7 +837,6 @@ CodeGenTypes::ComputeRecordLayout(const RecordDecl *D, llvm::StructType *Ty) {
   Ty->setBody(Builder.FieldTypes, Builder.Packed);
   bool TyPadded = Builder.DataLayout.getStructLayout(Ty)->hasPadding();
   PartialInitTy PartialInit = (PartialInitTy)(Builder.PartialInitFlags | (TyPadded << 1));
-
 
   auto RL = std::make_unique<CGRecordLayout>(
       Ty, BaseTy, (bool)Builder.IsZeroInitializable,

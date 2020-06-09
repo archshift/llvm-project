@@ -89,7 +89,7 @@ struct mixed2 {
   double b;
 };
 
-// CHECK: define partialinit { i64, double } @f_mixed2(i64 partialinit %x.coerce0, double partialinit %x.coerce1)
+// CHECK: define { i64, double } @f_mixed2(i64 %x.coerce0, double %x.coerce1)
 // CHECK: store i64 %x.coerce0
 // CHECK: store double %x.coerce1
 struct mixed2 f_mixed2(struct mixed2 x) {

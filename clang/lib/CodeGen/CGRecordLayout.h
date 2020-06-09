@@ -105,6 +105,7 @@ enum PartialInitTy {
   PARTIAL_INIT_NONE = 0,
   PARTIAL_INIT_UNION = 1,
   PARTIAL_INIT_STRUCT_PAD = 2,
+  PARTIAL_INIT_PADDING_FIELD = 4,
 };
 
 /// CGRecordLayout - This class handles struct and union layout info while
@@ -154,7 +155,7 @@ private:
   /// Nonzero when this struct or union layout contains bits which are
   /// necessarily uninitialized, like some kind of padding data between
   /// struct fields or following narrow union fields.
-  PartialInitTy PartialInitFlags : 2;
+  PartialInitTy PartialInitFlags : 3;
 
 public:
   CGRecordLayout(llvm::StructType *CompleteObjectType,

@@ -216,7 +216,7 @@ struct f28c {
   int y;
 };
 void f28(struct f28c C) {
-  // CHECK-LABEL: define void @f28(double partialinit %C.coerce0, i32 partialinit %C.coerce1)
+  // CHECK-LABEL: define void @f28(double %C.coerce0, i32 %C.coerce1)
 }
 
 struct f29a {

@@ -2136,6 +2136,9 @@ public:
   bool isExtIntType() const;                    // Extended Int Type
   bool isOpenCLSpecificType() const;            // Any OpenCL specific type
 
+  /// Check if this type has only two possible values, and so may be lowered to a bool.
+  bool hasBooleanRepresentation() const;
+
   /// Determines if this type, which must satisfy
   /// isObjCLifetimeType(), is implicitly __unsafe_unretained rather
   /// than implicitly __strong.

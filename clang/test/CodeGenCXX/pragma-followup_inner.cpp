@@ -21,7 +21,7 @@ extern "C" void followup_inner(int n, int *x) {
 // CHECK-DAG: ![[ACCESSGROUP_2:[0-9]+]] = distinct !{}
 
 // CHECK-DAG: ![[INNERLOOP_3:[0-9]+]] = distinct !{![[INNERLOOP_3:[0-9]+]], ![[PARALLEL_ACCESSES_4:[0-9]+]], ![[DISTRIBUTE_5:[0-9]+]], ![[DISTRIBUTE_FOLLOWUP_6:[0-9]+]]}
-// CHECK-DAG: ![[PARALLEL_ACCESSES_4:[0-9]+]] = !{!"llvm.loop.parallel_accesses", !2}
+// CHECK-DAG: ![[PARALLEL_ACCESSES_4:[0-9]+]] = !{!"llvm.loop.parallel_accesses", ![[ACCESSGROUP_2]]}
 // CHECK-DAG: ![[DISTRIBUTE_5:[0-9]+]] = !{!"llvm.loop.distribute.enable", i1 true}
 // CHECK-DAG: ![[DISTRIBUTE_FOLLOWUP_6:[0-9]+]] = !{!"llvm.loop.distribute.followup_all", ![[LOOP_7:[0-9]+]]}
 
@@ -30,7 +30,7 @@ extern "C" void followup_inner(int n, int *x) {
 
 // CHECK-DAG: ![[OUTERLOOP_9:[0-9]+]] = distinct !{![[OUTERLOOP_9:[0-9]+]], ![[UNROLLANDJAM_COUNT_10:[0-9]+]], ![[UNROLLANDJAM_FOLLOWUPINNER_11:[0-9]+]]}
 // CHECK-DAG: ![[UNROLLANDJAM_COUNT_10:[0-9]+]] = !{!"llvm.loop.unroll_and_jam.count", i32 4}
-// CHECK-DAG: ![[UNROLLANDJAM_FOLLOWUPINNER_11:[0-9]+]] = !{!"llvm.loop.unroll_and_jam.followup_inner", !12}
+// CHECK-DAG: ![[UNROLLANDJAM_FOLLOWUPINNER_11:[0-9]+]] = !{!"llvm.loop.unroll_and_jam.followup_inner", ![[LOOP_12:[0-9]+]]}
 
 // CHECK-DAG: ![[LOOP_12:[0-9]+]] = distinct !{![[LOOP_12:[0-9]+]], ![[PARALLEL_ACCESSES_4:[0-9]+]], ![[ISVECTORIZED_13:[0-9]+]], ![[UNROLL_COUNT_13:[0-9]+]], ![[UNROLL_FOLLOWUP_14:[0-9]+]]}
 // CHECK-DAG: ![[ISVECTORIZED_13:[0-9]+]] = !{!"llvm.loop.isvectorized"}

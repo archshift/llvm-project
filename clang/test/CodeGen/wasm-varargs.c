@@ -12,7 +12,7 @@ int test_i32(char *fmt, ...) {
   return v;
 }
 
-// CHECK-LABEL: define i32 @test_i32(i8*{{.*}} %fmt, ...) {{.*}} {
+// CHECK-LABEL: define noundef i32 @test_i32(i8*{{.*}} %fmt, ...) {{.*}} {
 // CHECK:   [[FMT_ADDR:%[^,=]+]] = alloca i8*, align 4
 // CHECK:   [[VA:%[^,=]+]] = alloca i8*, align 4
 // CHECK:   [[V:%[^,=]+]] = alloca i32, align 4
@@ -41,7 +41,7 @@ long long test_i64(char *fmt, ...) {
   return v;
 }
 
-// CHECK-LABEL: define i64 @test_i64(i8*{{.*}} %fmt, ...) {{.*}} {
+// CHECK-LABEL: define noundef i64 @test_i64(i8*{{.*}} %fmt, ...) {{.*}} {
 // CHECK:   [[FMT_ADDR:%[^,=]+]] = alloca i8*, align 4
 // CHECK:   [[VA:%[^,=]+]] = alloca i8*, align 4
 // CHECK:   [[V:%[^,=]+]] = alloca i64, align 8

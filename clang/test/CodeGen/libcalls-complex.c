@@ -14,36 +14,36 @@ extern long double cimagl(long double _Complex);
 
 double test_creal(double _Complex z) {
   return creal(z);
-  // CHECK-NO-NOT: call double @creal
-  // CHECK-YES: call double @creal
+  // CHECK-NO-NOT: call noundef double @creal
+  // CHECK-YES: call noundef double @creal
 }
 
 long double test_creall(double _Complex z) {
   return creall(z);
-  // CHECK-NO-NOT: call x86_fp80 @creall
-  // CHECK-YES: call x86_fp80 @creall
+  // CHECK-NO-NOT: call noundef x86_fp80 @creall
+  // CHECK-YES: call noundef x86_fp80 @creall
 }
 
 float test_crealf(double _Complex z) {
   return crealf(z);
-  // CHECK-NO-NOT: call float @crealf
-  // CHECK-YES: call float @crealf
+  // CHECK-NO-NOT: call noundef float @crealf
+  // CHECK-YES: call noundef float @crealf
 }
 
 double test_cimag(double _Complex z) {
   return cimag(z);
-  // CHECK-NO-NOT: call double @cimag
-  // CHECK-YES: call double @cimag
+  // CHECK-NO-NOT: call noundef double @cimag
+  // CHECK-YES: call noundef double @cimag
 }
 
 long double test_cimagl(double _Complex z) {
   return cimagl(z);
-  // CHECK-NO-NOT: call x86_fp80 @cimagl
-  // CHECK-YES: call x86_fp80 @cimagl
+  // CHECK-NO-NOT: call noundef x86_fp80 @cimagl
+  // CHECK-YES: call noundef x86_fp80 @cimagl
 }
 
 float test_cimagf(double _Complex z) {
   return cimagf(z);
-  // CHECK-NO-NOT: call float @cimagf
-  // CHECK-YES: call float @cimagf
+  // CHECK-NO-NOT: call noundef float @cimagf
+  // CHECK-YES: call noundef float @cimagf
 }

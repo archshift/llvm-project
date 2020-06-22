@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple arm64_32-apple-ios7.0 -target-abi darwinpcs -emit-llvm -o - -O1 -ffreestanding %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple arm64_32-apple-ios7.0 -target-abi darwinpcs -emit-llvm -o - -O1 -ffreestanding %s | FileCheck %s
 
 #include <stdarg.h>
 
@@ -8,7 +8,7 @@ typedef struct {
 
 // No realignment should be needed here: slot size is 4 bytes.
 int test_int(OneInt input, va_list *mylist) {
-// CHECK-LABEL: define i32 @test_int(i32 %input
+// CHECK-LABEL: define noundef i32 @test_int(i32 %input
 // CHECK: [[START:%.*]] = load i8*, i8** %mylist
 // CHECK: [[NEXT:%.*]] = getelementptr inbounds i8, i8* [[START]], i32 4
 // CHECK: store i8* [[NEXT]], i8** %mylist
@@ -27,7 +27,7 @@ typedef struct {
 
 // Minimum slot size is 4 bytes, so address needs rounding up to multiple of 8.
 long long test_longlong(OneLongLong input, va_list *mylist) {
-// CHECK-LABEL: define i64 @test_longlong(i64 %input
+// CHECK-LABEL: define noundef i64 @test_longlong(i64 %input
 // CHECK: [[STARTPTR:%.*]] = bitcast i8** %mylist to i32*
 // CHECK: [[START:%.*]] = load i32, i32* [[STARTPTR]]
 
@@ -52,7 +52,7 @@ typedef struct {
 
 // HFAs take priority over passing large structs indirectly.
 float test_hfa(va_list *mylist) {
-// CHECK-LABEL: define float @test_hfa
+// CHECK-LABEL: define noundef float @test_hfa
 // CHECK: [[START:%.*]] = load i8*, i8** %mylist
 
 // CHECK: [[NEXT:%.*]] = getelementptr inbounds i8, i8* [[START]], i32 16
@@ -81,7 +81,7 @@ typedef struct {
 // Structs bigger than 16 bytes are passed indirectly: a pointer is placed on
 // the stack.
 long long test_bigstruct(BigStruct input, va_list *mylist) {
-// CHECK-LABEL: define i64 @test_bigstruct(%struct.BigStruct*
+// CHECK-LABEL: define noundef i64 @test_bigstruct(%struct.BigStruct*
 // CHECK: [[START:%.*]] = load i8*, i8** %mylist
 // CHECK: [[NEXT:%.*]] = getelementptr inbounds i8, i8* [[START]], i32 4
 // CHECK: store i8* [[NEXT]], i8** %mylist
@@ -103,7 +103,7 @@ typedef struct {
 // alignment must be passed via "[N x i32]" to be correctly allocated in the
 // backend.
 short test_threeshorts(ThreeShorts input, va_list *mylist) {
-// CHECK-LABEL: define signext i16 @test_threeshorts([2 x i32] %input
+// CHECK-LABEL: define noundef signext i16 @test_threeshorts([2 x i32] %input
 
 // CHECK: [[START:%.*]] = load i8*, i8** %mylist
 // CHECK: [[NEXT:%.*]] = getelementptr inbounds i8, i8* [[START]], i32 8

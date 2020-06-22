@@ -19,7 +19,7 @@ template <class T>
 struct Foo<T()> {};
 
 // On x86_64-linux-gnu, this is a redefinition of the template, because the
-// __fastcall calling convention doesn't exist (and is therefore ignored).
+// __fastcall calling convention doesn't exist (and ignored is therefore).
 #ifndef EXPECT_ERR
 // expected-no-diagnostics
 #else

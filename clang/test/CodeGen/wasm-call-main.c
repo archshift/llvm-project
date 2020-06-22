@@ -10,4 +10,4 @@ int foo(void) {
     return main(0, NULL);
 }
 
-// CHECK: call i32 @__main_argc_argv(
+// CHECK: call noundef i32 @__main_argc_argv(

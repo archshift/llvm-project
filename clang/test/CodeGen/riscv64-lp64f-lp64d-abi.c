@@ -1,6 +1,6 @@
-// RUN: %clang_cc1 -triple riscv64 -target-feature +f -target-abi lp64f -emit-llvm %s -o - \
+// RUN: %clang_cc1 -disable-noundef-args -triple riscv64 -target-feature +f -target-abi lp64f -emit-llvm %s -o - \
 // RUN:     | FileCheck %s
-// RUN: %clang_cc1 -triple riscv64 -target-feature +d -target-abi lp64d -emit-llvm %s -o - \
+// RUN: %clang_cc1 -disable-noundef-args -triple riscv64 -target-feature +d -target-abi lp64d -emit-llvm %s -o - \
 // RUN:     | FileCheck %s
 
 #include <stdint.h>
@@ -150,7 +150,7 @@ void f_struct_float_int8_insufficient_fprs(float a, float b, float c, float d,
 // CHECK: define void @f_floatcomplex(float %a.coerce0, float %a.coerce1)
 void f_floatcomplex(float __complex__ a) {}
 
-// CHECK: define { float, float } @f_ret_floatcomplex()
+// CHECK: define noundef { float, float } @f_ret_floatcomplex()
 float __complex__ f_ret_floatcomplex() {
   return 1.0;
 }

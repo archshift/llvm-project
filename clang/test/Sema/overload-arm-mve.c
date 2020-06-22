@@ -38,19 +38,19 @@ uint32x4_t vu32;
 // Simple cases where the types are correctly matched
 
 // CHECK-LABEL: @test_easy_s16(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int16
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int16
 int test_easy_s16(void) { return overload(vs16, s16); }
 
 // CHECK-LABEL: @test_easy_u16(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint16
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint16
 int test_easy_u16(void) { return overload(vu16, u16); }
 
 // CHECK-LABEL: @test_easy_s32(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int32
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int32
 int test_easy_s32(void) { return overload(vs32, s32); }
 
 // CHECK-LABEL: @test_easy_u32(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint32
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint32
 int test_easy_u32(void) { return overload(vu32, u32); }
 
 // ----------------------------------------------------------------------
@@ -58,19 +58,19 @@ int test_easy_u32(void) { return overload(vu32, u32); }
 // same overloads to be selected if that happens.
 
 // CHECK-LABEL: @test_promote_s16(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int16
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int16
 int test_promote_s16(void) { return overload(vs16, s16 + 1); }
 
 // CHECK-LABEL: @test_promote_u16(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint16
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint16
 int test_promote_u16(void) { return overload(vu16, u16 + 1); }
 
 // CHECK-LABEL: @test_promote_s32(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int32
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int32
 int test_promote_s32(void) { return overload(vs32, s32 + 1); }
 
 // CHECK-LABEL: @test_promote_u32(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint32
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint32
 int test_promote_u32(void) { return overload(vu32, u32 + 1); }
 
 // ----------------------------------------------------------------------
@@ -79,19 +79,19 @@ int test_promote_u32(void) { return overload(vu32, u32 + 1); }
 // the literal to be.
 
 // CHECK-LABEL: @test_literal_s16(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int16
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int16
 int test_literal_s16(void) { return overload(vs16, 1); }
 
 // CHECK-LABEL: @test_literal_u16(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint16
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint16
 int test_literal_u16(void) { return overload(vu16, 1); }
 
 // CHECK-LABEL: @test_literal_s32(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int32
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_int32
 int test_literal_s32(void) { return overload(vs32, 1); }
 
 // CHECK-LABEL: @test_literal_u32(
-// CHECK: call i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint32
+// CHECK: call noundef i32 @_Z8overload{{[a-zA-Z0-9_]+}}_uint32
 int test_literal_u32(void) { return overload(vu32, 1); }
 
 // ----------------------------------------------------------------------

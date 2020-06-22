@@ -121,7 +121,7 @@ void f10() {
 }
 
 // rdar://7530813
-// CHECK-LABEL: define i32 @f11
+// CHECK-LABEL: define noundef i32 @f11
 int f11(long X) {
   int A[100];
   return A[X];
@@ -135,14 +135,14 @@ int f11(long X) {
 
 int f12() {
   // PR3150
-  // CHECK-LABEL: define i32 @f12
+  // CHECK-LABEL: define noundef i32 @f12
   // CHECK: ret i32 1
   return 1||1;
 }
 
 // Make sure negate of fp uses -0.0 for proper -0 handling.
 double f13(double X) {
-  // CHECK-LABEL: define double @f13
+  // CHECK-LABEL: define noundef double @f13
   // CHECK: fneg double
   return -X;
 }
@@ -195,13 +195,13 @@ void f18() {
   (strct)returns_int();
 }
 // CHECK-LABEL: define void @f18()
-// CHECK: call i32 @returns_int()
+// CHECK: call noundef i32 @returns_int()
 
 // Ensure the right stmt is returned
 int f19() {
   return ({ 3;;4;; });
 }
-// CHECK-LABEL: define i32 @f19()
+// CHECK-LABEL: define noundef i32 @f19()
 // CHECK: [[T:%.*]] = alloca i32
 // CHECK: store i32 4, i32* [[T]]
 // CHECK: [[L:%.*]] = load i32, i32* [[T]]

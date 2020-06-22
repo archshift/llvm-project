@@ -45,7 +45,7 @@
 
 #ifdef SET
 float fun(float a, float b) {
-  // CHECK-LABEL: define float @fun{{.*}}
+  // CHECK-LABEL: define frozen float @fun{{.*}}
   //CHECK-EBSTRICT: llvm.experimental.constrained.fmul{{.*}}tonearest{{.*}}strict
   //CHECK-EBSTRICT: llvm.experimental.constrained.fadd{{.*}}tonearest{{.*}}strict
   //CHECK-CONTRACT: llvm.experimental.constrained.fmuladd{{.*}}tonearest{{.*}}strict

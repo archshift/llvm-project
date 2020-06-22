@@ -6,7 +6,7 @@ float sqrtf(float x);
 float foo(float X) {
 // CHECK: foo
 // CHECK-NOT: readonly
-// CHECK: call float @sqrtf
+// CHECK: call noundef float @sqrtf
   // Check that this is not marked readonly when errno is used.
   return sqrtf(X);
 }

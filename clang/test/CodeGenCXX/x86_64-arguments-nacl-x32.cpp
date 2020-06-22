@@ -1,11 +1,11 @@
-// RUN: %clang_cc1 -std=c++11 -triple x86_64-unknown-nacl -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -std=c++11 -triple=x86_64-unknown-linux-gnux32 -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -triple x86_64-unknown-nacl -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -triple=x86_64-unknown-linux-gnux32 -emit-llvm -o - %s | FileCheck %s
 
 struct test_struct {};
 typedef int test_struct::* test_struct_mdp;
 typedef int (test_struct::*test_struct_mfp)();
 
-// CHECK-LABEL: define i32 @{{.*}}f_mdp{{.*}}(i32 %a)
+// CHECK-LABEL: define noundef i32 @{{.*}}f_mdp{{.*}}(i32 %a)
 test_struct_mdp f_mdp(test_struct_mdp a) { return a; }
 
 // CHECK-LABEL: define {{.*}} @{{.*}}f_mfp{{.*}}(i64 %a.coerce)

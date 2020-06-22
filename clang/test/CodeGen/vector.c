@@ -69,7 +69,7 @@ vec_int1 lax_vector_compare1(int x, vec_int1 y) {
   return y;
 }
 
-// CHECK: define i32 @lax_vector_compare1(i32 {{.*}}, i32 {{.*}})
+// CHECK: define noundef i32 @lax_vector_compare1(i32 {{.*}}, i32 {{.*}})
 // CHECK: icmp eq i32
 
 typedef int vec_int2 __attribute__((vector_size(8)));

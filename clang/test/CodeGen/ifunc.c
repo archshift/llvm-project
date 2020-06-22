@@ -37,5 +37,5 @@ void* goo_ifunc(void) {
 // CHECK: @foo = ifunc i32 (i32), bitcast (i32 (i32)* ()* @foo_ifunc to i32 (i32)*)
 // CHECK: @goo = ifunc void (), bitcast (i8* ()* @goo_ifunc to void ()*)
 
-// CHECK: call i32 @foo(i32
+// CHECK: call noundef i32 @foo(i32
 // CHECK: call void @goo()

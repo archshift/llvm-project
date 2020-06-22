@@ -1,6 +1,6 @@
 // REQUIRES: amdgpu-registered-target
-// RUN: %clang_cc1 -triple amdgcn-unknown-unknown -S -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -triple r600-unknown-unknown -S -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple amdgcn-unknown-unknown -S -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple r600-unknown-unknown -S -emit-llvm -o - %s | FileCheck %s
 
 typedef __attribute__(( ext_vector_type(2) )) char char2;
 typedef __attribute__(( ext_vector_type(3) )) char char3;
@@ -312,7 +312,7 @@ void func_different_size_type_pair_arg(different_size_type_pair arg1) { }
 // CHECK: void @func_flexible_array_arg(%struct.flexible_array addrspace(5)* nocapture byval(%struct.flexible_array) align 4 %arg)
 void func_flexible_array_arg(flexible_array arg) { }
 
-// CHECK: define float @func_f32_ret()
+// CHECK: define noundef float @func_f32_ret()
 float func_f32_ret()
 {
   return 0.0f;

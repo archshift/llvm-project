@@ -23,7 +23,7 @@ void test0(void) {
 // CHECK-NEXT:  br i1 [[SEVEN]], label [[NULLINIT:%.*]], label [[CALL_LABEL:%.*]]
 // CHECK:       [[FN:%.*]] = load i8*, i8** getelementptr inbounds
 // CHECK-NEXT:  [[EIGHT:%.*]] = bitcast i8* [[FN]]
-// CHECK-NEXT:  [[CALL:%.*]] = call signext i8 [[EIGHT]]
+// CHECK-NEXT:  [[CALL:%.*]] = call noundef signext i8 [[EIGHT]]
 // CHECK-NEXT:  br label [[CONT:%.*]]
 // CHECK:       call void @llvm.objc.release(i8* [[FIVE]]) [[NUW:#[0-9]+]]
 // CHECK-NEXT:  br label [[CONT]]
@@ -41,7 +41,7 @@ void test1(void) {
 // CHECK-NEXT: [[WEAKOBJ:%.*]] = alloca i8*, align 8
 // CHECK-NEXT: [[RESULT:%.*]] = alloca { float, float }, align 4
 //   Various initializations.
-// CHECK:      [[T0:%.*]] = call i8* bitcast (
+// CHECK:      [[T0:%.*]] = call noundef i8* bitcast (
 // CHECK-NEXT: store i8* [[T0]], i8** [[OBJ]]
 // CHECK-NEXT: [[T0:%.*]] = load i8*, i8** [[OBJ]]
 // CHECK-NEXT: call i8* @llvm.objc.initWeak(i8** [[WEAKOBJ]], i8* [[T0]]) [[NUW]]
@@ -55,7 +55,7 @@ void test1(void) {
 // CHECK-NEXT: [[T0:%.*]] = icmp eq i8* [[SELF]], null
 // CHECK-NEXT: br i1 [[T0]], label [[FORNULL:%.*]], label [[FORCALL:%.*]]
 //   Invoke and produce the return values.
-// CHECK:      [[CALL:%.*]] = invoke <2 x float> bitcast
+// CHECK:      [[CALL:%.*]] = invoke noundef <2 x float> bitcast
 // CHECK-NEXT:   to label [[INVOKE_CONT:%.*]] unwind label {{%.*}}
 // CHECK:      [[T0:%.*]] = bitcast { float, float }* [[COERCE:%.*]] to <2 x float>*
 // CHECK-NEXT: store <2 x float> [[CALL]], <2 x float>* [[T0]],

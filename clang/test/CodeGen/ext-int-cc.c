@@ -1,33 +1,33 @@
-// RUN: %clang_cc1 -triple x86_64-gnu-linux -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=LIN64
-// RUN: %clang_cc1 -triple x86_64-windows-pc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WIN64
-// RUN: %clang_cc1 -triple i386-gnu-linux -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=LIN32
-// RUN: %clang_cc1 -triple i386-windows-pc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WIN32
-// RUN: %clang_cc1 -triple le32-nacl -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=NACL
-// RUN: %clang_cc1 -triple nvptx64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=NVPTX64
-// RUN: %clang_cc1 -triple nvptx -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=NVPTX
-// RUN: %clang_cc1 -triple sparcv9 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPARCV9
-// RUN: %clang_cc1 -triple sparc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPARC
-// RUN: %clang_cc1 -triple mips64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=MIPS64
-// RUN: %clang_cc1 -triple mips -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=MIPS
-// RUN: %clang_cc1 -triple spir64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPIR64
-// RUN: %clang_cc1 -triple spir -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPIR
-// RUN: %clang_cc1 -triple hexagon -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=HEX
-// RUN: %clang_cc1 -triple lanai -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=LANAI
-// RUN: %clang_cc1 -triple r600 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=R600
-// RUN: %clang_cc1 -triple arc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=ARC
-// RUN: %clang_cc1 -triple xcore -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=XCORE
-// RUN: %clang_cc1 -triple riscv64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=RISCV64
-// RUN: %clang_cc1 -triple riscv32 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=RISCV32
-// RUN: %clang_cc1 -triple wasm64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WASM
-// RUN: %clang_cc1 -triple wasm32 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WASM
-// RUN: %clang_cc1 -triple systemz -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SYSTEMZ
-// RUN: %clang_cc1 -triple ppc64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=PPC64
-// RUN: %clang_cc1 -triple ppc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=PPC32
-// RUN: %clang_cc1 -triple aarch64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64
-// RUN: %clang_cc1 -triple aarch64 -target-abi darwinpcs -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64DARWIN
-// RUN: %clang_cc1 -triple arm64_32-apple-ios -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64
-// RUN: %clang_cc1 -triple arm64_32-apple-ios -target-abi darwinpcs -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64DARWIN
-// RUN: %clang_cc1 -triple arm -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=ARM
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-gnu-linux -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=LIN64
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-windows-pc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WIN64
+// RUN: %clang_cc1 -disable-noundef-args -triple i386-gnu-linux -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=LIN32
+// RUN: %clang_cc1 -disable-noundef-args -triple i386-windows-pc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WIN32
+// RUN: %clang_cc1 -disable-noundef-args -triple le32-nacl -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=NACL
+// RUN: %clang_cc1 -disable-noundef-args -triple nvptx64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=NVPTX64
+// RUN: %clang_cc1 -disable-noundef-args -triple nvptx -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=NVPTX
+// RUN: %clang_cc1 -disable-noundef-args -triple sparcv9 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPARCV9
+// RUN: %clang_cc1 -disable-noundef-args -triple sparc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPARC
+// RUN: %clang_cc1 -disable-noundef-args -triple mips64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=MIPS64
+// RUN: %clang_cc1 -disable-noundef-args -triple mips -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=MIPS
+// RUN: %clang_cc1 -disable-noundef-args -triple spir64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPIR64
+// RUN: %clang_cc1 -disable-noundef-args -triple spir -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SPIR
+// RUN: %clang_cc1 -disable-noundef-args -triple hexagon -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=HEX
+// RUN: %clang_cc1 -disable-noundef-args -triple lanai -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=LANAI
+// RUN: %clang_cc1 -disable-noundef-args -triple r600 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=R600
+// RUN: %clang_cc1 -disable-noundef-args -triple arc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=ARC
+// RUN: %clang_cc1 -disable-noundef-args -triple xcore -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=XCORE
+// RUN: %clang_cc1 -disable-noundef-args -triple riscv64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=RISCV64
+// RUN: %clang_cc1 -disable-noundef-args -triple riscv32 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=RISCV32
+// RUN: %clang_cc1 -disable-noundef-args -triple wasm64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WASM
+// RUN: %clang_cc1 -disable-noundef-args -triple wasm32 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=WASM
+// RUN: %clang_cc1 -disable-noundef-args -triple systemz -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=SYSTEMZ
+// RUN: %clang_cc1 -disable-noundef-args -triple ppc64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=PPC64
+// RUN: %clang_cc1 -disable-noundef-args -triple ppc -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=PPC32
+// RUN: %clang_cc1 -disable-noundef-args -triple aarch64 -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64
+// RUN: %clang_cc1 -disable-noundef-args -triple aarch64 -target-abi darwinpcs -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64DARWIN
+// RUN: %clang_cc1 -disable-noundef-args -triple arm64_32-apple-ios -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64
+// RUN: %clang_cc1 -disable-noundef-args -triple arm64_32-apple-ios -target-abi darwinpcs -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=AARCH64DARWIN
+// RUN: %clang_cc1 -disable-noundef-args -triple arm -O3 -disable-llvm-passes -emit-llvm -o - %s | FileCheck %s --check-prefixes=ARM
 
 // Make sure 128 and 64 bit versions are passed like integers, and that >128
 // is passed indirectly.
@@ -127,7 +127,7 @@ _ExtInt(63) ReturnPassing(){}
 // NACL: define i63 @ReturnPassing(
 // NVPTX64: define i63 @ReturnPassing(
 // NVPTX: define i63 @ReturnPassing(
-// SPARCV9: define signext i63 @ReturnPassing(
+// SPARCV9: define noundef signext i63 @ReturnPassing(
 // SPARC: define i63 @ReturnPassing(
 // MIPS64: define i63 @ReturnPassing(
 // MIPS: define i63 @ReturnPassing(
@@ -138,44 +138,44 @@ _ExtInt(63) ReturnPassing(){}
 // R600: define i63 @ReturnPassing(
 // ARC: define i63 @ReturnPassing(
 // XCORE: define i63 @ReturnPassing(
-// RISCV64: define signext i63 @ReturnPassing(
+// RISCV64: define noundef signext i63 @ReturnPassing(
 // RISCV32: define i63 @ReturnPassing(
 // WASM: define i63 @ReturnPassing(
-// SYSTEMZ: define signext i63 @ReturnPassing(
-// PPC64: define signext i63 @ReturnPassing(
+// SYSTEMZ: define noundef signext i63 @ReturnPassing(
+// PPC64: define noundef signext i63 @ReturnPassing(
 // PPC32: define i63 @ReturnPassing(
 // AARCH64: define i63 @ReturnPassing(
 // AARCH64DARWIN: define i63 @ReturnPassing(
 // ARM: define arm_aapcscc i63 @ReturnPassing(
 
 _ExtInt(64) ReturnPassing2(){}
-// LIN64: define i64 @ReturnPassing2(
-// WIN64: define dso_local i64 @ReturnPassing2(
-// LIN32: define i64 @ReturnPassing2(
-// WIN32: define dso_local i64 @ReturnPassing2(
-// NACL: define i64 @ReturnPassing2(
-// NVPTX64: define i64 @ReturnPassing2(
-// NVPTX: define i64 @ReturnPassing2(
-// SPARCV9: define i64 @ReturnPassing2(
-// SPARC: define i64 @ReturnPassing2(
-// MIPS64: define i64 @ReturnPassing2(
-// MIPS: define i64 @ReturnPassing2(
-// SPIR64: define spir_func i64 @ReturnPassing2(
-// SPIR: define spir_func i64 @ReturnPassing2(
-// HEX: define i64 @ReturnPassing2(
-// LANAI: define i64 @ReturnPassing2(
-// R600: define i64 @ReturnPassing2(
-// ARC: define i64 @ReturnPassing2(
-// XCORE: define i64 @ReturnPassing2(
-// RISCV64: define i64 @ReturnPassing2(
-// RISCV32: define i64 @ReturnPassing2(
-// WASM: define i64 @ReturnPassing2(
-// SYSTEMZ: define i64 @ReturnPassing2(
-// PPC64: define i64 @ReturnPassing2(
-// PPC32: define i64 @ReturnPassing2(
-// AARCH64: define i64 @ReturnPassing2(
-// AARCH64DARWIN: define i64 @ReturnPassing2(
-// ARM: define arm_aapcscc i64 @ReturnPassing2(
+// LIN64: define noundef i64 @ReturnPassing2(
+// WIN64: define dso_local noundef i64 @ReturnPassing2(
+// LIN32: define noundef i64 @ReturnPassing2(
+// WIN32: define dso_local noundef i64 @ReturnPassing2(
+// NACL: define noundef i64 @ReturnPassing2(
+// NVPTX64: define noundef i64 @ReturnPassing2(
+// NVPTX: define noundef i64 @ReturnPassing2(
+// SPARCV9: define noundef i64 @ReturnPassing2(
+// SPARC: define noundef i64 @ReturnPassing2(
+// MIPS64: define noundef i64 @ReturnPassing2(
+// MIPS: define noundef i64 @ReturnPassing2(
+// SPIR64: define spir_func noundef i64 @ReturnPassing2(
+// SPIR: define spir_func noundef i64 @ReturnPassing2(
+// HEX: define noundef i64 @ReturnPassing2(
+// LANAI: define noundef i64 @ReturnPassing2(
+// R600: define noundef i64 @ReturnPassing2(
+// ARC: define noundef i64 @ReturnPassing2(
+// XCORE: define noundef i64 @ReturnPassing2(
+// RISCV64: define noundef i64 @ReturnPassing2(
+// RISCV32: define noundef i64 @ReturnPassing2(
+// WASM: define noundef i64 @ReturnPassing2(
+// SYSTEMZ: define noundef i64 @ReturnPassing2(
+// PPC64: define noundef i64 @ReturnPassing2(
+// PPC32: define noundef i64 @ReturnPassing2(
+// AARCH64: define noundef i64 @ReturnPassing2(
+// AARCH64DARWIN: define noundef i64 @ReturnPassing2(
+// ARM: define arm_aapcscc noundef i64 @ReturnPassing2(
 
 _ExtInt(127) ReturnPassing3(){}
 // LIN64: define { i64, i64 } @ReturnPassing3(
@@ -209,32 +209,32 @@ _ExtInt(127) ReturnPassing3(){}
 // ARM: define arm_aapcscc void @ReturnPassing3(i127* noalias sret
 
 _ExtInt(128) ReturnPassing4(){}
-// LIN64: define { i64, i64 } @ReturnPassing4(
+// LIN64: define noundef { i64, i64 } @ReturnPassing4(
 // WIN64: define dso_local void @ReturnPassing4(i128* noalias sret
 // LIN32: define void @ReturnPassing4(i128* noalias sret
 // WIN32: define dso_local void @ReturnPassing4(i128* noalias sret
 // NACL: define void @ReturnPassing4(i128* noalias sret
-// NVPTX64: define i128 @ReturnPassing4(
-// NVPTX: define i128 @ReturnPassing4(
-// SPARCV9: define i128 @ReturnPassing4(
+// NVPTX64: define noundef i128 @ReturnPassing4(
+// NVPTX: define noundef i128 @ReturnPassing4(
+// SPARCV9: define noundef i128 @ReturnPassing4(
 // SPARC: define void @ReturnPassing4(i128* noalias sret
-// MIPS64: define i128 @ReturnPassing4(
+// MIPS64: define noundef i128 @ReturnPassing4(
 // MIPS: define void @ReturnPassing4(i128* noalias sret
-// SPIR64: define spir_func i128 @ReturnPassing4(
+// SPIR64: define spir_func noundef i128 @ReturnPassing4(
 // SPIR: define spir_func void @ReturnPassing4(i128* noalias sret
 // HEX: define void @ReturnPassing4(i128* noalias sret
 // LANAI: define void @ReturnPassing4(i128* noalias sret
 // R600: define void @ReturnPassing4(i128 addrspace(5)* noalias sret
 // ARC: define void @ReturnPassing4(i128* noalias sret
 // XCORE: define void @ReturnPassing4(i128* noalias sret
-// RISCV64: define i128 @ReturnPassing4(
+// RISCV64: define noundef i128 @ReturnPassing4(
 // RISCV32: define void @ReturnPassing4(i128* noalias sret
-// WASM: define i128 @ReturnPassing4(
+// WASM: define noundef i128 @ReturnPassing4(
 // SYSTEMZ: define void @ReturnPassing4(i128* noalias sret
-// PPC64: define i128 @ReturnPassing4(
+// PPC64: define noundef i128 @ReturnPassing4(
 // PPC32: define void @ReturnPassing4(i128* noalias sret
-// AARCH64: define i128 @ReturnPassing4(
-// AARCH64DARWIN: define i128 @ReturnPassing4(
+// AARCH64: define noundef i128 @ReturnPassing4(
+// AARCH64DARWIN: define noundef i128 @ReturnPassing4(
 // ARM: define arm_aapcscc void @ReturnPassing4(i128* noalias sret
 
 _ExtInt(129) ReturnPassing5(){}
@@ -269,6 +269,6 @@ _ExtInt(129) ReturnPassing5(){}
 // SparcV9 is odd in that it has a return-size limit of 256, not 128 or 64
 // like other platforms, so test to make sure this behavior will still work.
 _ExtInt(256) ReturnPassing6() {}
-// SPARCV9: define i256 @ReturnPassing6(
+// SPARCV9: define noundef i256 @ReturnPassing6(
 _ExtInt(257) ReturnPassing7() {}
 // SPARCV9: define void @ReturnPassing7(i257* noalias sret

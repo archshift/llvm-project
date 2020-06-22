@@ -106,16 +106,16 @@ void *e2 = V<char>::m + W<char>::m + &X<char>::m;
 // Individual variable initialization functions:
 
 // CHECK: define {{.*}} @[[A_INIT:.*]]()
-// CHECK: call i32 @_Z1fv()
+// CHECK: call noundef i32 @_Z1fv()
 // CHECK-NEXT: store i32 {{.*}}, i32* @a, align 4
 
-// CHECK-LABEL: define i32 @_Z1fv()
+// CHECK-LABEL: define noundef i32 @_Z1fv()
 int f() {
   // CHECK: %[[GUARD:.*]] = load i8, i8* @_ZGVZ1fvE1n, align 1
   // CHECK: %[[NEED_INIT:.*]] = icmp eq i8 %[[GUARD]], 0
   // CHECK: br i1 %[[NEED_INIT]]
 
-  // CHECK: %[[CALL:.*]] = call i32 @_Z1gv()
+  // CHECK: %[[CALL:.*]] = call noundef i32 @_Z1gv()
   // CHECK: store i32 %[[CALL]], i32* @_ZZ1fvE1n, align 4
   // CHECK: store i8 1, i8* @_ZGVZ1fvE1n
   // CHECK: br label
@@ -131,22 +131,22 @@ int f() {
 // CHECK-NEXT: load i32, i32* %{{.*}}, align 4
 // CHECK-NEXT: store i32 %{{.*}}, i32* @c, align 4
 
-// LINUX-LABEL: define linkonce_odr hidden i32* @_ZTW1b()
+// LINUX-LABEL: define linkonce_odr hidden noundef i32* @_ZTW1b()
 // LINUX: br i1 icmp ne (void ()* @_ZTH1b, void ()* null),
 // not null:
 // LINUX: call void @_ZTH1b()
 // LINUX: br label
 // finally:
 // LINUX: ret i32* @b
-// DARWIN-LABEL: declare cxx_fast_tlscc i32* @_ZTW1b()
+// DARWIN-LABEL: declare cxx_fast_tlscc noundef i32* @_ZTW1b()
 // There is no definition of the thread wrapper on Darwin for external TLV.
 
 // CHECK: define {{.*}} @[[D_INIT:.*]]()
-// CHECK: call i32 @_Z1gv()
+// CHECK: call noundef i32 @_Z1gv()
 // CHECK-NEXT: store i32 %{{.*}}, i32* @_ZL1d, align 4
 
 // CHECK: define {{.*}} @[[U_M_INIT:.*]]()
-// CHECK: call i32 @_Z1fv()
+// CHECK: call noundef i32 @_Z1fv()
 // CHECK-NEXT: store i32 %{{.*}}, i32* @_ZN1U1mE, align 4
 
 // CHECK: define {{.*}} @[[E_INIT:.*]]()
@@ -157,18 +157,18 @@ int f() {
 // DARWIN: call cxx_fast_tlscc {{.*}}* @_ZTWN1XIiE1mE()
 // CHECK: store {{.*}} @e
 
-// LINUX-LABEL: define weak_odr hidden i32* @_ZTWN1VIiE1mE()
-// DARWIN-LABEL: define weak_odr hidden cxx_fast_tlscc i32* @_ZTWN1VIiE1mE()
+// LINUX-LABEL: define weak_odr hidden noundef i32* @_ZTWN1VIiE1mE()
+// DARWIN-LABEL: define weak_odr hidden cxx_fast_tlscc noundef i32* @_ZTWN1VIiE1mE()
 // LINUX: call void @_ZTHN1VIiE1mE()
 // DARWIN: call cxx_fast_tlscc void @_ZTHN1VIiE1mE()
 // CHECK: ret i32* @_ZN1VIiE1mE
 
-// LINUX-LABEL: define weak_odr hidden i32* @_ZTWN1WIiE1mE()
-// DARWIN-LABEL: define weak_odr hidden cxx_fast_tlscc i32* @_ZTWN1WIiE1mE()
+// LINUX-LABEL: define weak_odr hidden noundef i32* @_ZTWN1WIiE1mE()
+// DARWIN-LABEL: define weak_odr hidden cxx_fast_tlscc noundef i32* @_ZTWN1WIiE1mE()
 // CHECK-NOT: call
 // CHECK: ret i32* @_ZN1WIiE1mE
 
-// LINUX-LABEL: define weak_odr hidden {{.*}}* @_ZTWN1XIiE1mE()
+// LINUX-LABEL: define weak_odr hidden noundef {{.*}}* @_ZTWN1XIiE1mE()
 // DARWIN-LABEL: define weak_odr hidden cxx_fast_tlscc {{.*}}* @_ZTWN1XIiE1mE()
 // LINUX: call void @_ZTHN1XIiE1mE()
 // DARWIN: call cxx_fast_tlscc void @_ZTHN1XIiE1mE()
@@ -182,7 +182,7 @@ int f() {
 // CHECK: %[[VF_M_INITIALIZED:.*]] = icmp eq i8 %{{.*}}, 0
 // CHECK: br i1 %[[VF_M_INITIALIZED]],
 // need init:
-// CHECK: call i32 @_Z1gv()
+// CHECK: call noundef i32 @_Z1gv()
 // CHECK: store i32 %{{.*}}, i32* @_ZN1VIfE1mE, align 4
 // CHECK: store i64 1, i64* @_ZGVN1VIfE1mE
 // CHECK: br label
@@ -203,20 +203,20 @@ int f() {
 // LINUX: declare i32 @__cxa_thread_atexit(void (i8*)*, i8*, i8*)
 // DARWIN: declare i32 @_tlv_atexit(void (i8*)*, i8*, i8*)
 
-// DARWIN: declare cxx_fast_tlscc i32* @_ZTWN1VIcE1mE()
-// LINUX: define linkonce_odr hidden i32* @_ZTWN1VIcE1mE() {{#[0-9]+}} comdat {
+// DARWIN: declare cxx_fast_tlscc noundef i32* @_ZTWN1VIcE1mE()
+// LINUX: define linkonce_odr hidden noundef i32* @_ZTWN1VIcE1mE() {{#[0-9]+}} comdat 
 // LINUX: br i1 icmp ne (void ()* @_ZTHN1VIcE1mE,
 // LINUX: call void @_ZTHN1VIcE1mE()
 // LINUX: ret i32* @_ZN1VIcE1mE
 
-// DARWIN: declare cxx_fast_tlscc i32* @_ZTWN1WIcE1mE()
-// LINUX: define linkonce_odr hidden i32* @_ZTWN1WIcE1mE() {{#[0-9]+}} comdat {
+// DARWIN: declare cxx_fast_tlscc noundef i32* @_ZTWN1WIcE1mE()
+// LINUX: define linkonce_odr hidden noundef i32* @_ZTWN1WIcE1mE() {{#[0-9]+}} comdat 
 // LINUX: br i1 icmp ne (void ()* @_ZTHN1WIcE1mE,
 // LINUX: call void @_ZTHN1WIcE1mE()
 // LINUX: ret i32* @_ZN1WIcE1mE
 
 // DARWIN: declare cxx_fast_tlscc {{.*}}* @_ZTWN1XIcE1mE()
-// LINUX: define linkonce_odr hidden {{.*}}* @_ZTWN1XIcE1mE() {{#[0-9]+}} comdat {
+// LINUX: define linkonce_odr hidden {{.*}}* @_ZTWN1XIcE1mE() {{#[0-9]+}} comdat 
 // LINUX: br i1 icmp ne (void ()* @_ZTHN1XIcE1mE,
 // LINUX: call void @_ZTHN1XIcE1mE()
 // LINUX: ret {{.*}}* @_ZN1XIcE1mE
@@ -227,7 +227,7 @@ struct T { ~T(); };
 // CHECK-LABEL: define void @_Z8tls_dtorv()
 void tls_dtor() {
   // CHECK: load i8, i8* @_ZGVZ8tls_dtorvE1s
-  // CHECK: call void @_ZN1SC1Ev(%struct.S* @_ZZ8tls_dtorvE1s)
+  // CHECK: call void @_ZN1SC1Ev(%struct.S* noundef @_ZZ8tls_dtorvE1s)
   // LINUX: call i32 @__cxa_thread_atexit({{.*}}@_ZN1SD1Ev {{.*}} @_ZZ8tls_dtorvE1s{{.*}} @__dso_handle
   // DARWIN: call i32 @_tlv_atexit({{.*}}@_ZN1SD1Ev {{.*}} @_ZZ8tls_dtorvE1s{{.*}} @__dso_handle
   // CHECK: store i8 1, i8* @_ZGVZ8tls_dtorvE1s
@@ -241,7 +241,7 @@ void tls_dtor() {
   static thread_local T t;
 
   // CHECK: load i8, i8* @_ZGVZ8tls_dtorvE1u
-  // CHECK: call void @_ZN1SC1Ev(%struct.S* @_ZGRZ8tls_dtorvE1u_)
+  // CHECK: call void @_ZN1SC1Ev(%struct.S* noundef @_ZGRZ8tls_dtorvE1u_)
   // LINUX: call i32 @__cxa_thread_atexit({{.*}}@_ZN1SD1Ev {{.*}} @_ZGRZ8tls_dtorvE1u_{{.*}} @__dso_handle
   // DARWIN: call i32 @_tlv_atexit({{.*}}@_ZN1SD1Ev {{.*}} @_ZGRZ8tls_dtorvE1u_{{.*}} @__dso_handle
   // CHECK: store i8 1, i8* @_ZGVZ8tls_dtorvE1u
@@ -272,8 +272,8 @@ thread_local int anon_i{f()};
 void set_anon_i() {
   anon_i = 2;
 }
-// LINUX-LABEL: define internal i32* @_ZTWN12_GLOBAL__N_16anon_iE()
-// DARWIN-LABEL: define internal cxx_fast_tlscc i32* @_ZTWN12_GLOBAL__N_16anon_iE()
+// LINUX-LABEL: define internal noundef i32* @_ZTWN12_GLOBAL__N_16anon_iE()
+// DARWIN-LABEL: define internal cxx_fast_tlscc noundef i32* @_ZTWN12_GLOBAL__N_16anon_iE()
 
 // LINUX: define internal void @[[V_M_INIT]]()
 // DARWIN: define internal cxx_fast_tlscc void @[[V_M_INIT]]()
@@ -283,7 +283,7 @@ void set_anon_i() {
 // CHECK: %[[V_M_INITIALIZED:.*]] = icmp eq i8 %{{.*}}, 0
 // CHECK: br i1 %[[V_M_INITIALIZED]],
 // need init:
-// CHECK: call i32 @_Z1gv()
+// CHECK: call noundef i32 @_Z1gv()
 // CHECK: store i32 %{{.*}}, i32* @_ZN1VIiE1mE, align 4
 // CHECK: store i64 1, i64* @_ZGVN1VIiE1mE
 // CHECK: br label
@@ -322,8 +322,8 @@ void set_anon_i() {
 // CHECK-NOT: call void @[[V_M_INIT]]()
 
 
-// LINUX: define weak_odr hidden i32* @_ZTW1a()
-// DARWIN: define cxx_fast_tlscc i32* @_ZTW1a()
+// LINUX: define weak_odr hidden noundef i32* @_ZTW1a()
+// DARWIN: define cxx_fast_tlscc noundef i32* @_ZTW1a()
 // LINUX:   call void @_ZTH1a()
 // DARWIN: call cxx_fast_tlscc void @_ZTH1a()
 // CHECK:   ret i32* @a
@@ -335,8 +335,8 @@ void set_anon_i() {
 // thread-local variables in this TU.
 // CHECK-NOT: define {{.*}} @_ZTWL1d()
 
-// LINUX-LABEL: define weak_odr hidden i32* @_ZTWN1U1mE()
-// DARWIN-LABEL: define cxx_fast_tlscc i32* @_ZTWN1U1mE()
+// LINUX-LABEL: define weak_odr hidden noundef i32* @_ZTWN1U1mE()
+// DARWIN-LABEL: define cxx_fast_tlscc noundef i32* @_ZTWN1U1mE()
 // LINUX: call void @_ZTHN1U1mE()
 // DARWIN: call cxx_fast_tlscc void @_ZTHN1U1mE()
 // CHECK: ret i32* @_ZN1U1mE

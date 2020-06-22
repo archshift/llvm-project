@@ -1,6 +1,6 @@
-// RUN: %clang_cc1 -emit-llvm -o %t %s
+// RUN: %clang_cc1 -disable-noundef-args -emit-llvm -o %t %s
 // RUN: not grep __builtin %t
-// RUN: %clang_cc1 %s -emit-llvm -o - -triple x86_64-darwin-apple | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args %s -emit-llvm -o - -triple x86_64-darwin-apple | FileCheck %s
 
 int printf(const char *, ...);
 
@@ -438,7 +438,7 @@ void test_builtin_longjmp(void **buffer) {
 
 #endif
 
-// CHECK-LABEL: define i64 @test_builtin_readcyclecounter
+// CHECK-LABEL: define noundef i64 @test_builtin_readcyclecounter
 long long test_builtin_readcyclecounter() {
   // CHECK: call i64 @llvm.readcyclecounter()
   return __builtin_readcyclecounter();

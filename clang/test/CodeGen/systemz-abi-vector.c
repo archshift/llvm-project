@@ -1,18 +1,18 @@
-// RUN: %clang_cc1 -triple s390x-linux-gnu \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu \
 // RUN:   -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-feature +vector \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-feature +vector \
 // RUN:   -emit-llvm -o - %s | FileCheck --check-prefix=CHECK-VECTOR %s
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu z13 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu z13 \
 // RUN:   -emit-llvm -o - %s | FileCheck --check-prefix=CHECK-VECTOR %s
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu arch11 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu arch11 \
 // RUN:   -emit-llvm -o - %s | FileCheck --check-prefix=CHECK-VECTOR %s
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu z14 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu z14 \
 // RUN:   -emit-llvm -o - %s | FileCheck --check-prefix=CHECK-VECTOR %s
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu arch12 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu arch12 \
 // RUN:   -emit-llvm -o - %s | FileCheck --check-prefix=CHECK-VECTOR %s
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu z15 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu z15 \
 // RUN:   -emit-llvm -o - %s | FileCheck --check-prefix=CHECK-VECTOR %s
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu arch13 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu arch13 \
 // RUN:   -emit-llvm -o - %s | FileCheck --check-prefix=CHECK-VECTOR %s
 
 // Vector types
@@ -51,23 +51,23 @@ unsigned int align = __alignof__ (v16i8);
 
 v1i8 pass_v1i8(v1i8 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1i8(<1 x i8>* noalias sret align 1 %{{.*}}, <1 x i8>* %0)
-// CHECK-VECTOR-LABEL: define <1 x i8> @pass_v1i8(<1 x i8> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x i8> @pass_v1i8(<1 x i8> %{{.*}})
 
 v2i8 pass_v2i8(v2i8 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v2i8(<2 x i8>* noalias sret align 2 %{{.*}}, <2 x i8>* %0)
-// CHECK-VECTOR-LABEL: define <2 x i8> @pass_v2i8(<2 x i8> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <2 x i8> @pass_v2i8(<2 x i8> %{{.*}})
 
 v4i8 pass_v4i8(v4i8 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v4i8(<4 x i8>* noalias sret align 4 %{{.*}}, <4 x i8>* %0)
-// CHECK-VECTOR-LABEL: define <4 x i8> @pass_v4i8(<4 x i8> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <4 x i8> @pass_v4i8(<4 x i8> %{{.*}})
 
 v8i8 pass_v8i8(v8i8 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v8i8(<8 x i8>* noalias sret align 8 %{{.*}}, <8 x i8>* %0)
-// CHECK-VECTOR-LABEL: define <8 x i8> @pass_v8i8(<8 x i8> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <8 x i8> @pass_v8i8(<8 x i8> %{{.*}})
 
 v16i8 pass_v16i8(v16i8 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v16i8(<16 x i8>* noalias sret align 16 %{{.*}}, <16 x i8>* %0)
-// CHECK-VECTOR-LABEL: define <16 x i8> @pass_v16i8(<16 x i8> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <16 x i8> @pass_v16i8(<16 x i8> %{{.*}})
 
 v32i8 pass_v32i8(v32i8 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v32i8(<32 x i8>* noalias sret align 32 %{{.*}}, <32 x i8>* %0)
@@ -75,67 +75,67 @@ v32i8 pass_v32i8(v32i8 arg) { return arg; }
 
 v1i16 pass_v1i16(v1i16 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1i16(<1 x i16>* noalias sret align 2 %{{.*}}, <1 x i16>* %0)
-// CHECK-VECTOR-LABEL: define <1 x i16> @pass_v1i16(<1 x i16> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x i16> @pass_v1i16(<1 x i16> %{{.*}})
 
 v2i16 pass_v2i16(v2i16 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v2i16(<2 x i16>* noalias sret align 4 %{{.*}}, <2 x i16>* %0)
-// CHECK-VECTOR-LABEL: define <2 x i16> @pass_v2i16(<2 x i16> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <2 x i16> @pass_v2i16(<2 x i16> %{{.*}})
 
 v4i16 pass_v4i16(v4i16 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v4i16(<4 x i16>* noalias sret align 8 %{{.*}}, <4 x i16>* %0)
-// CHECK-VECTOR-LABEL: define <4 x i16> @pass_v4i16(<4 x i16> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <4 x i16> @pass_v4i16(<4 x i16> %{{.*}})
 
 v8i16 pass_v8i16(v8i16 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v8i16(<8 x i16>* noalias sret align 16 %{{.*}}, <8 x i16>* %0)
-// CHECK-VECTOR-LABEL: define <8 x i16> @pass_v8i16(<8 x i16> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <8 x i16> @pass_v8i16(<8 x i16> %{{.*}})
 
 v1i32 pass_v1i32(v1i32 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1i32(<1 x i32>* noalias sret align 4 %{{.*}}, <1 x i32>* %0)
-// CHECK-VECTOR-LABEL: define <1 x i32> @pass_v1i32(<1 x i32> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x i32> @pass_v1i32(<1 x i32> %{{.*}})
 
 v2i32 pass_v2i32(v2i32 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v2i32(<2 x i32>* noalias sret align 8 %{{.*}}, <2 x i32>* %0)
-// CHECK-VECTOR-LABEL: define <2 x i32> @pass_v2i32(<2 x i32> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <2 x i32> @pass_v2i32(<2 x i32> %{{.*}})
 
 v4i32 pass_v4i32(v4i32 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v4i32(<4 x i32>* noalias sret align 16 %{{.*}}, <4 x i32>* %0)
-// CHECK-VECTOR-LABEL: define <4 x i32> @pass_v4i32(<4 x i32> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <4 x i32> @pass_v4i32(<4 x i32> %{{.*}})
 
 v1i64 pass_v1i64(v1i64 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1i64(<1 x i64>* noalias sret align 8 %{{.*}}, <1 x i64>* %0)
-// CHECK-VECTOR-LABEL: define <1 x i64> @pass_v1i64(<1 x i64> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x i64> @pass_v1i64(<1 x i64> %{{.*}})
 
 v2i64 pass_v2i64(v2i64 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v2i64(<2 x i64>* noalias sret align 16 %{{.*}}, <2 x i64>* %0)
-// CHECK-VECTOR-LABEL: define <2 x i64> @pass_v2i64(<2 x i64> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <2 x i64> @pass_v2i64(<2 x i64> %{{.*}})
 
 v1i128 pass_v1i128(v1i128 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1i128(<1 x i128>* noalias sret align 16 %{{.*}}, <1 x i128>* %0)
-// CHECK-VECTOR-LABEL: define <1 x i128> @pass_v1i128(<1 x i128> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x i128> @pass_v1i128(<1 x i128> %{{.*}})
 
 v1f32 pass_v1f32(v1f32 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1f32(<1 x float>* noalias sret align 4 %{{.*}}, <1 x float>* %0)
-// CHECK-VECTOR-LABEL: define <1 x float> @pass_v1f32(<1 x float> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x float> @pass_v1f32(<1 x float> %{{.*}})
 
 v2f32 pass_v2f32(v2f32 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v2f32(<2 x float>* noalias sret align 8 %{{.*}}, <2 x float>* %0)
-// CHECK-VECTOR-LABEL: define <2 x float> @pass_v2f32(<2 x float> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <2 x float> @pass_v2f32(<2 x float> %{{.*}})
 
 v4f32 pass_v4f32(v4f32 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v4f32(<4 x float>* noalias sret align 16 %{{.*}}, <4 x float>* %0)
-// CHECK-VECTOR-LABEL: define <4 x float> @pass_v4f32(<4 x float> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <4 x float> @pass_v4f32(<4 x float> %{{.*}})
 
 v1f64 pass_v1f64(v1f64 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1f64(<1 x double>* noalias sret align 8 %{{.*}}, <1 x double>* %0)
-// CHECK-VECTOR-LABEL: define <1 x double> @pass_v1f64(<1 x double> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x double> @pass_v1f64(<1 x double> %{{.*}})
 
 v2f64 pass_v2f64(v2f64 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v2f64(<2 x double>* noalias sret align 16 %{{.*}}, <2 x double>* %0)
-// CHECK-VECTOR-LABEL: define <2 x double> @pass_v2f64(<2 x double> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <2 x double> @pass_v2f64(<2 x double> %{{.*}})
 
 v1f128 pass_v1f128(v1f128 arg) { return arg; }
 // CHECK-LABEL: define void @pass_v1f128(<1 x fp128>* noalias sret align 16 %{{.*}}, <1 x fp128>* %0)
-// CHECK-VECTOR-LABEL: define <1 x fp128> @pass_v1f128(<1 x fp128> %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x fp128> @pass_v1f128(<1 x fp128> %{{.*}})
 
 
 // Vector-like aggregate types
@@ -219,7 +219,7 @@ v1i8 va_v1i8(__builtin_va_list l) { return __builtin_va_arg(l, v1i8); }
 // CHECK: [[VA_ARG_ADDR:%[^ ]+]] = phi <1 x i8>** [ [[REG_ADDR]], %{{.*}} ], [ [[MEM_ADDR]], %{{.*}} ]
 // CHECK: [[INDIRECT_ARG:%[^ ]+]] = load <1 x i8>*, <1 x i8>** [[VA_ARG_ADDR]]
 // CHECK: ret void
-// CHECK-VECTOR-LABEL: define <1 x i8> @va_v1i8(%struct.__va_list_tag* %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <1 x i8> @va_v1i8(%struct.__va_list_tag* %{{.*}})
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 2
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA:%[^ ]+]] = load i8*, i8** [[OVERFLOW_ARG_AREA_PTR]]
 // CHECK-VECTOR: [[MEM_ADDR:%[^ ]+]] = bitcast i8* [[OVERFLOW_ARG_AREA]] to <1 x i8>*
@@ -251,7 +251,7 @@ v2i8 va_v2i8(__builtin_va_list l) { return __builtin_va_arg(l, v2i8); }
 // CHECK: [[VA_ARG_ADDR:%[^ ]+]] = phi <2 x i8>** [ [[REG_ADDR]], %{{.*}} ], [ [[MEM_ADDR]], %{{.*}} ]
 // CHECK: [[INDIRECT_ARG:%[^ ]+]] = load <2 x i8>*, <2 x i8>** [[VA_ARG_ADDR]]
 // CHECK: ret void
-// CHECK-VECTOR-LABEL: define <2 x i8> @va_v2i8(%struct.__va_list_tag* %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <2 x i8> @va_v2i8(%struct.__va_list_tag* %{{.*}})
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 2
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA:%[^ ]+]] = load i8*, i8** [[OVERFLOW_ARG_AREA_PTR]]
 // CHECK-VECTOR: [[MEM_ADDR:%[^ ]+]] = bitcast i8* [[OVERFLOW_ARG_AREA]] to <2 x i8>*
@@ -283,7 +283,7 @@ v4i8 va_v4i8(__builtin_va_list l) { return __builtin_va_arg(l, v4i8); }
 // CHECK: [[VA_ARG_ADDR:%[^ ]+]] = phi <4 x i8>** [ [[REG_ADDR]], %{{.*}} ], [ [[MEM_ADDR]], %{{.*}} ]
 // CHECK: [[INDIRECT_ARG:%[^ ]+]] = load <4 x i8>*, <4 x i8>** [[VA_ARG_ADDR]]
 // CHECK: ret void
-// CHECK-VECTOR-LABEL: define <4 x i8> @va_v4i8(%struct.__va_list_tag* %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <4 x i8> @va_v4i8(%struct.__va_list_tag* %{{.*}})
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 2
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA:%[^ ]+]] = load i8*, i8** [[OVERFLOW_ARG_AREA_PTR]]
 // CHECK-VECTOR: [[MEM_ADDR:%[^ ]+]] = bitcast i8* [[OVERFLOW_ARG_AREA]] to <4 x i8>*
@@ -315,7 +315,7 @@ v8i8 va_v8i8(__builtin_va_list l) { return __builtin_va_arg(l, v8i8); }
 // CHECK: [[VA_ARG_ADDR:%[^ ]+]] = phi <8 x i8>** [ [[REG_ADDR]], %{{.*}} ], [ [[MEM_ADDR]], %{{.*}} ]
 // CHECK: [[INDIRECT_ARG:%[^ ]+]] = load <8 x i8>*, <8 x i8>** [[VA_ARG_ADDR]]
 // CHECK: ret void
-// CHECK-VECTOR-LABEL: define <8 x i8> @va_v8i8(%struct.__va_list_tag* %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <8 x i8> @va_v8i8(%struct.__va_list_tag* %{{.*}})
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 2
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA:%[^ ]+]] = load i8*, i8** [[OVERFLOW_ARG_AREA_PTR]]
 // CHECK-VECTOR: [[MEM_ADDR:%[^ ]+]] = bitcast i8* [[OVERFLOW_ARG_AREA]] to <8 x i8>*
@@ -347,7 +347,7 @@ v16i8 va_v16i8(__builtin_va_list l) { return __builtin_va_arg(l, v16i8); }
 // CHECK: [[VA_ARG_ADDR:%[^ ]+]] = phi <16 x i8>** [ [[REG_ADDR]], %{{.*}} ], [ [[MEM_ADDR]], %{{.*}} ]
 // CHECK: [[INDIRECT_ARG:%[^ ]+]] = load <16 x i8>*, <16 x i8>** [[VA_ARG_ADDR]]
 // CHECK: ret void
-// CHECK-VECTOR-LABEL: define <16 x i8> @va_v16i8(%struct.__va_list_tag* %{{.*}})
+// CHECK-VECTOR-LABEL: define noundef <16 x i8> @va_v16i8(%struct.__va_list_tag* %{{.*}})
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 2
 // CHECK-VECTOR: [[OVERFLOW_ARG_AREA:%[^ ]+]] = load i8*, i8** [[OVERFLOW_ARG_AREA_PTR]]
 // CHECK-VECTOR: [[MEM_ADDR:%[^ ]+]] = bitcast i8* [[OVERFLOW_ARG_AREA]] to <16 x i8>*

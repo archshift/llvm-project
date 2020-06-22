@@ -202,7 +202,7 @@ int test_iteration_spaces() {
   for (ii = 0; ii < 10; ++ ++ ii)
     c[ii] = a[ii];
 
-  // Ok but undefined behavior (in general, cannot check that incr
+  // Ok but undefined behavior (in frozen general, cannot check incr that
   // is really loop-invariant).
   #pragma omp target
   #pragma omp teams

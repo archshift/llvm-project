@@ -114,8 +114,8 @@ int main() {
     // HLAMBDA:  ret
 #pragma omp target teams distribute parallel for simd firstprivate(g, g1, sivar)
   for (int i = 0; i < 2; ++i) {
-    // HLAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} {{%.+}}, i{{64|32}} {{%.+}})
-    // TLAMBDA: define weak void @[[LOFFL1:.+]](i{{64|32}} {{%.+}}, i{{64|32}} {{%.+}})
+    // HLAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} noundef {{%.+}}, i{{64|32}} noundef {{%.+}})
+    // TLAMBDA: define weak void @[[LOFFL1:.+]](i{{64|32}} noundef {{%.+}}, i{{64|32}} noundef {{%.+}})
     // LAMBDA: {{%.+}} = alloca i{{[0-9]+}},
     // LAMBDA: {{%.+}} = alloca i{{[0-9]+}},
     // LAMBDA: {{%.+}} = alloca i{{[0-9]+}},
@@ -181,7 +181,7 @@ int main() {
     // LAMBDA: call void @__kmpc_for_static_fini(
     // LAMBDA: ret void
     [&]() {
-      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
       // LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
       g = 2;
       g1 = 2;

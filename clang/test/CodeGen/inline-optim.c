@@ -22,16 +22,16 @@ void foo() {
 // NOINLINE-LABEL: @foo
 // HINT-LABEL: @foo
 // INLINE-LABEL: @foo
-// NOINLINE: call i32 @inline_hint
-// HINT-NOT: call i32 @inline_hint
-// INLINE-NOT: call i32 @inline_hint
+// NOINLINE: call noundef i32 @inline_hint
+// HINT-NOT: call noundef i32 @inline_hint
+// INLINE-NOT: call noundef i32 @inline_hint
     pa[0] = inline_hint(pa[1],pa[2]);
-// NOINLINE-NOT: call i32 @inline_always
-// HINT-NOT: call i32 @inline_always
-// INLINE-NOT: call i32 @inline_always
+// NOINLINE-NOT: call noundef i32 @inline_always
+// HINT-NOT: call noundef i32 @inline_always
+// INLINE-NOT: call noundef i32 @inline_always
     pa[3] = inline_always(pa[4],pa[5]);
-// NOINLINE: call i32 @inline_no_hint
-// HINT: call i32 @inline_no_hint
-// INLINE-NOT: call i32 @inline_no_hint
+// NOINLINE: call noundef i32 @inline_no_hint
+// HINT: call noundef i32 @inline_no_hint
+// INLINE-NOT: call noundef i32 @inline_no_hint
     pa[6] = inline_no_hint(pa[7], pa[8]);
 }

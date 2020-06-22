@@ -44,12 +44,12 @@ int main(int argc, const char * argv[])
     return 0;
 }
 
-// CHECK: define i32 @main
+// CHECK: define noundef i32 @main
 // CHECK: call void @_ZN8UUIDTestI10TestStructL_Z42_GUID_eafa1952_66f8_438b_8fba_af1bbae42191EEC1Ev
 // CHECK: call void @_ZN11UUIDTestTwoIL_Z42_GUID_eafa1952_66f8_438b_8fba_af1bbae42191EEC1Ev
 // CHECK: call void @_ZN11UUIDTestTwoIL_Z42_GUID_eafa1952_66f8_438b_8fba_af1bbae42191EEC1Ev
-// CHECK: call void @_Z15test_uuidofTypeI10TestStructEvPPv(i8** null)
-// CHECK: call void @_Z15test_uuidofExprI9HasMemberEvPPv(i8** null)
+// CHECK: call void @_Z15test_uuidofTypeI10TestStructEvPPv(i8** noundef null)
+// CHECK: call void @_Z15test_uuidofExprI9HasMemberEvPPv(i8** noundef null)
 
 // CHECK: define linkonce_odr void @_ZN8UUIDTestI10TestStructL_Z42_GUID_eafa1952_66f8_438b_8fba_af1bbae42191EEC1Ev
 // CHECK: define linkonce_odr void @_Z15test_uuidofTypeI10TestStructEvPPv

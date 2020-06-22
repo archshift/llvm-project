@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -fno-rtti -emit-llvm %s -o - -mconstructor-aliases -triple=i386-pc-win32 | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -fno-rtti -emit-llvm %s -o - -mconstructor-aliases -triple=i386-pc-win32 | FileCheck %s
 
 struct Left {
   virtual void left();
@@ -204,7 +204,7 @@ struct AsymmetricChild : LeftWithNonVirtualDtor, Right {
 void call_asymmetric_child_complete_dtor() {
   // CHECK-LABEL: define dso_local void @"?call_asymmetric_child_complete_dtor@@YAXXZ"
   AsymmetricChild obj;
-  // CHECK: call x86_thiscallcc %struct.AsymmetricChild* @"??0AsymmetricChild@@QAE@XZ"(%struct.AsymmetricChild* %[[OBJ:.*]])
+  // CHECK: call x86_thiscallcc noundef %struct.AsymmetricChild* @"??0AsymmetricChild@@QAE@XZ"(%struct.AsymmetricChild* %[[OBJ:.*]])
   // CHECK-NOT: getelementptr
   // CHECK: call x86_thiscallcc void @"??1AsymmetricChild@@UAE@XZ"(%struct.AsymmetricChild* %[[OBJ]])
   // CHECK: ret

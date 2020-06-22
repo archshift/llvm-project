@@ -279,47 +279,47 @@ int size_a_ld = sizeof(_Atomic(long double));
 
 // Check types
 
-// CHECK: define dso_local zeroext i8 @check_char()
+// CHECK: define dso_local noundef zeroext i8 @check_char()
 char check_char() { return 0; }
 
-// CHECK: define dso_local signext i16 @check_short()
+// CHECK: define dso_local noundef signext i16 @check_short()
 short check_short() { return 0; }
 
-// CHECK: define dso_local signext i32 @check_int()
+// CHECK: define dso_local noundef signext i32 @check_int()
 int check_int() { return 0; }
 
-// CHECK: define dso_local signext i32 @check_wchar_t()
+// CHECK: define dso_local noundef signext i32 @check_wchar_t()
 int check_wchar_t() { return 0; }
 
-// CHECK: define dso_local i64 @check_long()
+// CHECK: define dso_local noundef i64 @check_long()
 long check_long() { return 0; }
 
-// CHECK: define dso_local i64 @check_longlong()
+// CHECK: define dso_local noundef i64 @check_longlong()
 long long check_longlong() { return 0; }
 
-// CHECK: define dso_local zeroext i8 @check_uchar()
+// CHECK: define dso_local noundef zeroext i8 @check_uchar()
 unsigned char check_uchar() { return 0; }
 
-// CHECK: define dso_local zeroext i16 @check_ushort()
+// CHECK: define dso_local noundef zeroext i16 @check_ushort()
 unsigned short check_ushort() { return 0; }
 
-// CHECK: define dso_local signext i32 @check_uint()
+// CHECK: define dso_local noundef signext i32 @check_uint()
 unsigned int check_uint() { return 0; }
 
-// CHECK: define dso_local i64 @check_ulong()
+// CHECK: define dso_local noundef i64 @check_ulong()
 unsigned long check_ulong() { return 0; }
 
-// CHECK: define dso_local i64 @check_ulonglong()
+// CHECK: define dso_local noundef i64 @check_ulonglong()
 unsigned long long check_ulonglong() { return 0; }
 
-// CHECK: define dso_local i64 @check_size_t()
+// CHECK: define dso_local noundef i64 @check_size_t()
 size_t check_size_t() { return 0; }
 
-// CHECK: define dso_local float @check_float()
+// CHECK: define dso_local noundef float @check_float()
 float check_float() { return 0; }
 
-// CHECK: define dso_local double @check_double()
+// CHECK: define dso_local noundef double @check_double()
 double check_double() { return 0; }
 
-// CHECK: define dso_local fp128 @check_longdouble()
+// CHECK: define dso_local noundef fp128 @check_longdouble()
 long double check_longdouble() { return 0; }

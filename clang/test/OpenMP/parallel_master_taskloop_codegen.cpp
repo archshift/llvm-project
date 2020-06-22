@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 // CHECK: call void @__kmpc_end_serialized_parallel(%struct.ident_t* [[DEFLOC]], i32 [[GTID]])
 // CHECK: call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEFLOC]], i32 0, void (i32*, i32*, ...)* bitcast (void (i32*, i32*)* [[OMP_OUTLINED4:@.+]] to void (i32*, i32*, ...)*))
 
-// CHECK: define internal void [[OMP_OUTLINED1]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i64 %{{.+}})
+// CHECK: define internal void [[OMP_OUTLINED1]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i64 noundef %{{.+}})
 // CHECK: [[PRIO_ADDR:%.+]] = bitcast i64* %{{.+}} to i32*
 // CHECK:       [[RES:%.+]] = call {{.*}}i32 @__kmpc_master(%struct.ident_t* [[DEFLOC]], i32 [[GTID:%.+]])
 // CHECK-NEXT:  [[IS_MASTER:%.+]] = icmp ne i32 [[RES]], 0
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 // CHECK:       [[EXIT]]
 
 
-// CHECK: define internal i32 [[TASK1]](
+// CHECK: define internal noundef i32 [[TASK1]](
 // CHECK: [[DOWN:%.+]] = getelementptr inbounds [[TD_TY:%.+]], [[TD_TY]]* %{{.+}}, i32 0, i32 5
 // CHECK: [[DOWN_VAL:%.+]] = load i64, i64* [[DOWN]],
 // CHECK: [[UP:%.+]] = getelementptr inbounds [[TD_TY]], [[TD_TY]]* %{{.+}}, i32 0, i32 6
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 #pragma omp parallel master taskloop priority(argc)
   for (int i = 0; i < 10; ++i)
     ;
-// CHECK: define internal void [[OMP_OUTLINED2]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i64 %{{.+}})
+// CHECK: define internal void [[OMP_OUTLINED2]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i64 noundef %{{.+}})
 // CHECK:       [[RES:%.+]] = call {{.*}}i32 @__kmpc_master(%struct.ident_t* [[DEFLOC]], i32 [[GTID:%.+]])
 // CHECK-NEXT:  [[IS_MASTER:%.+]] = icmp ne i32 [[RES]], 0
 // CHECK-NEXT:  br i1 [[IS_MASTER]], label {{%?}}[[THEN:.+]], label {{%?}}[[EXIT:.+]]
@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
 // CHECK:       [[EXIT]]
 
 
-// CHECK: define internal i32 [[TASK2]](
+// CHECK: define internal noundef i32 [[TASK2]](
 // CHECK: [[DOWN:%.+]] = getelementptr inbounds [[TD_TY:%.+]], [[TD_TY]]* %{{.+}}, i32 0, i32 5
 // CHECK: [[DOWN_VAL:%.+]] = load i64, i64* [[DOWN]],
 // CHECK: [[UP:%.+]] = getelementptr inbounds [[TD_TY]], [[TD_TY]]* %{{.+}}, i32 0, i32 6
@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
 #pragma omp parallel master taskloop nogroup grainsize(argc)
   for (int i = 0; i < 10; ++i)
     ;
-// CHECK: define internal void [[OMP_OUTLINED3]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i32* nonnull align 4 dereferenceable(4) %{{.+}}, i8*** nonnull align 8 dereferenceable(8) %{{.+}}, i64 %{{.+}}, i64 %{{.+}})
+// CHECK: define internal void [[OMP_OUTLINED3]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i32* noundef nonnull align 4 dereferenceable(4) %{{.+}}, i8*** noundef nonnull align 8 dereferenceable(8) %{{.+}}, i64 noundef %{{.+}}, i64 noundef %{{.+}})
 // CHECK:       [[RES:%.+]] = call {{.*}}i32 @__kmpc_master(%struct.ident_t* [[DEFLOC]], i32 [[GTID:%.+]])
 // CHECK-NEXT:  [[IS_MASTER:%.+]] = icmp ne i32 [[RES]], 0
 // CHECK-NEXT:  br i1 [[IS_MASTER]], label {{%?}}[[THEN:.+]], label {{%?}}[[EXIT:.+]]
@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
 // CHECK-NEXT:  br label {{%?}}[[EXIT]]
 // CHECK:       [[EXIT]]
 
-// CHECK: define internal i32 [[TASK3]](
+// CHECK: define internal noundef i32 [[TASK3]](
 // CHECK: [[DOWN:%.+]] = getelementptr inbounds [[TD_TY:%.+]], [[TD_TY]]* %{{.+}}, i32 0, i32 5
 // CHECK: [[DOWN_VAL:%.+]] = load i64, i64* [[DOWN]],
 // CHECK: [[UP:%.+]] = getelementptr inbounds [[TD_TY]], [[TD_TY]]* %{{.+}}, i32 0, i32 6
@@ -211,7 +211,7 @@ struct S {
   S(int c) {
 // CHECK: call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEFLOC]], i32 3, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, %struct.S*, i32*, i64)* [[OMP_OUTLINED4:@.+]] to void (i32*, i32*, ...)*), %struct.S* %{{.+}}, i32* %{{.+}}, i64 %{{.+}})
 
-// CHECK: define internal void [[OMP_OUTLINED4]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, %struct.S* %{{.+}}, i32* nonnull align 4 dereferenceable(4) %{{.+}}, i64 %{{.+}})
+// CHECK: define internal void [[OMP_OUTLINED4]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, %struct.S* noundef %{{.+}}, i32* noundef nonnull align 4 dereferenceable(4) %{{.+}}, i64 noundef %{{.+}})
 // CHECK: [[CONV:%.+]] = bitcast i64* %{{.+}} to i8*
 // CHECK: [[CONDI8:%.+]] = load i8, i8* [[CONV]],
 // CHECK: [[COND:%.+]] = trunc i8 [[CONDI8]] to i1
@@ -234,7 +234,7 @@ struct S {
   }
 } s(1);
 
-// CHECK: define internal i32 [[TASK4]](
+// CHECK: define internal noundef i32 [[TASK4]](
 // CHECK: [[DOWN:%.+]] = getelementptr inbounds [[TD_TY:%.+]], [[TD_TY]]* %{{.+}}, i32 0, i32 5
 // CHECK: [[DOWN_VAL:%.+]] = load i64, i64* [[DOWN]],
 // CHECK: [[UP:%.+]] = getelementptr inbounds [[TD_TY]], [[TD_TY]]* %{{.+}}, i32 0, i32 6

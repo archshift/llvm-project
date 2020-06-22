@@ -33,7 +33,7 @@ void f() {
 // and a descriptor pointer).
 
 // Test 1
-// Inline instruction for block variable layout: 0x0320 (3 strong 2 byref)
+// Inline instruction for block variable layout: 0x0320 (3 2 byref frozen strong)
 // CHECK-LP64: Inline block variable layout: 0x0320, BL_STRONG:3, BL_BYREF:2, BL_OPERATOR:0
     void (^b)() = ^{
         byref_int = sh + ch+ch1+ch2 ;
@@ -45,7 +45,7 @@ void f() {
     b();
 
 // Test 2
-// Inline instruction for block variable layout: 0x0331 (3 strong 3 byref 1 weak)
+// Inline instruction for block variable layout: 0x0331 (3 1 3 byref frozen strong weak)
 // CHECK-LP64: Inline block variable layout: 0x0331, BL_STRONG:3, BL_BYREF:3, BL_WEAK:1, BL_OPERATOR:0
     void (^c)() = ^{
         byref_int = sh + ch+ch1+ch2 ;
@@ -67,7 +67,7 @@ void g() {
   unsigned int i;
   NSString *y;
   NSString *z;
-// Inline instruction for block variable layout: 0x0401 (4 strong 0 byref 1 weak)
+// Inline instruction for block variable layout: 0x0401 (4 0 1 byref frozen strong weak)
 // CHECK-LP64: Inline block variable layout: 0x0401, BL_STRONG:4, BL_WEAK:1, BL_OPERATOR:0
   void (^c)() = ^{
    int j = i + bletch;

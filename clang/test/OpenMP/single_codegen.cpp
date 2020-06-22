@@ -156,7 +156,7 @@ int main() {
 }
 
 // OMP50-LABEL: declare i8* @__kmpc_threadprivate_cached(
-// CHECK: void [[COPY_FUNC]](i8* %0, i8* %1)
+// CHECK: void [[COPY_FUNC]](i8* noundef %0, i8* noundef %1)
 // CHECK: store i8* %0, i8** [[DST_ADDR_REF:%.+]],
 // CHECK: store i8* %1, i8** [[SRC_ADDR_REF:%.+]],
 // CHECK: [[DST_ADDR_VOID_PTR:%.+]] = load i8*, i8** [[DST_ADDR_REF]],
@@ -175,14 +175,14 @@ int main() {
 // CHECK: [[SRC_C_ADDR_REF:%.+]] = getelementptr inbounds [5 x i8*], [5 x i8*]* [[SRC_ADDR]], i{{[0-9]+}} 0, i{{[0-9]+}} 1
 // CHECK: [[SRC_C_ADDR_VOID_PTR:%.+]] = load i8*, i8** [[SRC_C_ADDR_REF]],
 // CHECK: [[SRC_C_ADDR:%.+]] = bitcast i8* [[SRC_C_ADDR_VOID_PTR]] to [[TEST_CLASS_TY]]*
-// CHECK: call{{.*}} [[TEST_CLASS_TY_ASSIGN:@.+]]([[TEST_CLASS_TY]]* [[DST_C_ADDR]], [[TEST_CLASS_TY]]* {{.*}}[[SRC_C_ADDR]])
+// CHECK: call{{.*}} [[TEST_CLASS_TY_ASSIGN:@.+]]([[TEST_CLASS_TY]]* noundef [[DST_C_ADDR]], [[TEST_CLASS_TY]]* {{.*}}[[SRC_C_ADDR]])
 // CHECK: [[DST_TC_ADDR_REF:%.+]] = getelementptr inbounds [5 x i8*], [5 x i8*]* [[DST_ADDR]], i{{[0-9]+}} 0, i{{[0-9]+}} 2
 // CHECK: [[DST_TC_ADDR_VOID_PTR:%.+]] = load i8*, i8** [[DST_TC_ADDR_REF]],
 // CHECK: [[DST_TC_ADDR:%.+]] = bitcast i8* [[DST_TC_ADDR_VOID_PTR]] to [[TEST_CLASS_TY]]*
 // CHECK: [[SRC_TC_ADDR_REF:%.+]] = getelementptr inbounds [5 x i8*], [5 x i8*]* [[SRC_ADDR]], i{{[0-9]+}} 0, i{{[0-9]+}} 2
 // CHECK: [[SRC_TC_ADDR_VOID_PTR:%.+]] = load i8*, i8** [[SRC_TC_ADDR_REF]],
 // CHECK: [[SRC_TC_ADDR:%.+]] = bitcast i8* [[SRC_TC_ADDR_VOID_PTR]] to [[TEST_CLASS_TY]]*
-// CHECK: call{{.*}} [[TEST_CLASS_TY_ASSIGN]]([[TEST_CLASS_TY]]* [[DST_TC_ADDR]], [[TEST_CLASS_TY]]* {{.*}}[[SRC_TC_ADDR]])
+// CHECK: call{{.*}} [[TEST_CLASS_TY_ASSIGN]]([[TEST_CLASS_TY]]* noundef [[DST_TC_ADDR]], [[TEST_CLASS_TY]]* {{.*}}[[SRC_TC_ADDR]])
 // CHECK: [[DST_A2_ADDR_REF:%.+]] = getelementptr inbounds [5 x i8*], [5 x i8*]* [[DST_ADDR]], i{{[0-9]+}} 0, i{{[0-9]+}} 3
 // CHECK: [[DST_A2_ADDR:%.+]] = load i8*, i8** [[DST_A2_ADDR_REF]],
 // CHECK: [[SRC_A2_ADDR_REF:%.+]] = getelementptr inbounds [5 x i8*], [5 x i8*]* [[SRC_ADDR]], i{{[0-9]+}} 0, i{{[0-9]+}} 3
@@ -195,7 +195,7 @@ int main() {
 // CHECK: [[SRC_TC2_ADDR_VOID_PTR:%.+]] = load i8*, i8** [[SRC_TC2_ADDR_REF]],
 // CHECK: [[SRC_TC2_ADDR:%.+]] = bitcast i8* [[SRC_TC2_ADDR_VOID_PTR]] to [[TEST_CLASS_TY]]*
 // CHECK: br i1
-// CHECK: call{{.*}} [[TEST_CLASS_TY_ASSIGN]]([[TEST_CLASS_TY]]* %{{.+}}, [[TEST_CLASS_TY]]* {{.*}})
+// CHECK: call{{.*}} [[TEST_CLASS_TY_ASSIGN]]([[TEST_CLASS_TY]]* noundef %{{.+}}, [[TEST_CLASS_TY]]* {{.*}})
 // CHECK: br i1
 // CHECK: ret void
 
@@ -247,7 +247,7 @@ int main() {
 // OMP50-LABEL: call void @_ZZZN3SSTIdEC1EvENKUlvE_clEvENKUlvE_clEv(
 // OMP50-NEXT: ret void
 
-// OMP50: define internal void [[COPY_FUNC]](i8* %0, i8* %1)
+// OMP50: define internal void [[COPY_FUNC]](i8* noundef %0, i8* noundef %1)
 // OMP50: ret void
 
 // OMP45-LABEL:      parallel_single
@@ -322,7 +322,7 @@ void array_func(int n, int a[n], St s[2]) {
 // CHECK-NEXT: load i32*, i32** %
 // CHECK-NEXT: store i32* %
 // CHECK-LABEL: invoke void @_ZZN2SSC1ERiENKUlvE_clEv(
-// CHECK-SAME: [[CAP_TY]]* [[CAP]])
+// CHECK-SAME: [[CAP_TY]]* noundef [[CAP]])
 
 // CHECK: call void @__kmpc_end_single([[IDENT_T_TY]]* @{{.+}}, i32 %{{.+}})
 // CHECK: store i32 1, i32* [[DID_IT]],
@@ -384,7 +384,7 @@ void array_func(int n, int a[n], St s[2]) {
 // CHECK-NEXT: call void ([[IDENT_T_TY]]*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call([[IDENT_T_TY]]* @{{.+}}, i32 4, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, [[SS_TY]]*, i64, i64, i64)* [[SS_MICROTASK1:@.+]] to void
 // CHECK-NEXT: ret void
 
-// CHECK: define internal void [[COPY_FUNC]](i8* %0, i8* %1)
+// CHECK: define internal void [[COPY_FUNC]](i8* noundef %0, i8* noundef %1)
 // CHECK: ret void
 
 // CHECK: define internal void [[SS_MICROTASK1]](i32* {{[^,]+}}, i32* {{[^,]+}}, [[SS_TY]]* {{.+}}, i64 {{.+}}, i64 {{.+}}, i64 {{.+}})
@@ -440,7 +440,7 @@ void array_func(int n, int a[n], St s[2]) {
 // CHECK-NEXT: call void @__kmpc_copyprivate([[IDENT_T_TY]]* @{{.+}}, i32 %{{.+}}, i64 24, i8* %{{.+}}, void (i8*, i8*)* [[COPY_FUNC:@[^,]+]], i32 %{{.+}})
 // CHECK-NEXT:  ret void
 
-// CHECK: define internal void [[COPY_FUNC]](i8* %0, i8* %1)
+// CHECK: define internal void [[COPY_FUNC]](i8* noundef %0, i8* noundef %1)
 // CHECK: ret void
 
 // OMP45-LABEL: void @_ZN3SSTIdEC2Ev(
@@ -490,7 +490,7 @@ void array_func(int n, int a[n], St s[2]) {
 // OMP45-LABEL: call void @_ZZZN3SSTIdEC1EvENKUlvE_clEvENKUlvE_clEv(
 // OMP45-NEXT: ret void
 
-// OMP45: define internal void [[COPY_FUNC]](i8* %0, i8* %1)
+// OMP45: define internal void [[COPY_FUNC]](i8* noundef %0, i8* noundef %1)
 // OMP45: ret void
 
 // OMP45-LABEL: @_ZZZN3SSTIdEC1EvENKUlvE_clEvENKUlvE_clEv(

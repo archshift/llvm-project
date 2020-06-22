@@ -52,7 +52,7 @@ void foo();
 
 void expect_value_side_effects() {
 // ALL-LABEL: expect_value_side_effects
-// ALL: [[CALL:%.*]] = call i32 @y
+// ALL: [[CALL:%.*]] = call noundef i32 @y
 // O1:  [[SEXT:%.*]] = sext i32 [[CALL]] to i64
 // O1:  call i64 @llvm.expect.with.probability.i64(i64 {{%.*}}, i64 [[SEXT]], double 6.000000e-01)
 // O0-NOT: @llvm.expect.with.probability

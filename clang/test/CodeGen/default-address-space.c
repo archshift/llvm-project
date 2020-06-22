@@ -11,11 +11,11 @@ int ban[10];
 int *A;
 int *B;
 
-// CHECK-LABEL: define i32 @test1()
+// CHECK-LABEL: define noundef i32 @test1()
 // CHECK: load i32, i32* addrspacecast{{[^@]+}} @foo
 int test1() { return foo; }
 
-// CHECK-LABEL: define i32 @test2(i32 %i)
+// CHECK-LABEL: define noundef i32 @test2(i32 noundef %i)
 // CHECK: %[[addr:.*]] = getelementptr
 // CHECK: load i32, i32* %[[addr]]
 // CHECK-NEXT: ret i32
@@ -30,7 +30,7 @@ void test3() {
   *A = *B;
 }
 
-// CHECK-LABEL: define void @test4(i32* %a)
+// CHECK-LABEL: define void @test4(i32* noundef %a)
 // CHECK: %[[alloca:.*]] = alloca i32*, align 8, addrspace(5)
 // CHECK: %[[a_addr:.*]] = addrspacecast{{.*}} %[[alloca]] to i32**
 // CHECK: store i32* %a, i32** %[[a_addr]]

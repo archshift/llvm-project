@@ -21,7 +21,7 @@
 +(id)copy { return [super copy]; }  // BAD: class method in category
 @end
 
-// CHECK: define internal i8* @"\01+[Sub2(Category) copy]
+// CHECK: define internal noundef i8* @"\01+[Sub2(Category) copy]
 // CHECK: [[ONE:%.*]] = load %struct._class_t*, %struct._class_t** @"OBJC_CLASSLIST_SUP_REFS_$_.3"
 // CHECK: [[TWO:%.*]] = bitcast %struct._class_t* [[ONE]] to i8*
 // CHECK: [[THREE:%.*]] = getelementptr inbounds %struct._objc_super, %struct._objc_super* [[OBJC_SUPER:%.*]], i32 0, i32 1

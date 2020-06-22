@@ -25,7 +25,7 @@ int test(__s3 *arg) {
   return arg->a.b[2].c;
 }
 
-// CHECK: define dso_local i32 @test
+// CHECK: define dso_local noundef i32 @test
 // CHECK-NOT: call %struct.s2* @llvm.preserve.struct.access.index.p0s_struct.s2s.p0s_struct.s3s
 // CHECK: call %union.anon* @llvm.preserve.struct.access.index.p0s_union.anons.p0s_struct.s2s(%struct.s2* %{{[0-9a-z]+}}, i32 0, i32 0)
 // CHECK: call %union.anon* @llvm.preserve.union.access.index.p0s_union.anons.p0s_union.anons(%union.anon* %{{[0-9a-z]+}}, i32 0)

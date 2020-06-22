@@ -19,15 +19,15 @@
 void test_sqrt(double a1) {
   #pragma omp target
   {
-    // CHECK: call double @__nv_sqrt(double
+    // CHECK: call noundef double @__nv_sqrt(double
     double l1 = sqrt(a1);
-    // CHECK: call double @__nv_pow(double
+    // CHECK: call noundef double @__nv_pow(double
     double l2 = pow(a1, a1);
-    // CHECK: call double @__nv_modf(double
+    // CHECK: call noundef double @__nv_modf(double
     double l3 = modf(a1 + 3.5, &a1);
-    // CHECK: call double @__nv_fabs(double
+    // CHECK: call noundef double @__nv_fabs(double
     double l4 = fabs(a1);
-    // CHECK: call i32 @__nv_abs(i32
+    // CHECK: call noundef i32 @__nv_abs(i32
     double l5 = abs((int)a1);
   }
 }

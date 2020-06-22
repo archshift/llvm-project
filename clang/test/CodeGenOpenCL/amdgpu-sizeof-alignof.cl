@@ -30,7 +30,7 @@ typedef private void *private_ptr_t;
 void check(bool);
 
 void test() {
-  // CHECK-NOT: call void @check(i1 zeroext false)
+  // CHECK-NOT: call void @check(i1 frozen zeroext false)
   check(sizeof(size_t) == PTSIZE);
   check(__alignof__(size_t) == PTSIZE);
   check(sizeof(intptr_t) == PTSIZE);

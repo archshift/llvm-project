@@ -19,7 +19,7 @@ void test0(_Bool cond) {
   // CHECK-NEXT: store i1 false, i1* [[RELCOND]]
   // CHECK-NEXT: br i1 [[T1]],
   // CHECK:      br label
-  // CHECK:      [[CALL:%.*]] = call i8* @test0_helper()
+  // CHECK:      [[CALL:%.*]] = call noundef i8* @test0_helper()
   // CHECK-NEXT: store i8* [[CALL]], i8** [[RELVAL]]
   // CHECK-NEXT: store i1 true, i1* [[RELCOND]]
   // CHECK-NEXT: br label
@@ -72,7 +72,7 @@ void test1(int cond) {
   // CHECK-NEXT: store i8* [[T0]], i8** [[TEMP1]]
   // CHECK-NEXT: br label
   // CHECK:      [[W:%.*]] = phi i8* [ [[T0]], {{%.*}} ], [ undef, {{%.*}} ]
-  // CHECK-NEXT: call void @test1_sink(i8** [[T1]])
+  // CHECK-NEXT: call void @test1_sink(i8** noundef [[T1]])
   // CHECK-NEXT: [[T0:%.*]] = icmp eq i8** [[ARG]], null
   // CHECK-NEXT: br i1 [[T0]],
   // CHECK:      [[T0:%.*]] = load i8*, i8** [[TEMP1]]
@@ -95,7 +95,7 @@ void test1(int cond) {
   // CHECK-NEXT: store i1 true, i1* [[CONDCLEANUP]]
   // CHECK-NEXT: store i8* [[T0]], i8** [[TEMP2]]
   // CHECK-NEXT: br label
-  // CHECK:      call void @test1_sink(i8** [[T1]])
+  // CHECK:      call void @test1_sink(i8** noundef [[T1]])
   // CHECK-NEXT: [[T0:%.*]] = icmp eq i8** [[ARG]], null
   // CHECK-NEXT: br i1 [[T0]],
   // CHECK:      [[T0:%.*]] = load i8*, i8** [[TEMP2]]
@@ -131,7 +131,7 @@ void test2(int cond) {
   // CHECK-NEXT: store i1 false, i1* [[RUN_CLEANUP]]
   // CHECK-NEXT: br i1
   //   Within true branch, cleanup enabled.
-  // CHECK:      [[T0:%.*]] = call i8* @test2_producer()
+  // CHECK:      [[T0:%.*]] = call noundef i8* @test2_producer()
   // CHECK-NEXT: [[T1:%.*]] = notail call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T0]])
   // CHECK-NEXT: store i8* [[T1]], i8** [[CLEANUP_SAVE]]
   // CHECK-NEXT: store i1 true, i1* [[RUN_CLEANUP]]

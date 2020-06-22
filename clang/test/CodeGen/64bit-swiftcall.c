@@ -1,7 +1,7 @@
-// RUN: %clang_cc1 -triple x86_64-apple-darwin10 -target-cpu core2 -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -triple x86_64-apple-darwin10 -target-cpu core2 -emit-llvm -o - %s | FileCheck %s --check-prefix=X86-64
-// RUN: %clang_cc1 -triple arm64-apple-ios9 -target-cpu cyclone -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -triple arm64-apple-ios9 -target-cpu cyclone -emit-llvm -o - %s | FileCheck %s --check-prefix=ARM64
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-apple-darwin10 -target-cpu core2 -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-apple-darwin10 -target-cpu core2 -emit-llvm -o - %s | FileCheck %s --check-prefix=X86-64
+// RUN: %clang_cc1 -disable-noundef-args -triple arm64-apple-ios9 -target-cpu cyclone -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple arm64-apple-ios9 -target-cpu cyclone -emit-llvm -o - %s | FileCheck %s --check-prefix=ARM64
 
 // REQUIRES: aarch64-registered-target,x86-registered-target
 
@@ -398,7 +398,7 @@ TEST(int8)
 // CHECK-LABEL: define void @test_int8()
 // CHECK:   [[TMP1:%.*]] = alloca [[REC]], align
 // CHECK:   [[TMP2:%.*]] = alloca [[REC]], align
-// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] [[UAGG]] @return_int8()
+// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] noundef [[UAGG]] @return_int8()
 // CHECK:   [[CAST_TMP:%.*]] = bitcast [[REC]]* [[TMP1]] to [[AGG]]*
 // CHECK:   [[T0:%.*]] = getelementptr inbounds [[AGG]], [[AGG]]* [[CAST_TMP]], i32 0, i32 0
 // CHECK:   [[T1:%.*]] = extractvalue [[UAGG]] [[CALL]], 0
@@ -442,7 +442,7 @@ TEST(int5)
 // CHECK-LABEL: define void @test_int5()
 // CHECK:   [[TMP1:%.*]] = alloca [[REC]], align
 // CHECK:   [[TMP2:%.*]] = alloca [[REC]], align
-// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] [[UAGG]] @return_int5()
+// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] noundef [[UAGG]] @return_int5()
 // CHECK:   [[CAST_TMP:%.*]] = bitcast [[REC]]* [[TMP1]] to [[AGG]]*
 // CHECK:   [[T0:%.*]] = getelementptr inbounds [[AGG]], [[AGG]]* [[CAST_TMP]], i32 0, i32 0
 // CHECK:   [[T1:%.*]] = extractvalue [[UAGG]] [[CALL]], 0

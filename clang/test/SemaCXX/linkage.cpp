@@ -13,7 +13,7 @@ namespace test0 {
     void *foo() { return 0; }
   } A;
 
-  // CHECK: define linkonce_odr i8* @_ZN5test01A3fooEv(
+  // CHECK: define linkonce_odr noundef i8* @_ZN5test01A3fooEv(
 
   void test(A *a) {
     a->foo();
@@ -82,7 +82,7 @@ extern "C" {
 
         // Test both for mangling in the code generation and warnings from use
         // of internal, undefined names via -Werror.
-        // CHECK: call i32 @g(
+        // CHECK: call noundef i32 @g(
         // CHECK: load i32, i32* @a,
         return g() + a;
       }
@@ -94,8 +94,8 @@ extern "C" {
   }
 }
 
-// CHECK: define linkonce_odr i8* @_ZN5test11A3fooILj0EEEPvv(
-// CHECK: define linkonce_odr i8* @_ZN5test21A1BILj0EE3fooEv(
+// CHECK: define linkonce_odr noundef i8* @_ZN5test11A3fooILj0EEEPvv(
+// CHECK: define linkonce_odr noundef i8* @_ZN5test21A1BILj0EE3fooEv(
 
 namespace test5 {
   struct foo {

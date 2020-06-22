@@ -23,13 +23,13 @@ static char g_deferred[] = "hello";
 // CHECK-PROTECTED: @test4 = hidden global i32 10
 // CHECK-HIDDEN: @test4 = hidden global i32 10
 
-// CHECK-DEFAULT-LABEL: define i32 @f_def()
+// CHECK-DEFAULT-LABEL: define noundef i32 @f_def()
 // CHECK-DEFAULT: declare void @f_ext()
 // CHECK-DEFAULT-LABEL: define internal void @f_deferred()
-// CHECK-PROTECTED-LABEL: define protected i32 @f_def()
+// CHECK-PROTECTED-LABEL: define protected noundef i32 @f_def()
 // CHECK-PROTECTED: declare void @f_ext()
 // CHECK-PROTECTED-LABEL: define internal void @f_deferred()
-// CHECK-HIDDEN-LABEL: define hidden i32 @f_def()
+// CHECK-HIDDEN-LABEL: define hidden noundef i32 @f_def()
 // CHECK-HIDDEN: declare void @f_ext()
 // CHECK-HIDDEN-LABEL: define internal void @f_deferred()
 

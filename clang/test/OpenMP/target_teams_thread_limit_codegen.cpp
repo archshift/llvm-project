@@ -138,7 +138,7 @@ int bar(int n){
 
 
 //
-// CHECK: define {{.*}}[[FS1]]([[S1]]* {{%.+}}, i32 {{[^%]*}}[[PARM:%.+]])
+// CHECK: define {{.*}}[[FS1]]([[S1]]* noundef {{%.+}}, i32 {{[^%]*}}[[PARM:%.+]])
 //
 // CHECK-DAG:   store i32 [[PARM]], i32* [[N_ADDR:%.+]], align
 // CHECK:       store i32 1, i32* [[B:%.+]], align
@@ -280,7 +280,7 @@ int bar(int n){
 // Check that the offloading functions are emitted and that the parallel function
 // is appropriately guarded.
 
-// CHECK:       define internal void [[HVT1]]([[S1]]* {{%.+}}, i[[SZ]] [[PARM1:%.+]], i[[SZ]] [[PARM2:%.+]])
+// CHECK:       define internal void [[HVT1]]([[S1]]* noundef {{%.+}}, i[[SZ]] noundef [[PARM1:%.+]], i[[SZ]] noundef [[PARM2:%.+]])
 // CHECK-DAG:   store i[[SZ]] [[PARM2]], i[[SZ]]* [[CAPE_ADDR:%.+]], align
 // CHECK-64:    [[CONV:%.+]] = bitcast i[[SZ]]* [[CAPE_ADDR]] to i32*
 // CHECK-64:    [[TL:%.+]] = load i32, i32* [[CONV]], align
@@ -290,13 +290,13 @@ int bar(int n){
 //
 //
 
-// CHECK:       define internal void [[HVT2]]([[S1]]* {{%.+}})
+// CHECK:       define internal void [[HVT2]]([[S1]]* noundef {{%.+}})
 // CHECK:       call void @__kmpc_push_num_teams(%struct.ident_t* {{[^,]+}}, i32 {{[^,]+}}, i32 0, i32 1024)
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 1,
 //
 //
 
-// CHECK:       define internal void [[HVT3]](i[[SZ]] [[PARM1:%.+]], i[[SZ]] [[PARM2:%.+]])
+// CHECK:       define internal void [[HVT3]](i[[SZ]] noundef [[PARM1:%.+]], i[[SZ]] noundef [[PARM2:%.+]])
 // CHECK-DAG:   store i[[SZ]] [[PARM1]], i[[SZ]]* [[CAPE_ADDR1:%.+]], align
 // CHECK-DAG:   store i[[SZ]] [[PARM2]], i[[SZ]]* [[CAPE_ADDR2:%.+]], align
 // CHECK-64:    [[CONV1:%.+]] = bitcast i[[SZ]]* [[CAPE_ADDR1]] to i32*
@@ -309,7 +309,7 @@ int bar(int n){
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 0,
 //
 //
-// CHECK:       define internal void [[HVT4]](i[[SZ]] [[PARM:%.+]])
+// CHECK:       define internal void [[HVT4]](i[[SZ]] noundef [[PARM:%.+]])
 // CHECK-DAG:   store i[[SZ]] [[PARM]], i[[SZ]]* [[CAPE_ADDR:%.+]], align
 // CHECK-64:    [[CONV:%.+]] = bitcast i[[SZ]]* [[CAPE_ADDR]] to i32*
 // CHECK-64:    [[TL:%.+]] = load i32, i32* [[CONV]], align
@@ -325,7 +325,7 @@ int bar(int n){
 //
 //
 
-// CHECK:       define internal void [[HVT6]](i[[SZ]] [[PARM1:%.+]], i[[SZ]] [[PARM2:%.+]], i[[SZ]] [[PARM3:%.+]])
+// CHECK:       define internal void [[HVT6]](i[[SZ]] noundef [[PARM1:%.+]], i[[SZ]] noundef [[PARM2:%.+]], i[[SZ]] noundef [[PARM3:%.+]])
 // CHECK-DAG:   store i[[SZ]] [[PARM3]], i[[SZ]]* [[CAPE_ADDR:%.+]], align
 // CHECK:       [[CONV:%.+]] = bitcast i[[SZ]]* [[CAPE_ADDR]] to i16*
 // CHECK:       [[T:%.+]] = load i16, i16* [[CONV]], align

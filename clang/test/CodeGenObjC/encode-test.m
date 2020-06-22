@@ -186,7 +186,7 @@ size_t strlen(const char *s);
 
 // CHECK-LABEL: @test_strlen(
 // CHECK: %[[i:.*]] = alloca i32
-// CHECK: %[[call:.*]] = call i32 @strlen
+// CHECK: %[[call:.*]] = call noundef i32 @strlen
 // CHECK: store i32 %[[call]], i32* %[[i]]
 void test_strlen() {
   const char array[] = @encode(int);

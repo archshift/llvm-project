@@ -2,7 +2,7 @@
 
 // Test that Attr.Const from OpenCLBuiltins.td is lowered to a readnone attribute.
 // CHECK-LABEL: @test_const_attr
-// CHECK: call i32 @_Z3maxii({{.*}}) [[ATTR_CONST:#[0-9]]]
+// CHECK: call noundef i32 @_Z3maxii({{.*}}) [[ATTR_CONST:#[0-9]]]
 // CHECK: ret
 int test_const_attr(int a) {
   return max(a, 2);
@@ -10,7 +10,7 @@ int test_const_attr(int a) {
 
 // Test that Attr.Pure from OpenCLBuiltins.td is lowered to a readonly attribute.
 // CHECK-LABEL: @test_pure_attr
-// CHECK: call <4 x float> @_Z11read_imagef{{.*}} [[ATTR_PURE:#[0-9]]]
+// CHECK: call noundef <4 x float> @_Z11read_imagef{{.*}} [[ATTR_PURE:#[0-9]]]
 // CHECK: ret
 kernel void test_pure_attr(read_only image1d_t img) {
   float4 resf = read_imagef(img, 42);
@@ -18,7 +18,7 @@ kernel void test_pure_attr(read_only image1d_t img) {
 
 // Test that builtins with only one prototype are mangled.
 // CHECK-LABEL: @test_mangling
-// CHECK: call i32 @_Z12get_local_idj
+// CHECK: call noundef i32 @_Z12get_local_idj
 kernel void test_mangling() {
   size_t lid = get_local_id(0);
 }

@@ -2,7 +2,7 @@
 
 #include <immintrin.h>
 
-// CHECK-LABEL: define i64 @test_mm512_reduce_max_epi64(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_reduce_max_epi64(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I7_I:%.*]] = alloca <8 x i64>, align 64
 // CHECK-NEXT:    [[__B_ADDR_I8_I:%.*]] = alloca <8 x i64>, align 64
@@ -67,7 +67,7 @@ long long test_mm512_reduce_max_epi64(__m512i __W){
   return _mm512_reduce_max_epi64(__W);
 }
 
-// CHECK-LABEL: define i64 @test_mm512_reduce_max_epu64(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_reduce_max_epu64(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I7_I:%.*]] = alloca <8 x i64>, align 64
 // CHECK-NEXT:    [[__B_ADDR_I8_I:%.*]] = alloca <8 x i64>, align 64
@@ -132,7 +132,7 @@ unsigned long long test_mm512_reduce_max_epu64(__m512i __W){
   return _mm512_reduce_max_epu64(__W); 
 }
 
-// CHECK-LABEL: define double @test_mm512_reduce_max_pd(<8 x double> %__W) #0 {
+// CHECK-LABEL: define noundef double @test_mm512_reduce_max_pd(<8 x double> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I8_I:%.*]] = alloca <2 x double>, align 16
 // CHECK-NEXT:    [[__B_ADDR_I9_I:%.*]] = alloca <2 x double>, align 16
@@ -200,7 +200,7 @@ double test_mm512_reduce_max_pd(__m512d __W){
   return _mm512_reduce_max_pd(__W); 
 }
 
-// CHECK-LABEL: define i64 @test_mm512_reduce_min_epi64(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_reduce_min_epi64(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I7_I:%.*]] = alloca <8 x i64>, align 64
 // CHECK-NEXT:    [[__B_ADDR_I8_I:%.*]] = alloca <8 x i64>, align 64
@@ -265,7 +265,7 @@ long long test_mm512_reduce_min_epi64(__m512i __W){
   return _mm512_reduce_min_epi64(__W);
 }
 
-// CHECK-LABEL: define i64 @test_mm512_reduce_min_epu64(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_reduce_min_epu64(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I7_I:%.*]] = alloca <8 x i64>, align 64
 // CHECK-NEXT:    [[__B_ADDR_I8_I:%.*]] = alloca <8 x i64>, align 64
@@ -330,7 +330,7 @@ unsigned long long test_mm512_reduce_min_epu64(__m512i __W){
   return _mm512_reduce_min_epu64(__W);
 }
 
-// CHECK-LABEL: define double @test_mm512_reduce_min_pd(<8 x double> %__W) #0 {
+// CHECK-LABEL: define noundef double @test_mm512_reduce_min_pd(<8 x double> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I8_I:%.*]] = alloca <2 x double>, align 16
 // CHECK-NEXT:    [[__B_ADDR_I9_I:%.*]] = alloca <2 x double>, align 16
@@ -398,7 +398,7 @@ double test_mm512_reduce_min_pd(__m512d __W){
   return _mm512_reduce_min_pd(__W); 
 }
 
-// CHECK-LABEL: define i64 @test_mm512_mask_reduce_max_epi64(i8 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_mask_reduce_max_epi64(i8 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__D_ADDR_I_I:%.*]] = alloca i64, align 8
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <8 x i64>, align 64
@@ -503,7 +503,7 @@ long long test_mm512_mask_reduce_max_epi64(__mmask8 __M, __m512i __W){
   return _mm512_mask_reduce_max_epi64(__M, __W); 
 }
 
-// CHECK-LABEL: define i64 @test_mm512_mask_reduce_max_epu64(i8 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_mask_reduce_max_epu64(i8 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I_I:%.*]] = alloca <8 x i64>, align 64
 // CHECK-NEXT:    [[__U_ADDR_I_I:%.*]] = alloca i8, align 1
@@ -587,7 +587,7 @@ unsigned long test_mm512_mask_reduce_max_epu64(__mmask8 __M, __m512i __W){
   return _mm512_mask_reduce_max_epu64(__M, __W); 
 }
 
-// CHECK-LABEL: define double @test_mm512_mask_reduce_max_pd(i8 zeroext %__M, <8 x double> %__W) #0 {
+// CHECK-LABEL: define noundef double @test_mm512_mask_reduce_max_pd(i8 noundef zeroext %__M, <8 x double> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__W_ADDR_I_I:%.*]] = alloca double, align 8
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <8 x double>, align 64
@@ -695,7 +695,7 @@ double test_mm512_mask_reduce_max_pd(__mmask8 __M, __m512d __W){
   return _mm512_mask_reduce_max_pd(__M, __W); 
 }
 
-// CHECK-LABEL: define i64 @test_mm512_mask_reduce_min_epi64(i8 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_mask_reduce_min_epi64(i8 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__D_ADDR_I_I:%.*]] = alloca i64, align 8
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <8 x i64>, align 64
@@ -800,7 +800,7 @@ long long test_mm512_mask_reduce_min_epi64(__mmask8 __M, __m512i __W){
   return _mm512_mask_reduce_min_epi64(__M, __W); 
 }
 
-// CHECK-LABEL: define i64 @test_mm512_mask_reduce_min_epu64(i8 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i64 @test_mm512_mask_reduce_min_epu64(i8 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__D_ADDR_I_I:%.*]] = alloca i64, align 8
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <8 x i64>, align 64
@@ -905,7 +905,7 @@ long long test_mm512_mask_reduce_min_epu64(__mmask8 __M, __m512i __W){
   return _mm512_mask_reduce_min_epu64(__M, __W);
 }
 
-// CHECK-LABEL: define double @test_mm512_mask_reduce_min_pd(i8 zeroext %__M, <8 x double> %__W) #0 {
+// CHECK-LABEL: define noundef double @test_mm512_mask_reduce_min_pd(i8 noundef zeroext %__M, <8 x double> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__W_ADDR_I_I:%.*]] = alloca double, align 8
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <8 x double>, align 64
@@ -1013,7 +1013,7 @@ double test_mm512_mask_reduce_min_pd(__mmask8 __M, __m512d __W){
   return _mm512_mask_reduce_min_pd(__M, __W); 
 }
 
-// CHECK-LABEL: define i32 @test_mm512_reduce_max_epi32(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_reduce_max_epi32(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__V1_ADDR_I12_I:%.*]] = alloca <2 x i64>, align 16
 // CHECK-NEXT:    [[__V2_ADDR_I13_I:%.*]] = alloca <2 x i64>, align 16
@@ -1120,7 +1120,7 @@ int test_mm512_reduce_max_epi32(__m512i __W){
   return _mm512_reduce_max_epi32(__W);
 }
 
-// CHECK-LABEL: define i32 @test_mm512_reduce_max_epu32(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_reduce_max_epu32(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__V1_ADDR_I12_I:%.*]] = alloca <2 x i64>, align 16
 // CHECK-NEXT:    [[__V2_ADDR_I13_I:%.*]] = alloca <2 x i64>, align 16
@@ -1227,7 +1227,7 @@ unsigned int test_mm512_reduce_max_epu32(__m512i __W){
   return _mm512_reduce_max_epu32(__W); 
 }
 
-// CHECK-LABEL: define float @test_mm512_reduce_max_ps(<16 x float> %__W) #0 {
+// CHECK-LABEL: define noundef float @test_mm512_reduce_max_ps(<16 x float> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I12_I:%.*]] = alloca <4 x float>, align 16
 // CHECK-NEXT:    [[__B_ADDR_I13_I:%.*]] = alloca <4 x float>, align 16
@@ -1315,7 +1315,7 @@ float test_mm512_reduce_max_ps(__m512 __W){
   return _mm512_reduce_max_ps(__W); 
 }
 
-// CHECK-LABEL: define i32 @test_mm512_reduce_min_epi32(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_reduce_min_epi32(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__V1_ADDR_I12_I:%.*]] = alloca <2 x i64>, align 16
 // CHECK-NEXT:    [[__V2_ADDR_I13_I:%.*]] = alloca <2 x i64>, align 16
@@ -1422,7 +1422,7 @@ int test_mm512_reduce_min_epi32(__m512i __W){
   return _mm512_reduce_min_epi32(__W);
 }
 
-// CHECK-LABEL: define i32 @test_mm512_reduce_min_epu32(<8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_reduce_min_epu32(<8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__V1_ADDR_I12_I:%.*]] = alloca <2 x i64>, align 16
 // CHECK-NEXT:    [[__V2_ADDR_I13_I:%.*]] = alloca <2 x i64>, align 16
@@ -1529,7 +1529,7 @@ unsigned int test_mm512_reduce_min_epu32(__m512i __W){
   return _mm512_reduce_min_epu32(__W); 
 }
 
-// CHECK-LABEL: define float @test_mm512_reduce_min_ps(<16 x float> %__W) #0 {
+// CHECK-LABEL: define noundef float @test_mm512_reduce_min_ps(<16 x float> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__A_ADDR_I12_I:%.*]] = alloca <4 x float>, align 16
 // CHECK-NEXT:    [[__B_ADDR_I13_I:%.*]] = alloca <4 x float>, align 16
@@ -1617,7 +1617,7 @@ float test_mm512_reduce_min_ps(__m512 __W){
   return _mm512_reduce_min_ps(__W); 
 }
 
-// CHECK-LABEL: define i32 @test_mm512_mask_reduce_max_epi32(i16 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_mask_reduce_max_epi32(i16 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__S_ADDR_I_I:%.*]] = alloca i32, align 4
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <16 x i32>, align 64
@@ -1784,7 +1784,7 @@ int test_mm512_mask_reduce_max_epi32(__mmask16 __M, __m512i __W){
   return _mm512_mask_reduce_max_epi32(__M, __W); 
 }
 
-// CHECK-LABEL: define i32 @test_mm512_mask_reduce_max_epu32(i16 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_mask_reduce_max_epu32(i16 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I_I:%.*]] = alloca <8 x i64>, align 64
 // CHECK-NEXT:    [[__U_ADDR_I_I:%.*]] = alloca i16, align 2
@@ -1913,7 +1913,7 @@ unsigned int test_mm512_mask_reduce_max_epu32(__mmask16 __M, __m512i __W){
   return _mm512_mask_reduce_max_epu32(__M, __W); 
 }
 
-// CHECK-LABEL: define float @test_mm512_mask_reduce_max_ps(i16 zeroext %__M, <16 x float> %__W) #0 {
+// CHECK-LABEL: define noundef float @test_mm512_mask_reduce_max_ps(i16 noundef zeroext %__M, <16 x float> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__W_ADDR_I_I:%.*]] = alloca float, align 4
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <16 x float>, align 64
@@ -2057,7 +2057,7 @@ float test_mm512_mask_reduce_max_ps(__mmask16 __M, __m512 __W){
   return _mm512_mask_reduce_max_ps(__M, __W); 
 }
 
-// CHECK-LABEL: define i32 @test_mm512_mask_reduce_min_epi32(i16 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_mask_reduce_min_epi32(i16 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__S_ADDR_I_I:%.*]] = alloca i32, align 4
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <16 x i32>, align 64
@@ -2224,7 +2224,7 @@ int test_mm512_mask_reduce_min_epi32(__mmask16 __M, __m512i __W){
   return _mm512_mask_reduce_min_epi32(__M, __W); 
 }
 
-// CHECK-LABEL: define i32 @test_mm512_mask_reduce_min_epu32(i16 zeroext %__M, <8 x i64> %__W) #0 {
+// CHECK-LABEL: define noundef i32 @test_mm512_mask_reduce_min_epu32(i16 noundef zeroext %__M, <8 x i64> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__S_ADDR_I_I:%.*]] = alloca i32, align 4
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <16 x i32>, align 64
@@ -2391,7 +2391,7 @@ unsigned int test_mm512_mask_reduce_min_epu32(__mmask16 __M, __m512i __W){
   return _mm512_mask_reduce_min_epu32(__M, __W); 
 }
 
-// CHECK-LABEL: define float @test_mm512_mask_reduce_min_ps(i16 zeroext %__M, <16 x float> %__W) #0 {
+// CHECK-LABEL: define noundef float @test_mm512_mask_reduce_min_ps(i16 noundef zeroext %__M, <16 x float> noundef %__W) #0 {
 // CHECK-NEXT:  entry:
 // CHECK-NEXT:    [[__W_ADDR_I_I:%.*]] = alloca float, align 4
 // CHECK-NEXT:    [[DOTCOMPOUNDLITERAL_I_I:%.*]] = alloca <16 x float>, align 64

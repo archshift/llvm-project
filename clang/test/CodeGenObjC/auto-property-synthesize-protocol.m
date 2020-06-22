@@ -26,12 +26,12 @@
 @implementation I1 // expected-warning {{auto property synthesis will not synthesize property declared in a protocol}}
 @end
 
-// CHECK: define internal i32 @"\01-[I auto_opt_window]"(
+// CHECK: define internal noundef i32 @"\01-[I auto_opt_window]"(
 // CHECK: define internal void @"\01-[I setAuto_opt_window:]"(
-// CHECK: define internal i32 @"\01-[I1 auto_req_window]"(
+// CHECK: define internal noundef i32 @"\01-[I1 auto_req_window]"(
 // CHECK: define internal void @"\01-[I1 setAuto_req_window:]"(
 
-// CHECK-NOT: define internal i32 @"\01-[I1 no_auto_opt_window]"(
+// CHECK-NOT: define internal noundef i32 @"\01-[I1 no_auto_opt_window]"(
 // CHECK-NOT: define internal void @"\01-[I1 setNo_auto_opt_window:]"(
-// CHECK-NOT: define internal i32 @"\01-[I no_auto_req_window]"(
+// CHECK-NOT: define internal noundef i32 @"\01-[I no_auto_req_window]"(
 // CHECK-NOT: define internal void @"\01-[I setNo_auto_req_window:]"(

@@ -16,7 +16,7 @@ int main() {
 
 // Check that clang emits the location of the call site and not the inlined
 // function in the debug info.
-// CHECK: define dso_local i32 @main()
+// CHECK: define dso_local noundef i32 @main()
 // CHECK: %{{.+}} = load i32, i32* @x, align 4, !dbg [[DbgLoc:![0-9]+]]
 
 // Check that the no-inline-line-tables attribute is added.

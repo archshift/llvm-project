@@ -6,8 +6,8 @@ typedef int __attribute__((pcs("aapcs-vfp"))) (*aapcs_vfp_fn)(void);
 aapcs_fn bar;
 
 int foo(aapcs_vfp_fn baz) {
-// CHECK-LABEL: define i32 @foo
-// CHECK: call arm_aapcscc
-// CHECK: call arm_aapcs_vfpcc
+// CHECK-LABEL: define noundef i32 @foo
+// CHECK: call arm_aapcscc noundef
+// CHECK: call arm_aapcs_vfpcc noundef
   return bar() + baz();
 }

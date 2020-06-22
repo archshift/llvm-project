@@ -26,7 +26,7 @@ void test_assign() {
 }
 // CHECK-LABEL:        define void @test_assign()
 // CHECK:                [[X:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A:.*]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A:.*]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = call i8* @llvm.objc.unsafeClaimAutoreleasedReturnValue(i8* [[T1]])
@@ -38,7 +38,7 @@ void test_assign() {
 // CHECK-NEXT:           ret void
 
 // DISABLED-LABEL:     define void @test_assign()
-// DISABLED:             [[T0:%.*]] = call [[A:.*]]* @makeA()
+// DISABLED:             [[T0:%.*]] = call noundef [[A:.*]]* @makeA()
 // DISABLED-MARKED-NEXT: call void asm sideeffect
 // DISABLED-NEXT:        [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // DISABLED-NEXT:        [[T2:%.*]] = {{.*}}call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T1]])
@@ -50,7 +50,7 @@ void test_assign_assign() {
 // CHECK-LABEL:        define void @test_assign_assign()
 // CHECK:                [[X:%.*]] = alloca i8*
 // CHECK:                [[Y:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = call i8* @llvm.objc.unsafeClaimAutoreleasedReturnValue(i8* [[T1]])
@@ -72,7 +72,7 @@ void test_strong_assign_assign() {
 // CHECK-LABEL:        define void @test_strong_assign_assign()
 // CHECK:                [[X:%.*]] = alloca i8*
 // CHECK:                [[Y:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = {{.*}}call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T1]])
@@ -99,7 +99,7 @@ void test_assign_strong_assign() {
 // CHECK-LABEL:        define void @test_assign_strong_assign()
 // CHECK:                [[X:%.*]] = alloca i8*
 // CHECK:                [[Y:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = {{.*}}call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T1]])
@@ -123,7 +123,7 @@ void test_init() {
 }
 // CHECK-LABEL:        define void @test_init()
 // CHECK:                [[X:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = call i8* @llvm.objc.unsafeClaimAutoreleasedReturnValue(i8* [[T1]])
@@ -141,7 +141,7 @@ void test_init_assignment() {
 // CHECK-LABEL:        define void @test_init_assignment()
 // CHECK:                [[X:%.*]] = alloca i8*
 // CHECK:                [[Y:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = call i8* @llvm.objc.unsafeClaimAutoreleasedReturnValue(i8* [[T1]])
@@ -162,7 +162,7 @@ void test_strong_init_assignment() {
 // CHECK-LABEL:        define void @test_strong_init_assignment()
 // CHECK:                [[X:%.*]] = alloca i8*
 // CHECK:                [[Y:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = {{.*}}call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T1]])
@@ -186,7 +186,7 @@ void test_init_strong_assignment() {
 // CHECK-LABEL:        define void @test_init_strong_assignment()
 // CHECK:                [[X:%.*]] = alloca i8*
 // CHECK:                [[Y:%.*]] = alloca i8*
-// CHECK:                [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:                [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT:    call void asm sideeffect
 // CHECK-NEXT:           [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:           [[T2:%.*]] = {{.*}}call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T1]])
@@ -209,7 +209,7 @@ void test_ignored() {
   makeA();
 }
 // CHECK-LABEL:     define void @test_ignored()
-// CHECK:             [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:             [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT: call void asm sideeffect
 // CHECK-NEXT:        [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:        [[T2:%.*]] = call i8* @llvm.objc.unsafeClaimAutoreleasedReturnValue(i8* [[T1]])
@@ -220,7 +220,7 @@ void test_cast_to_void() {
   (void) makeA();
 }
 // CHECK-LABEL:     define void @test_cast_to_void()
-// CHECK:             [[T0:%.*]] = call [[A]]* @makeA()
+// CHECK:             [[T0:%.*]] = call noundef [[A]]* @makeA()
 // CHECK-MARKED-NEXT: call void asm sideeffect
 // CHECK-NEXT:        [[T1:%.*]] = bitcast [[A]]* [[T0]] to i8*
 // CHECK-NEXT:        [[T2:%.*]] = call i8* @llvm.objc.unsafeClaimAutoreleasedReturnValue(i8* [[T1]])

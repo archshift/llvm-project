@@ -4,7 +4,7 @@
 // If both the annotation and the attribute are present, prefer the attribute,
 // since it actually affects IRGen.
 
-// CHECK-LABEL: define nonnull i32* @f1
+// CHECK-LABEL: define noundef nonnull i32* @f1
 __attribute__((returns_nonnull)) int *_Nonnull f1(int *_Nonnull p) {
   // CHECK: entry:
   // CHECK-NEXT: [[SLOC_PTR:%.*]] = alloca i8*
@@ -41,7 +41,7 @@ void call_f2() {
 }
 
 // If the return value isn't meant to be checked, make sure we don't check it.
-// CHECK-LABEL: define i32* @f3
+// CHECK-LABEL: define noundef i32* @f3
 int *f3(int *p) {
   // CHECK-NOT: return.sloc
   // CHECK-NOT: call{{.*}}ubsan
@@ -51,7 +51,7 @@ int *f3(int *p) {
 // Check for a valid "return" source location, even when there is no return
 // statement, to avoid accidentally calling the runtime.
 
-// CHECK-LABEL: define nonnull i32* @f4
+// CHECK-LABEL: define noundef nonnull i32* @f4
 __attribute__((returns_nonnull)) int *f4() {
   // CHECK: store i8* null, i8** [[SLOC_PTR:%.*]]
   // CHECK: [[SLOC:%.*]] = load {{.*}} [[SLOC_PTR]]

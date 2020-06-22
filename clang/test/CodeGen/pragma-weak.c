@@ -140,7 +140,7 @@ __attribute((pure,noinline,const)) void __xxx(void) { }
 void SHA512Pad(void *context) {}
 #pragma weak SHA384Pad = SHA512Pad
 void PR10878() { SHA384Pad(0); }
-// CHECK: call void @SHA384Pad(i8* null)
+// CHECK: call void @SHA384Pad(i8* noundef null)
 
 
 // PR14046: Parse #pragma weak in function-local context
@@ -149,7 +149,7 @@ void PR14046f() {
 #pragma weak PR14046e
   PR14046e();
 }
-// CHECK: declare extern_weak i32 @PR14046e()
+// CHECK: declare extern_weak noundef i32 @PR14046e()
 
 // Parse #pragma weak after a label or case statement
 extern int PR16705a(void);
@@ -169,9 +169,9 @@ label:
   PR16705c();
 }
 
-// CHECK: declare extern_weak i32 @PR16705a()
-// CHECK: declare extern_weak i32 @PR16705b()
-// CHECK: declare extern_weak i32 @PR16705c()
+// CHECK: declare extern_weak noundef i32 @PR16705a()
+// CHECK: declare extern_weak noundef i32 @PR16705b()
+// CHECK: declare extern_weak noundef i32 @PR16705c()
 
 
 ///////////// TODO: stuff that still doesn't work

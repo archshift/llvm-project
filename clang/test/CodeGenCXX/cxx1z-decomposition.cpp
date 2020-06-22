@@ -50,11 +50,11 @@ auto [e1, e2] = make<E>();
 
 // CHECK: @_Z4makeI1BERT_v()
 //   CHECK: call i32 @_Z3getILi0EEDa1B()
-//   CHECK: call void @_ZN1XC1E1Y({{.*}}* @_ZGR2b1_, i32
+//   CHECK: call void @_ZN1XC1E1Y({{.*}}* noundef @_ZGR2b1_, i32
 //   CHECK: call i32 @__cxa_atexit({{.*}}@_ZN1XD1Ev{{.*}}@_ZGR2b1_
 //   CHECK: store {{.*}}* @_ZGR2b1_,
 //
-//   CHECK: call double @_Z3getILi1EEDa1B()
+//   CHECK: call noundef double @_Z3getILi1EEDa1B()
 //   CHECK: fptosi double %{{.*}} to i32
 //   CHECK: store i32 %{{.*}}, i32* @_ZGR2b2_
 //   CHECK: store i32* @_ZGR2b2_, i32** @b2
@@ -69,7 +69,7 @@ auto [e1, e2] = make<E>();
 // CHECK: store i32 %{{.*}}, i32* getelementptr inbounds ({ i32, i32 }, { i32, i32 }* @_ZDC2e12e2E, i32 0, i32 0)
 // CHECK: store i32 %{{.*}}, i32* getelementptr inbounds ({ i32, i32 }, { i32, i32 }* @_ZDC2e12e2E, i32 0, i32 1)
 
-// CHECK: define i32 @_Z12test_globalsv()
+// CHECK: define noundef i32 @_Z12test_globalsv()
 int test_globals() {
   return a2 + b2 + c2 + d2 + e2;
   // CHECK: load i8, i8* getelementptr inbounds (%struct.A, %struct.A* @_ZDC2a12a2E, i32 0, i32 1)
@@ -87,15 +87,15 @@ int test_globals() {
   // CHECK: load i32, i32* getelementptr inbounds ({ i32, i32 }, { i32, i32 }* @_ZDC2e12e2E, i32 0, i32 1)
 }
 
-// CHECK: define i32 @_Z11test_localsv()
+// CHECK: define noundef i32 @_Z11test_localsv()
 int test_locals() {
   auto [b1, b2] = make<B>();
 
   // CHECK: @_Z4makeI1BERT_v()
   //   CHECK: call i32 @_Z3getILi0EEDa1B()
-  //   CHECK: call void @_ZN1XC1E1Y({{.*}}* %[[b1:.*]], i32
+  //   CHECK: call void @_ZN1XC1E1Y({{.*}}* noundef %[[b1:.*]], i32
   //
-  //   CHECK: call double @_Z3getILi1EEDa1B()
+  //   CHECK: call noundef double @_Z3getILi1EEDa1B()
   //   CHECK: %[[cvt:.*]] = fptosi double %{{.*}} to i32
   //   CHECK: store i32 %[[cvt]], i32* %[[b2:.*]],
   //   CHECK: store i32* %[[b2]], i32** %[[b2ref:.*]],
@@ -149,7 +149,7 @@ int test_static_tuple() {
   // CHECK: br i1
   // CHECK: @__cxa_guard_acquire({{.*}} @_ZGVZ17test_static_tuplevE2x1)
   // CHECK: call {{.*}} @_Z3getILi0EEDa1B(
-  // CHECK: call {{.*}} @_ZN1XC1E1Y({{.*}} @_ZGRZ17test_static_tuplevE2x1_,
+  // CHECK: call {{.*}} @_ZN1XC1E1Y({{.*}} @_ZGRZ17test_static_tuplevE2x1_
   // CHECK: call {{.*}} @__cxa_atexit({{.*}} @_ZN1XD1Ev {{.*}} @_ZGRZ17test_static_tuplevE2x1_
   // CHECK: store {{.*}} @_ZGRZ17test_static_tuplevE2x1_, {{.*}} @_ZZ17test_static_tuplevE2x1
   // CHECK: call void @__cxa_guard_release({{.*}} @_ZGVZ17test_static_tuplevE2x1)

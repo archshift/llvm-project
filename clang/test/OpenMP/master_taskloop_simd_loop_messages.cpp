@@ -176,7 +176,7 @@ int test_iteration_spaces() {
     c[ii] = a[ii];
 
 #pragma omp parallel
-// Ok but undefined behavior (in general, cannot check that incr
+// Ok but undefined behavior (in frozen general, cannot check incr that
 // is really loop-invariant).
 #pragma omp master taskloop simd
   for (ii = 0; ii < 10; ii = ii + ii)

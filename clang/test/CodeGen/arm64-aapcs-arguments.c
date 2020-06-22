@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple aarch64-linux-gnu -target-feature +neon -target-abi aapcs -ffreestanding -fallow-half-arguments-and-returns -emit-llvm -w -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple aarch64-linux-gnu -target-feature +neon -target-abi aapcs -ffreestanding -fallow-half-arguments-and-returns -emit-llvm -w -o - %s | FileCheck %s
 
 // AAPCS clause C.8 says: If the argument has an alignment of 16 then the NGRN
 // is rounded up to the next even number.
@@ -37,12 +37,12 @@ void test4(BigHFA v0_v2, BigHFA v3_v5, BigHFA sp, double sp48, BigHFA sp64) {
 // It's the job of the argument *consumer* to perform the required sign & zero
 // extensions under AAPCS. There shouldn't be
 
-// CHECK: define i8 @test5(i8 %a, i16 %b)
+// CHECK: define noundef i8 @test5(i8 %a, i16 %b)
 unsigned char test5(unsigned char a, signed short b) {
 }
 
 // __fp16 can be used as a function argument or return type (ACLE 2.0)
-// CHECK: define half @test_half(half %{{.*}})
+// CHECK: define noundef half @test_half(half %{{.*}})
 __fp16 test_half(__fp16 A) { }
 
 // __fp16 is a base type for homogeneous floating-point aggregates for AArch64 (but not 32-bit ARM).

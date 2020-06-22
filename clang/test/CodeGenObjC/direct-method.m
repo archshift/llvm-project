@@ -17,12 +17,12 @@ __attribute__((objc_root_class))
 @end
 
 @implementation Root
-// CHECK-LABEL: define hidden i32 @"\01-[Root intProperty2]"
+// CHECK-LABEL: define hidden noundef i32 @"\01-[Root intProperty2]"
 - (int)intProperty2 {
   return 42;
 }
 
-// CHECK-LABEL: define hidden i32 @"\01-[Root getInt]"(
+// CHECK-LABEL: define hidden noundef i32 @"\01-[Root getInt]"(
 - (int)getInt __attribute__((objc_direct)) {
   // loading parameters
   // CHECK-LABEL: entry:
@@ -55,7 +55,7 @@ __attribute__((objc_root_class))
   return 42;
 }
 
-// CHECK-LABEL: define hidden i32 @"\01+[Root classGetInt]"(
+// CHECK-LABEL: define hidden noundef i32 @"\01+[Root classGetInt]"(
 + (int)classGetInt __attribute__((objc_direct)) {
   // loading parameters
   // CHECK-LABEL: entry:
@@ -160,7 +160,7 @@ __attribute__((objc_root_class))
 }
 
 @end
-// CHECK-LABEL: define hidden i32 @"\01-[Root intProperty]"
+// CHECK-LABEL: define hidden noundef i32 @"\01-[Root intProperty]"
 
 @interface Foo : Root {
   id __strong _cause_cxx_destruct;
@@ -181,43 +181,43 @@ __attribute__((objc_root_class))
 
 __attribute__((objc_direct_members))
 @implementation Foo
-// CHECK-LABEL: define hidden i32 @"\01-[Foo directMethodInExtension]"(
+// CHECK-LABEL: define hidden noundef i32 @"\01-[Foo directMethodInExtension]"(
 - (int)directMethodInExtension {
   return 42;
 }
-// CHECK-LABEL: define hidden i32 @"\01-[Foo getDirect_setDynamic]"(
+// CHECK-LABEL: define hidden noundef i32 @"\01-[Foo getDirect_setDynamic]"(
 // CHECK-LABEL: define internal void @"\01-[Foo setGetDirect_setDynamic:]"(
-// CHECK-LABEL: define internal i32 @"\01-[Foo getDynamic_setDirect]"(
+// CHECK-LABEL: define internal noundef i32 @"\01-[Foo getDynamic_setDirect]"(
 // CHECK-LABEL: define hidden void @"\01-[Foo setGetDynamic_setDirect:]"(
 // CHECK-LABEL: define internal void @"\01-[Foo .cxx_destruct]"(
 @end
 
 @implementation Foo (Cat)
-// CHECK-LABEL: define hidden i32 @"\01-[Foo directMethodInCategory]"(
+// CHECK-LABEL: define hidden noundef i32 @"\01-[Foo directMethodInCategory]"(
 - (int)directMethodInCategory {
   return 42;
 }
-// CHECK-LABEL: define hidden i32 @"\01-[Foo directMethodInCategoryNoDecl]"(
+// CHECK-LABEL: define hidden noundef i32 @"\01-[Foo directMethodInCategoryNoDecl]"(
 - (int)directMethodInCategoryNoDecl __attribute__((objc_direct)) {
   return 42;
 }
 @end
 
 int useRoot(Root *r) {
-  // CHECK-LABEL: define i32 @useRoot
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[Root getInt]"
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[Root intProperty]"
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[Root intProperty2]"
+  // CHECK-LABEL: define noundef i32 @useRoot
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[Root getInt]"
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[Root intProperty]"
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[Root intProperty2]"
   return [r getInt] + [r intProperty] + [r intProperty2];
 }
 
 int useFoo(Foo *f) {
-  // CHECK-LABEL: define i32 @useFoo
+  // CHECK-LABEL: define noundef i32 @useFoo
   // CHECK: call void bitcast {{.*}} @"\01-[Foo setGetDynamic_setDirect:]"
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[Foo getDirect_setDynamic]"
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[Foo directMethodInExtension]"
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[Foo directMethodInCategory]"
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[Foo directMethodInCategoryNoDecl]"
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[Foo getDirect_setDynamic]"
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[Foo directMethodInExtension]"
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[Foo directMethodInCategory]"
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[Foo directMethodInCategoryNoDecl]"
   [f setGetDynamic_setDirect:1];
   return [f getDirect_setDynamic] +
          [f directMethodInExtension] +
@@ -231,7 +231,7 @@ __attribute__((objc_root_class))
 @end
 
 int useRootDeclOnly(RootDeclOnly *r) {
-  // CHECK-LABEL: define i32 @useRootDeclOnly
-  // CHECK: %{{[^ ]*}} = call i32 bitcast {{.*}} @"\01-[RootDeclOnly intProperty]"
+  // CHECK-LABEL: define noundef i32 @useRootDeclOnly
+  // CHECK: %{{[^ ]*}} = call noundef i32 bitcast {{.*}} @"\01-[RootDeclOnly intProperty]"
   return [r intProperty];
 }

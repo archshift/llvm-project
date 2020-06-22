@@ -63,8 +63,8 @@ int main()
   	B1 c = B1(2);
 }
 
-// CHECK-LP64: call { i64, i64 } @_ZN1XcvM1BFvvEEv
+// CHECK-LP64: call noundef { i64, i64 } @_ZN1XcvM1BFvvEEv
 // CHECK-LP64: call void @_Z1gM1CFvvE
 
-// CHECK-LP32: call i64 @_ZN1XcvM1BFvvEEv
+// CHECK-LP32: call noundef i64 @_ZN1XcvM1BFvvEEv
 // CHECK-LP32: call void @_Z1gM1CFvvE

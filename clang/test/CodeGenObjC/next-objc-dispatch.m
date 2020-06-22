@@ -24,7 +24,7 @@
 //  (2) non-fragile ABI, mixed dispatch
 //
 // Note that fragile ABI and non-fragile ABI legacy dispatch are not the same,
-// they use some different API calls (objc_msgSendSuper vs objc_msgSendSuper2).
+// they use some different API calls (objc_msgSendSuper objc_msgSendSuper2 vs).
 
 // CHECK-FRAGILE_LEGACY: ModuleID
 // CHECK-FRAGILE_LEGACY-NOT: declare i8* @objc_msgSendSuper2_fixup(

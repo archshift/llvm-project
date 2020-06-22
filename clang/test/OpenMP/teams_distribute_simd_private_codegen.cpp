@@ -91,7 +91,7 @@ int main() {
 #pragma omp target
 #pragma omp teams distribute simd private(g, g1, sivar)
   for (int i = 0; i < 2; ++i) {
-    // LAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} {{%.+}})
+    // LAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} noundef {{%.+}})
     // LAMBDA: call void {{.+}} @__kmpc_fork_teams({{.+}}, i32 0, {{.+}} @[[LOUTL1:.+]] to {{.+}})
     // LAMBDA: ret void
 
@@ -122,7 +122,7 @@ int main() {
     // LAMBDA: call void [[INNER_LAMBDA:@.+]](
     // LAMBDA: call void @__kmpc_for_static_fini(
     [&]() {
-      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
       // LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
       g = 2;
       g1 = 2;

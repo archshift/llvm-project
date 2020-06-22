@@ -11,17 +11,17 @@ long double powl(long double, long double);
 
 // CHECK-LABEL: define void @test_pow
 void test_pow(float a0, double a1, long double a2) {
-  // CHECK: call float @powf
+  // CHECK: call noundef float @powf
   float l0 = powf(a0, a0);
 
-  // CHECK: call double @pow
+  // CHECK: call noundef double @pow
   double l1 = pow(a1, a1);
 
-  // CHECK: call double @powl
+  // CHECK: call noundef double @powl
   long double l2 = powl(a2, a2);
 }
 
-// CHECK: declare float @powf(float, float)
-// CHECK: declare double @pow(double, double)
-// CHECK: declare double @powl(double, double)
+// CHECK: declare noundef float @powf(float noundef, float noundef)
+// CHECK: declare noundef double @pow(double noundef, double noundef)
+// CHECK: declare noundef double @powl(double noundef, double noundef)
 

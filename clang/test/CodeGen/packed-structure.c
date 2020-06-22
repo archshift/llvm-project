@@ -16,7 +16,7 @@ int s0_align_x = __alignof(((struct s0*)0)->x);
 int s0_align_y = __alignof(((struct s0*)0)->y);
 int s0_align   = __alignof(struct s0);
 
-// CHECK-FUNCTIONS-LABEL: define i32 @s0_load_x
+// CHECK-FUNCTIONS-LABEL: define noundef i32 @s0_load_x
 // CHECK-FUNCTIONS: [[s0_load_x:%.*]] = load i32, i32* {{.*}}, align 4
 // CHECK-FUNCTIONS: ret i32 [[s0_load_x]]
 int s0_load_x(struct s0 *a) { return a->x; }
@@ -24,7 +24,7 @@ int s0_load_x(struct s0 *a) { return a->x; }
 // has changed in llvm-gcc recently, previously both x and y would be loaded
 // with align 1 (in 2363.1 at least).
 //
-// CHECK-FUNCTIONS-LABEL: define i32 @s0_load_y
+// CHECK-FUNCTIONS-LABEL: define noundef i32 @s0_load_y
 // CHECK-FUNCTIONS: [[s0_load_y:%.*]] = load i32, i32* {{.*}}, align 4
 // CHECK-FUNCTIONS: ret i32 [[s0_load_y]]
 int s0_load_y(struct s0 *a) { return a->y; }
@@ -46,11 +46,11 @@ int s1_align_x = __alignof(((struct s1*)0)->x);
 int s1_align_y = __alignof(((struct s1*)0)->y);
 int s1_align   = __alignof(struct s1);
 
-// CHECK-FUNCTIONS-LABEL: define i32 @s1_load_x
+// CHECK-FUNCTIONS-LABEL: define noundef i32 @s1_load_x
 // CHECK-FUNCTIONS: [[s1_load_x:%.*]] = load i32, i32* {{.*}}, align 1
 // CHECK-FUNCTIONS: ret i32 [[s1_load_x]]
 int s1_load_x(struct s1 *a) { return a->x; }
-// CHECK-FUNCTIONS-LABEL: define i32 @s1_load_y
+// CHECK-FUNCTIONS-LABEL: define noundef i32 @s1_load_y
 // CHECK-FUNCTIONS: [[s1_load_y:%.*]] = load i32, i32* {{.*}}, align 1
 // CHECK-FUNCTIONS: ret i32 [[s1_load_y]]
 int s1_load_y(struct s1 *a) { return a->y; }
@@ -74,11 +74,11 @@ int s2_align_x = __alignof(((struct s2*)0)->x);
 int s2_align_y = __alignof(((struct s2*)0)->y);
 int s2_align   = __alignof(struct s2);
 
-// CHECK-FUNCTIONS-LABEL: define i32 @s2_load_x
+// CHECK-FUNCTIONS-LABEL: define noundef i32 @s2_load_x
 // CHECK-FUNCTIONS: [[s2_load_y:%.*]] = load i32, i32* {{.*}}, align 2
 // CHECK-FUNCTIONS: ret i32 [[s2_load_y]]
 int s2_load_x(struct s2 *a) { return a->x; }
-// CHECK-FUNCTIONS-LABEL: define i32 @s2_load_y
+// CHECK-FUNCTIONS-LABEL: define noundef i32 @s2_load_y
 // CHECK-FUNCTIONS: [[s2_load_y:%.*]] = load i32, i32* {{.*}}, align 2
 // CHECK-FUNCTIONS: ret i32 [[s2_load_y]]
 int s2_load_y(struct s2 *a) { return a->y; }
@@ -92,7 +92,7 @@ struct __attribute__((packed, aligned)) s3 {
 };
 // CHECK-GLOBAL: @s3_1 = global i32 1
 int s3_1 = __alignof(((struct s3*) 0)->anInt);
-// CHECK-FUNCTIONS-LABEL: define i32 @test3(
+// CHECK-FUNCTIONS-LABEL: define noundef i32 @test3(
 int test3(struct s3 *ptr) {
   // CHECK-FUNCTIONS:      [[PTR:%.*]] = getelementptr inbounds {{%.*}}, {{%.*}}* {{%.*}}, i32 0, i32 1
   // CHECK-FUNCTIONS-NEXT: load i32, i32* [[PTR]], align 2

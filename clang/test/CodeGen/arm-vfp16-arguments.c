@@ -1,10 +1,10 @@
-// RUN: %clang_cc1 -triple armv7a--none-eabi -target-abi aapcs \
+// RUN: %clang_cc1 -disable-noundef-args -triple armv7a--none-eabi -target-abi aapcs \
 // RUN:   -mfloat-abi soft -target-feature +neon -emit-llvm -o - -O1 %s \
 // RUN:   | FileCheck %s --check-prefix=CHECK-SOFT
-// RUN: %clang_cc1 -triple armv7a--none-eabi -target-abi aapcs \
+// RUN: %clang_cc1 -disable-noundef-args -triple armv7a--none-eabi -target-abi aapcs \
 // RUN:   -mfloat-abi hard -target-feature +neon -emit-llvm -o - -O1 %s \
 // RUN:   | FileCheck %s --check-prefix=CHECK-HARD
-// RUN: %clang_cc1 -triple armv7a--none-eabi -target-abi aapcs \
+// RUN: %clang_cc1 -disable-noundef-args -triple armv7a--none-eabi -target-abi aapcs \
 // RUN:   -mfloat-abi hard -target-feature +neon -target-feature +fullfp16 \
 // RUN:   -emit-llvm -o - -O1 %s \
 // RUN:   | FileCheck %s --check-prefix=CHECK-FULL
@@ -29,15 +29,15 @@ void st4(float16x4_t a) { g4 = a; }
 // CHECK-FULL: store <4 x half> %a, <4 x half>* @g4
 
 float16x4_t ld4(void) { return g4; }
-// CHECK-SOFT: define <2 x i32> @ld4()
+// CHECK-SOFT: define noundef <2 x i32> @ld4()
 // CHECK-SOFT: %0 = load <2 x i32>, <2 x i32>* bitcast (<4 x half>* @g4 to <2 x i32>*)
 // CHECK-SOFT: ret <2 x i32> %0
 //
-// CHECK-HARD: define arm_aapcs_vfpcc <2 x i32> @ld4()
+// CHECK-HARD: define arm_aapcs_vfpcc noundef <2 x i32> @ld4()
 // CHECK-HARD: %0 = load <2 x i32>, <2 x i32>* bitcast (<4 x half>* @g4 to <2 x i32>*)
 // CHECK-HARD: ret <2 x i32> %0
 //
-// CHECK-FULL: define arm_aapcs_vfpcc <4 x half> @ld4()
+// CHECK-FULL: define arm_aapcs_vfpcc noundef <4 x half> @ld4()
 // CHECK-FULL: %0 = load <4 x half>, <4 x half>* @g4
 // CHECK-FULL: ret <4 x half> %0
 
@@ -52,15 +52,15 @@ void st8(float16x8_t a) { g8 = a; }
 // CHECK-FULL: store <8 x half> %a, <8 x half>* @g8
 
 float16x8_t ld8(void) { return g8; }
-// CHECK-SOFT: define <4 x i32> @ld8()
+// CHECK-SOFT: define noundef <4 x i32> @ld8()
 // CHECK-SOFT: %0 = load <4 x i32>, <4 x i32>* bitcast (<8 x half>* @g8 to <4 x i32>*)
 // CHECK-SOFT: ret <4 x i32> %0
 //
-// CHECK-HARD: define arm_aapcs_vfpcc <4 x i32> @ld8()
+// CHECK-HARD: define arm_aapcs_vfpcc noundef <4 x i32> @ld8()
 // CHECK-HARD: %0 = load <4 x i32>, <4 x i32>* bitcast (<8 x half>* @g8 to <4 x i32>*)
 // CHECK-HARD: ret <4 x i32> %0
 //
-// CHECK-FULL: define arm_aapcs_vfpcc <8 x half> @ld8()
+// CHECK-FULL: define arm_aapcs_vfpcc noundef <8 x half> @ld8()
 // CHECK-FULL: %0 = load <8 x half>, <8 x half>* @g8
 // CHECK-FULL: ret <8 x half> %0
 

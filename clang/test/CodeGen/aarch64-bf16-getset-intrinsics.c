@@ -98,8 +98,8 @@ bfloat16x4_t test_vget_low_bf16(bfloat16x8_t a) {
 
 // CHECK-LABEL: @test_vget_lane_bf16(
 // CHECK-NEXT:  entry:
-// CHECK-NEXT:    [[DOTCAST1:%.*]] = extractelement <4 x bfloat> [[V:%.*]], i32 1
-// CHECK-NEXT:    ret bfloat [[DOTCAST1]]
+// CHECK-NEXT:    [[VGET_LANE:%.*]] = extractelement <4 x bfloat> [[V:%.*]], i32 1
+// CHECK-NEXT:    ret bfloat [[VGET_LANE]]
 //
 bfloat16_t test_vget_lane_bf16(bfloat16x4_t v) {
   return vget_lane_bf16(v, 1);
@@ -107,8 +107,8 @@ bfloat16_t test_vget_lane_bf16(bfloat16x4_t v) {
 
 // CHECK-LABEL: @test_vgetq_lane_bf16(
 // CHECK-NEXT:  entry:
-// CHECK-NEXT:    [[DOTCAST1:%.*]] = extractelement <8 x bfloat> [[V:%.*]], i32 7
-// CHECK-NEXT:    ret bfloat [[DOTCAST1]]
+// CHECK-NEXT:    [[VGETQ_LANE:%.*]] = extractelement <8 x bfloat> [[V:%.*]], i32 7
+// CHECK-NEXT:    ret bfloat [[VGETQ_LANE]]
 //
 bfloat16_t test_vgetq_lane_bf16(bfloat16x8_t v) {
   return vgetq_lane_bf16(v, 7);
@@ -116,8 +116,8 @@ bfloat16_t test_vgetq_lane_bf16(bfloat16x8_t v) {
 
 // CHECK-LABEL: @test_vset_lane_bf16(
 // CHECK-NEXT:  entry:
-// CHECK-NEXT:    [[TMP0:%.*]] = insertelement <4 x bfloat> [[V:%.*]], bfloat [[A:%.*]], i32 1
-// CHECK-NEXT:    ret <4 x bfloat> [[TMP0]]
+// CHECK-NEXT:    [[VSET_LANE:%.*]] = insertelement <4 x bfloat> [[V:%.*]], bfloat [[A:%.*]], i32 1
+// CHECK-NEXT:    ret <4 x bfloat> [[VSET_LANE]]
 //
 bfloat16x4_t test_vset_lane_bf16(bfloat16_t a, bfloat16x4_t v) {
   return vset_lane_bf16(a, v, 1);
@@ -125,8 +125,8 @@ bfloat16x4_t test_vset_lane_bf16(bfloat16_t a, bfloat16x4_t v) {
 
 // CHECK-LABEL: @test_vsetq_lane_bf16(
 // CHECK-NEXT:  entry:
-// CHECK-NEXT:    [[TMP0:%.*]] = insertelement <8 x bfloat> [[V:%.*]], bfloat [[A:%.*]], i32 7
-// CHECK-NEXT:    ret <8 x bfloat> [[TMP0]]
+// CHECK-NEXT:    [[VSET_LANE:%.*]] = insertelement <8 x bfloat> [[V:%.*]], bfloat [[A:%.*]], i32 7
+// CHECK-NEXT:    ret <8 x bfloat> [[VSET_LANE]]
 //
 bfloat16x8_t test_vsetq_lane_bf16(bfloat16_t a, bfloat16x8_t v) {
   return vsetq_lane_bf16(a, v, 7);

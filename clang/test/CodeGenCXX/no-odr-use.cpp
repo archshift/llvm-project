@@ -6,7 +6,7 @@
 // CHECK-CXX2A-DAG: @_ZN7PR422765State1mE = linkonce_odr constant [2 x { i64, i64 }] [{ {{.*}} @_ZN7PR422765State2f1Ev {{.*}}, i64 0 }, { {{.*}} @_ZN7PR422765State2f2Ev {{.*}}, i64 0 }], comdat
 
 struct A { int x, y[2]; int arr[3]; };
-// CHECK-LABEL: define i32 @_Z1fi(
+// CHECK-LABEL: define noundef i32 @_Z1fi(
 int f(int i) {
   // CHECK: call void {{.*}}memcpy{{.*}}({{.*}}, {{.*}} @__const._Z1fi.a
   constexpr A a = {1, 2, 3, 4, 5, 6};

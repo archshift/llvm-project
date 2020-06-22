@@ -1,5 +1,5 @@
-// RUN: %clang_cc1 %s -triple=thumbv7-apple-ios6.0 -fno-use-cxa-atexit -target-abi apcs-gnu -emit-llvm -std=gnu++98 -o - -fexceptions | FileCheck -check-prefix=CHECK -check-prefix=CHECK98 %s
-// RUN: %clang_cc1 %s -triple=thumbv7-apple-ios6.0 -fno-use-cxa-atexit -target-abi apcs-gnu -emit-llvm -std=gnu++11 -o - -fexceptions | FileCheck -check-prefix=CHECK -check-prefix=CHECK11 %s
+// RUN: %clang_cc1 -disable-noundef-args %s -triple=thumbv7-apple-ios6.0 -fno-use-cxa-atexit -target-abi apcs-gnu -emit-llvm -std=gnu++98 -o - -fexceptions | FileCheck -check-prefix=CHECK -check-prefix=CHECK98 %s
+// RUN: %clang_cc1 -disable-noundef-args %s -triple=thumbv7-apple-ios6.0 -fno-use-cxa-atexit -target-abi apcs-gnu -emit-llvm -std=gnu++11 -o - -fexceptions | FileCheck -check-prefix=CHECK -check-prefix=CHECK11 %s
 
 // CHECK: @_ZZN5test74testEvE1x = internal global i32 0, align 4
 // CHECK: @_ZGVZN5test74testEvE1x = internal global i32 0
@@ -26,7 +26,7 @@ bar baz;
 // PR9593
 // Make sure atexit(3) is used for global dtors.
 
-// CHECK:      call [[BAR:%.*]]* @_ZN3barC1Ev(
+// CHECK:      call noundef [[BAR:%.*]]* @_ZN3barC1Ev(
 // CHECK-NEXT: call i32 @atexit(void ()* @__dtor_baz)
 
 // CHECK-NOT: @_GLOBAL__D_a()
@@ -46,26 +46,26 @@ namespace test1 {
   // CHECK-LABEL: define void @_ZN5test14testEv()
   void test() {
     // CHECK: [[AV:%.*]] = alloca [[A:%.*]], align 1
-    // CHECK: call [[A]]* @_ZN5test11AC1Ei([[A]]* [[AV]], i32 10)
+    // CHECK: call noundef [[A]]* @_ZN5test11AC1Ei([[A]]* [[AV]], i32 10)
     // CHECK: invoke void @_ZN5test11A3barEv([[A]]* [[AV]])
-    // CHECK: call [[A]]* @_ZN5test11AD1Ev([[A]]* [[AV]])
+    // CHECK: call noundef [[A]]* @_ZN5test11AD1Ev([[A]]* [[AV]])
     // CHECK: ret void
     A a = 10;
     a.bar();
   }
 
-  // CHECK: define linkonce_odr [[A]]* @_ZN5test11AC1Ei([[A]]* returned %this, i32 %i) unnamed_addr
+  // CHECK: define linkonce_odr noundef [[A]]* @_ZN5test11AC1Ei([[A]]* returned %this, i32 %i) unnamed_addr
   // CHECK:   [[THIS:%.*]] = alloca [[A]]*, align 4
   // CHECK:   store [[A]]* {{.*}}, [[A]]** [[THIS]]
   // CHECK:   [[THIS1:%.*]] = load [[A]]*, [[A]]** [[THIS]]
-  // CHECK:   {{%.*}} = call [[A]]* @_ZN5test11AC2Ei(
+  // CHECK:   {{%.*}} = call noundef [[A]]* @_ZN5test11AC2Ei(
   // CHECK:   ret [[A]]* [[THIS1]]
 
-  // CHECK: define linkonce_odr [[A]]* @_ZN5test11AD1Ev([[A]]* returned %this) unnamed_addr
+  // CHECK: define linkonce_odr noundef [[A]]* @_ZN5test11AD1Ev([[A]]* returned %this) unnamed_addr
   // CHECK:   [[THIS:%.*]] = alloca [[A]]*, align 4
   // CHECK:   store [[A]]* {{.*}}, [[A]]** [[THIS]]
   // CHECK:   [[THIS1:%.*]] = load [[A]]*, [[A]]** [[THIS]]
-  // CHECK:   {{%.*}} = call [[A]]* @_ZN5test11AD2Ev(
+  // CHECK:   {{%.*}} = call noundef [[A]]* @_ZN5test11AD2Ev(
   // CHECK:   ret [[A]]* [[THIS1]]
 }
 
@@ -110,7 +110,7 @@ namespace test3 {
 
   void a() {
     // CHECK-LABEL: define void @_ZN5test31aEv()
-    // CHECK: call noalias nonnull i8* @_Znam(i32 48)
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 48)
     // CHECK: store i32 4
     // CHECK: store i32 10
     A *x = new A[10];
@@ -123,7 +123,7 @@ namespace test3 {
     // CHECK: @llvm.uadd.with.overflow.i32(i32 {{.*}}, i32 8)
     // CHECK: [[OR:%.*]] = or i1
     // CHECK: [[SZ:%.*]] = select i1 [[OR]]
-    // CHECK: call noalias nonnull i8* @_Znam(i32 [[SZ]])
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 [[SZ]])
     // CHECK: store i32 4
     // CHECK: store i32 [[N]]
     A *x = new A[n];
@@ -131,7 +131,7 @@ namespace test3 {
 
   void c() {
     // CHECK-LABEL: define void @_ZN5test31cEv()
-    // CHECK: call noalias nonnull i8* @_Znam(i32 808)
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 808)
     // CHECK: store i32 4
     // CHECK: store i32 200
     A (*x)[20] = new A[10][20];
@@ -144,7 +144,7 @@ namespace test3 {
     // CHECK: [[NE:%.*]] = mul i32 [[N]], 20
     // CHECK: @llvm.uadd.with.overflow.i32(i32 {{.*}}, i32 8)
     // CHECK: [[SZ:%.*]] = select
-    // CHECK: call noalias nonnull i8* @_Znam(i32 [[SZ]])
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 [[SZ]])
     // CHECK: store i32 4
     // CHECK: store i32 [[NE]]
     A (*x)[20] = new A[n][20];
@@ -185,7 +185,7 @@ namespace test4 {
 
   void a() {
     // CHECK-LABEL: define void @_ZN5test41aEv()
-    // CHECK: call noalias nonnull i8* @_Znam(i32 48)
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 48)
     // CHECK: store i32 4
     // CHECK: store i32 10
     A *x = new A[10];
@@ -197,7 +197,7 @@ namespace test4 {
     // CHECK: @llvm.umul.with.overflow.i32(i32 [[N]], i32 4)
     // CHECK: @llvm.uadd.with.overflow.i32(i32 {{.*}}, i32 8)
     // CHECK: [[SZ:%.*]] = select
-    // CHECK: call noalias nonnull i8* @_Znam(i32 [[SZ]])
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 [[SZ]])
     // CHECK: store i32 4
     // CHECK: store i32 [[N]]
     A *x = new A[n];
@@ -205,7 +205,7 @@ namespace test4 {
 
   void c() {
     // CHECK-LABEL: define void @_ZN5test41cEv()
-    // CHECK: call noalias nonnull i8* @_Znam(i32 808)
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 808)
     // CHECK: store i32 4
     // CHECK: store i32 200
     A (*x)[20] = new A[10][20];
@@ -218,7 +218,7 @@ namespace test4 {
     // CHECK: [[NE:%.*]] = mul i32 [[N]], 20
     // CHECK: @llvm.uadd.with.overflow.i32(i32 {{.*}}, i32 8)
     // CHECK: [[SZ:%.*]] = select
-    // CHECK: call noalias nonnull i8* @_Znam(i32 [[SZ]])
+    // CHECK: call noalias noundef nonnull i8* @_Znam(i32 [[SZ]])
     // CHECK: store i32 4
     // CHECK: store i32 [[NE]]
     A (*x)[20] = new A[n][20];
@@ -260,7 +260,7 @@ namespace test5 {
     // CHECK:      [[PTR:%.*]] = alloca [[A:%.*]]*, align 4
     // CHECK-NEXT: store [[A]]* {{.*}}, [[A]]** [[PTR]], align 4
     // CHECK-NEXT: [[TMP:%.*]] = load [[A]]*, [[A]]** [[PTR]], align 4
-    // CHECK-NEXT: call [[A]]* @_ZN5test51AD1Ev([[A]]* [[TMP]])
+    // CHECK-NEXT: call noundef [[A]]* @_ZN5test51AD1Ev([[A]]* [[TMP]])
     // CHECK-NEXT: ret void
     a->~A();
   }
@@ -305,7 +305,7 @@ namespace test7 {
     // CHECK-NEXT: [[T4:%.*]] = icmp ne i32 [[T3]], 0
     // CHECK-NEXT: br i1 [[T4]]
     //   -> fallthrough, end
-    // CHECK:      [[INIT:%.*]] = invoke i32 @_ZN5test73fooEv()
+    // CHECK:      [[INIT:%.*]] = invoke noundef i32 @_ZN5test73fooEv()
     // CHECK:      store i32 [[INIT]], i32* @_ZZN5test74testEvE1x, align 4
     // CHECK-NEXT: call void @__cxa_guard_release(i32* @_ZGVZN5test74testEvE1x)
     // CHECK-NEXT: br label
@@ -340,7 +340,7 @@ namespace test8 {
     // CHECK-NEXT: [[T4:%.*]] = icmp ne i32 [[T3]], 0
     // CHECK-NEXT: br i1 [[T4]]
     //   -> fallthrough, end
-    // CHECK:      [[INIT:%.*]] = invoke [[TEST8A]]* @_ZN5test81AC1Ev([[TEST8A]]* @_ZZN5test84testEvE1x)
+    // CHECK:      [[INIT:%.*]] = invoke noundef [[TEST8A]]* @_ZN5test81AC1Ev([[TEST8A]]* @_ZZN5test84testEvE1x)
 
     // FIXME: Here we register a global destructor that
     // unconditionally calls the destructor.  That's what we've always
@@ -375,7 +375,7 @@ namespace test9 {
   A *testNew(unsigned n) {
     return new A[n];
   }
-// CHECK:    define [[TEST9:%.*]]* @_ZN5test97testNewEj(i32
+// CHECK:    define noundef [[TEST9:%.*]]* @_ZN5test97testNewEj(i32
 // CHECK:      [[N_VAR:%.*]] = alloca i32, align 4
 // CHECK:      [[N:%.*]] = load i32, i32* [[N_VAR]], align 4
 // CHECK-NEXT: [[T0:%.*]] = call { i32, i1 } @llvm.umul.with.overflow.i32(i32 [[N]], i32 16)
@@ -386,7 +386,7 @@ namespace test9 {
 // CHECK-NEXT: [[OVERFLOW:%.*]] = or i1 [[O0]], [[O1]]
 // CHECK-NEXT: [[T3:%.*]] = extractvalue { i32, i1 } [[T2]], 0
 // CHECK-NEXT: [[T4:%.*]] = select i1 [[OVERFLOW]], i32 -1, i32 [[T3]]
-// CHECK-NEXT: [[ALLOC:%.*]] = call noalias nonnull i8* @_Znam(i32 [[T4]])
+// CHECK-NEXT: [[ALLOC:%.*]] = call noalias noundef nonnull i8* @_Znam(i32 [[T4]])
 // CHECK-NEXT: [[T0:%.*]] = bitcast i8* [[ALLOC]] to i32*
 // CHECK-NEXT: store i32 16, i32* [[T0]]
 // CHECK-NEXT: [[T1:%.*]] = getelementptr inbounds i32, i32* [[T0]], i32 1
@@ -413,8 +413,8 @@ namespace test9 {
 //   Array deallocation follows.
 }
 
-  // CHECK: define linkonce_odr [[C:%.*]]* @_ZTv0_n12_N5test21CD1Ev(
-  // CHECK:   call [[C]]* @_ZN5test21CD1Ev(
+  // CHECK: define linkonce_odr noundef [[C:%.*]]* @_ZTv0_n12_N5test21CD1Ev(
+  // CHECK:   call noundef [[C]]* @_ZN5test21CD1Ev(
   // CHECK:   ret [[C]]* undef
 
   // CHECK-LABEL: define linkonce_odr void @_ZTv0_n12_N5test21CD0Ev(

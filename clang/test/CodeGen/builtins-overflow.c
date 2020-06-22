@@ -14,7 +14,7 @@ extern long long LongLongErrorCode;
 void overflowed(void);
 
 unsigned test_add_overflow_uint_uint_uint(unsigned x, unsigned y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_add_overflow_uint_uint_uint
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_add_overflow_uint_uint_uint
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.uadd.with.overflow.i32(i32 %{{.+}}, i32 %{{.+}})
   // CHECK-DAG: [[Q:%.+]] = extractvalue { i32, i1 } [[S]], 0
@@ -28,7 +28,7 @@ unsigned test_add_overflow_uint_uint_uint(unsigned x, unsigned y) {
 }
 
 int test_add_overflow_int_int_int(int x, int y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_add_overflow_int_int_int
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_add_overflow_int_int_int
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.sadd.with.overflow.i32(i32 %{{.+}}, i32 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i32, i1 } [[S]], 1
@@ -42,7 +42,7 @@ int test_add_overflow_int_int_int(int x, int y) {
 }
 
 int test_add_overflow_xint31_xint31_xint31(_ExtInt(31) x, _ExtInt(31) y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_add_overflow_xint31_xint31_xint31({{.+}})
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_add_overflow_xint31_xint31_xint31({{.+}})
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i31, i1 } @llvm.sadd.with.overflow.i31(i31 %{{.+}}, i31 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i31, i1 } [[S]], 1
@@ -56,7 +56,7 @@ int test_add_overflow_xint31_xint31_xint31(_ExtInt(31) x, _ExtInt(31) y) {
 }
 
 unsigned test_sub_overflow_uint_uint_uint(unsigned x, unsigned y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_sub_overflow_uint_uint_uint
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_sub_overflow_uint_uint_uint
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.usub.with.overflow.i32(i32 %{{.+}}, i32 %{{.+}})
   // CHECK-DAG: [[Q:%.+]] = extractvalue { i32, i1 } [[S]], 0
@@ -70,7 +70,7 @@ unsigned test_sub_overflow_uint_uint_uint(unsigned x, unsigned y) {
 }
 
 int test_sub_overflow_int_int_int(int x, int y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_sub_overflow_int_int_int
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_sub_overflow_int_int_int
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.ssub.with.overflow.i32(i32 %{{.+}}, i32 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i32, i1 } [[S]], 1
@@ -84,7 +84,7 @@ int test_sub_overflow_int_int_int(int x, int y) {
 }
 
 int test_sub_overflow_xint31_xint31_xint31(_ExtInt(31) x, _ExtInt(31) y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_sub_overflow_xint31_xint31_xint31({{.+}})
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_sub_overflow_xint31_xint31_xint31({{.+}})
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i31, i1 } @llvm.ssub.with.overflow.i31(i31 %{{.+}}, i31 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i31, i1 } [[S]], 1
@@ -98,7 +98,7 @@ int test_sub_overflow_xint31_xint31_xint31(_ExtInt(31) x, _ExtInt(31) y) {
 }
 
 unsigned test_mul_overflow_uint_uint_uint(unsigned x, unsigned y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_mul_overflow_uint_uint_uint
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_mul_overflow_uint_uint_uint
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.umul.with.overflow.i32(i32 %{{.+}}, i32 %{{.+}})
   // CHECK-DAG: [[Q:%.+]] = extractvalue { i32, i1 } [[S]], 0
@@ -112,7 +112,7 @@ unsigned test_mul_overflow_uint_uint_uint(unsigned x, unsigned y) {
 }
 
 int test_mul_overflow_int_int_int(int x, int y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_mul_overflow_int_int_int
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_mul_overflow_int_int_int
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.smul.with.overflow.i32(i32 %{{.+}}, i32 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i32, i1 } [[S]], 1
@@ -126,7 +126,7 @@ int test_mul_overflow_int_int_int(int x, int y) {
 }
 
 int test_mul_overflow_xint31_xint31_xint31(_ExtInt(31) x, _ExtInt(31) y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_mul_overflow_xint31_xint31_xint31({{.+}})
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_mul_overflow_xint31_xint31_xint31({{.+}})
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i31, i1 } @llvm.smul.with.overflow.i31(i31 %{{.+}}, i31 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i31, i1 } [[S]], 1
@@ -140,7 +140,7 @@ int test_mul_overflow_xint31_xint31_xint31(_ExtInt(31) x, _ExtInt(31) y) {
 }
 
 int test_mul_overflow_xint127_xint127_xint127(_ExtInt(127) x, _ExtInt(127) y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_mul_overflow_xint127_xint127_xint127({{.+}})
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_mul_overflow_xint127_xint127_xint127({{.+}})
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i127, i1 } @llvm.smul.with.overflow.i127(i127 %{{.+}}, i127 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i127, i1 } [[S]], 1
@@ -154,7 +154,7 @@ int test_mul_overflow_xint127_xint127_xint127(_ExtInt(127) x, _ExtInt(127) y) {
 }
 
 int test_mul_overflow_xint128_xint128_xint128(_ExtInt(128) x, _ExtInt(128) y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_mul_overflow_xint128_xint128_xint128({{.+}})
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_mul_overflow_xint128_xint128_xint128({{.+}})
   // CHECK-NOT: ext
   // CHECK: [[S:%.+]] = call { i128, i1 } @llvm.smul.with.overflow.i128(i128 %{{.+}}, i128 %{{.+}})
   // CHECK-DAG: [[C:%.+]] = extractvalue { i128, i1 } [[S]], 1
@@ -168,7 +168,7 @@ int test_mul_overflow_xint128_xint128_xint128(_ExtInt(128) x, _ExtInt(128) y) {
 }
 
 int test_add_overflow_uint_int_int(unsigned x, int y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_add_overflow_uint_int_int
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_add_overflow_uint_int_int
   // CHECK: [[XE:%.+]] = zext i32 %{{.+}} to i33
   // CHECK: [[YE:%.+]] = sext i32 %{{.+}} to i33
   // CHECK: [[S:%.+]] = call { i33, i1 } @llvm.sadd.with.overflow.i33(i33 [[XE]], i33 [[YE]])
@@ -206,7 +206,7 @@ _Bool test_add_overflow_uint_uint_bool(unsigned x, unsigned y) {
 }
 
 unsigned test_add_overflow_bool_bool_uint(_Bool x, _Bool y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_add_overflow_bool_bool_uint
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_add_overflow_bool_bool_uint
   // CHECK: [[XE:%.+]] = zext i1 %{{.+}} to i32
   // CHECK: [[YE:%.+]] = zext i1 %{{.+}} to i32
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.uadd.with.overflow.i32(i32 [[XE]], i32 [[YE]])
@@ -235,7 +235,7 @@ _Bool test_add_overflow_bool_bool_bool(_Bool x, _Bool y) {
 }
 
 int test_add_overflow_volatile(int x, int y) {
-  // CHECK-LABEL: define {{(dso_local )?}}i32 @test_add_overflow_volatile
+  // CHECK-LABEL: define {{(dso_local )?}}noundef i32 @test_add_overflow_volatile
   // CHECK: [[S:%.+]] = call { i32, i1 } @llvm.sadd.with.overflow.i32(i32 %{{.+}}, i32 %{{.+}})
   // CHECK-DAG: [[Q:%.+]] = extractvalue { i32, i1 } [[S]], 0
   // CHECK-DAG: [[C:%.+]] = extractvalue { i32, i1 } [[S]], 1
@@ -257,7 +257,7 @@ unsigned test_uadd_overflow(unsigned x, unsigned y) {
 }
 
 unsigned long test_uaddl_overflow(unsigned long x, unsigned long y) {
-// CHECK: @test_uaddl_overflow([[UL:i32|i64]] %x
+// CHECK: @test_uaddl_overflow([[UL:i32|i64]] noundef %x
 // CHECK: %{{.+}} = call { [[UL]], i1 } @llvm.uadd.with.overflow.[[UL]]([[UL]] %{{.+}}, [[UL]] %{{.+}})
   unsigned long result;
   if (__builtin_uaddl_overflow(x, y, &result))
@@ -284,7 +284,7 @@ unsigned test_usub_overflow(unsigned x, unsigned y) {
 }
 
 unsigned long test_usubl_overflow(unsigned long x, unsigned long y) {
-// CHECK: @test_usubl_overflow([[UL:i32|i64]] %x
+// CHECK: @test_usubl_overflow([[UL:i32|i64]] noundef %x
 // CHECK: %{{.+}} = call { [[UL]], i1 } @llvm.usub.with.overflow.[[UL]]([[UL]] %{{.+}}, [[UL]] %{{.+}})
   unsigned long result;
   if (__builtin_usubl_overflow(x, y, &result))
@@ -311,7 +311,7 @@ unsigned test_umul_overflow(unsigned x, unsigned y) {
 }
 
 unsigned long test_umull_overflow(unsigned long x, unsigned long y) {
-// CHECK: @test_umull_overflow([[UL:i32|i64]] %x
+// CHECK: @test_umull_overflow([[UL:i32|i64]] noundef %x
 // CHECK: %{{.+}} = call { [[UL]], i1 } @llvm.umul.with.overflow.[[UL]]([[UL]] %{{.+}}, [[UL]] %{{.+}})
   unsigned long result;
   if (__builtin_umull_overflow(x, y, &result))
@@ -338,7 +338,7 @@ int test_sadd_overflow(int x, int y) {
 }
 
 long test_saddl_overflow(long x, long y) {
-// CHECK: @test_saddl_overflow([[UL:i32|i64]] %x
+// CHECK: @test_saddl_overflow([[UL:i32|i64]] noundef %x
 // CHECK: %{{.+}} = call { [[UL]], i1 } @llvm.sadd.with.overflow.[[UL]]([[UL]] %{{.+}}, [[UL]] %{{.+}})
   long result;
   if (__builtin_saddl_overflow(x, y, &result))
@@ -365,7 +365,7 @@ int test_ssub_overflow(int x, int y) {
 }
 
 long test_ssubl_overflow(long x, long y) {
-// CHECK: @test_ssubl_overflow([[UL:i32|i64]] %x
+// CHECK: @test_ssubl_overflow([[UL:i32|i64]] noundef %x
 // CHECK: %{{.+}} = call { [[UL]], i1 } @llvm.ssub.with.overflow.[[UL]]([[UL]] %{{.+}}, [[UL]] %{{.+}})
   long result;
   if (__builtin_ssubl_overflow(x, y, &result))
@@ -392,7 +392,7 @@ int test_smul_overflow(int x, int y) {
 }
 
 long test_smull_overflow(long x, long y) {
-// CHECK: @test_smull_overflow([[UL:i32|i64]] %x
+// CHECK: @test_smull_overflow([[UL:i32|i64]] noundef %x
 // CHECK: %{{.+}} = call { [[UL]], i1 } @llvm.smul.with.overflow.[[UL]]([[UL]] %{{.+}}, [[UL]] %{{.+}})
   long result;
   if (__builtin_smull_overflow(x, y, &result))

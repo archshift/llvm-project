@@ -1,5 +1,5 @@
-// RUN: %clang_cc1 -triple x86_64-linux-gnu -emit-llvm %s -o - | FileCheck %s --check-prefix=LINUX
-// RUN: %clang_cc1 -triple x86_64-windows-pc -emit-llvm %s -o - | FileCheck %s --check-prefix=WINDOWS
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-linux-gnu -emit-llvm %s -o - | FileCheck %s --check-prefix=LINUX
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-windows-pc -emit-llvm %s -o - | FileCheck %s --check-prefix=WINDOWS
 
 int __attribute__((target("sse4.2"))) foo(void) { return 0; }
 int __attribute__((target("arch=sandybridge"))) foo(void);
@@ -73,47 +73,47 @@ __attribute__((target("avx,sse4.2"), used)) inline void foo_used2(int i, double 
 // LINUX: @fwd_decl_default.ifunc = weak_odr ifunc i32 (), i32 ()* ()* @fwd_decl_default.resolver
 // LINUX: @fwd_decl_avx.ifunc = weak_odr ifunc i32 (), i32 ()* ()* @fwd_decl_avx.resolver
 
-// LINUX: define i32 @foo.sse4.2()
+// LINUX: define noundef i32 @foo.sse4.2()
 // LINUX: ret i32 0
-// LINUX: define i32 @foo.arch_ivybridge()
+// LINUX: define noundef i32 @foo.arch_ivybridge()
 // LINUX: ret i32 1
-// LINUX: define i32 @foo.arch_goldmont()
+// LINUX: define noundef i32 @foo.arch_goldmont()
 // LINUX: ret i32 3
-// LINUX: define i32 @foo.arch_goldmont-plus()
+// LINUX: define noundef i32 @foo.arch_goldmont-plus()
 // LINUX: ret i32 4
-// LINUX: define i32 @foo.arch_tremont()
+// LINUX: define noundef i32 @foo.arch_tremont()
 // LINUX: ret i32 5
-// LINUX: define i32 @foo.arch_icelake-client()
+// LINUX: define noundef i32 @foo.arch_icelake-client()
 // LINUX: ret i32 6
-// LINUX: define i32 @foo.arch_icelake-server()
+// LINUX: define noundef i32 @foo.arch_icelake-server()
 // LINUX: ret i32 7
-// LINUX: define i32 @foo.arch_cooperlake()
+// LINUX: define noundef i32 @foo.arch_cooperlake()
 // LINUX: ret i32 8
-// LINUX: define i32 @foo.arch_tigerlake()
+// LINUX: define noundef i32 @foo.arch_tigerlake()
 // LINUX: ret i32 9
-// LINUX: define i32 @foo()
+// LINUX: define noundef i32 @foo()
 // LINUX: ret i32 2
-// LINUX: define i32 @bar()
-// LINUX: call i32 @foo.ifunc()
+// LINUX: define noundef i32 @bar()
+// LINUX: call noundef i32 @foo.ifunc()
 
-// WINDOWS: define dso_local i32 @foo.sse4.2()
+// WINDOWS: define dso_local noundef i32 @foo.sse4.2()
 // WINDOWS: ret i32 0
-// WINDOWS: define dso_local i32 @foo.arch_ivybridge()
+// WINDOWS: define dso_local noundef i32 @foo.arch_ivybridge()
 // WINDOWS: ret i32 1
-// WINDOWS: define dso_local i32 @foo.arch_goldmont()
+// WINDOWS: define dso_local noundef i32 @foo.arch_goldmont()
 // WINDOWS: ret i32 3
-// WINDOWS: define dso_local i32 @foo.arch_goldmont-plus()
+// WINDOWS: define dso_local noundef i32 @foo.arch_goldmont-plus()
 // WINDOWS: ret i32 4
-// WINDOWS: define dso_local i32 @foo.arch_tremont()
+// WINDOWS: define dso_local noundef i32 @foo.arch_tremont()
 // WINDOWS: ret i32 5
-// WINDOWS: define dso_local i32 @foo.arch_icelake-client()
+// WINDOWS: define dso_local noundef i32 @foo.arch_icelake-client()
 // WINDOWS: ret i32 6
-// WINDOWS: define dso_local i32 @foo.arch_icelake-server()
+// WINDOWS: define dso_local noundef i32 @foo.arch_icelake-server()
 // WINDOWS: ret i32 7
-// WINDOWS: define dso_local i32 @foo()
+// WINDOWS: define dso_local noundef i32 @foo()
 // WINDOWS: ret i32 2
-// WINDOWS: define dso_local i32 @bar()
-// WINDOWS: call i32 @foo.resolver()
+// WINDOWS: define dso_local noundef i32 @bar()
+// WINDOWS: call noundef i32 @foo.resolver()
 
 // LINUX: define weak_odr i32 ()* @foo.resolver() comdat
 // LINUX: call void @__cpu_indicator_init()
@@ -127,13 +127,13 @@ __attribute__((target("avx,sse4.2"), used)) inline void foo_used2(int i, double 
 // WINDOWS: call i32 @foo.arch_sandybridge
 // WINDOWS: call i32 @foo.arch_ivybridge
 // WINDOWS: call i32 @foo.sse4.2
-// WINDOWS: call i32 @foo
+// WINDOWS: call i32 @foo(
 
-// LINUX: define i32 @bar2()
-// LINUX: call i32 @foo_inline.ifunc()
+// LINUX: define noundef i32 @bar2()
+// LINUX: call noundef i32 @foo_inline.ifunc()
 
-// WINDOWS: define dso_local i32 @bar2()
-// WINDOWS: call i32 @foo_inline.resolver()
+// WINDOWS: define dso_local noundef i32 @bar2()
+// WINDOWS: call noundef i32 @foo_inline.resolver()
 
 // LINUX: define weak_odr i32 ()* @foo_inline.resolver() comdat
 // LINUX: call void @__cpu_indicator_init()
@@ -199,27 +199,27 @@ __attribute__((target("avx,sse4.2"), used)) inline void foo_used2(int i, double 
 // WINDOWS: call void @foo_multi(i32 %0, double %1)
 // WINDOWS-NEXT: ret void
 
-// LINUX: define i32 @fwd_decl_default()
+// LINUX: define noundef i32 @fwd_decl_default()
 // LINUX: ret i32 2
-// LINUX: define i32 @fwd_decl_avx.avx()
+// LINUX: define noundef i32 @fwd_decl_avx.avx()
 // LINUX: ret i32 2
-// LINUX: define i32 @fwd_decl_avx()
+// LINUX: define noundef i32 @fwd_decl_avx()
 // LINUX: ret i32 2
 
-// WINDOWS: define dso_local i32 @fwd_decl_default()
+// WINDOWS: define dso_local noundef i32 @fwd_decl_default()
 // WINDOWS: ret i32 2
-// WINDOWS: define dso_local i32 @fwd_decl_avx.avx()
+// WINDOWS: define dso_local noundef i32 @fwd_decl_avx.avx()
 // WINDOWS: ret i32 2
-// WINDOWS: define dso_local i32 @fwd_decl_avx()
+// WINDOWS: define dso_local noundef i32 @fwd_decl_avx()
 // WINDOWS: ret i32 2
 
 // LINUX: define void @bar5()
-// LINUX: call i32 @fwd_decl_default.ifunc()
-// LINUX: call i32 @fwd_decl_avx.ifunc()
+// LINUX: call noundef i32 @fwd_decl_default.ifunc()
+// LINUX: call noundef i32 @fwd_decl_avx.ifunc()
 
 // WINDOWS: define dso_local void @bar5()
-// WINDOWS: call i32 @fwd_decl_default.resolver()
-// WINDOWS: call i32 @fwd_decl_avx.resolver()
+// WINDOWS: call noundef i32 @fwd_decl_default.resolver()
+// WINDOWS: call noundef i32 @fwd_decl_avx.resolver()
 
 // LINUX: define weak_odr i32 ()* @fwd_decl_default.resolver() comdat
 // LINUX: call void @__cpu_indicator_init()
@@ -237,11 +237,11 @@ __attribute__((target("avx,sse4.2"), used)) inline void foo_used2(int i, double 
 // WINDOWS: call i32 @fwd_decl_avx.avx
 // WINDOWS: call i32 @fwd_decl_avx
 
-// LINUX: define i32 @changed_to_mv.avx()
-// LINUX: define i32 @changed_to_mv.fma4()
+// LINUX: define noundef i32 @changed_to_mv.avx()
+// LINUX: define noundef i32 @changed_to_mv.fma4()
 
-// WINDOWS: define dso_local i32 @changed_to_mv.avx()
-// WINDOWS: define dso_local i32 @changed_to_mv.fma4()
+// WINDOWS: define dso_local noundef i32 @changed_to_mv.avx()
+// WINDOWS: define dso_local noundef i32 @changed_to_mv.fma4()
 
 // LINUX: define linkonce void @foo_used(i32 %{{.*}}, double %{{.*}})
 // LINUX-NOT: @foo_used.avx_sse4.2(
@@ -253,27 +253,27 @@ __attribute__((target("avx,sse4.2"), used)) inline void foo_used2(int i, double 
 // WINDOWS-NOT: @foo_used2(
 // WINDOWS: define linkonce_odr dso_local void @foo_used2.avx_sse4.2(i32 %{{.*}}, double %{{.*}})
 
-// LINUX: declare i32 @foo.arch_sandybridge()
-// WINDOWS: declare dso_local i32 @foo.arch_sandybridge()
+// LINUX: declare noundef i32 @foo.arch_sandybridge()
+// WINDOWS: declare dso_local noundef i32 @foo.arch_sandybridge()
 
-// LINUX: define linkonce i32 @foo_inline.sse4.2()
+// LINUX: define linkonce noundef i32 @foo_inline.sse4.2()
 // LINUX: ret i32 0
 
-// WINDOWS: define linkonce_odr dso_local i32 @foo_inline.sse4.2()
+// WINDOWS: define linkonce_odr dso_local noundef i32 @foo_inline.sse4.2()
 // WINDOWS: ret i32 0
 
-// LINUX: declare i32 @foo_inline.arch_sandybridge()
+// LINUX: declare noundef i32 @foo_inline.arch_sandybridge()
 
-// WINDOWS: declare dso_local i32 @foo_inline.arch_sandybridge()
+// WINDOWS: declare dso_local noundef i32 @foo_inline.arch_sandybridge()
 
-// LINUX: define linkonce i32 @foo_inline.arch_ivybridge()
+// LINUX: define linkonce noundef i32 @foo_inline.arch_ivybridge()
 // LINUX: ret i32 1
-// LINUX: define linkonce i32 @foo_inline()
+// LINUX: define linkonce noundef i32 @foo_inline()
 // LINUX: ret i32 2
 
-// WINDOWS: define linkonce_odr dso_local i32 @foo_inline.arch_ivybridge()
+// WINDOWS: define linkonce_odr dso_local noundef i32 @foo_inline.arch_ivybridge()
 // WINDOWS: ret i32 1
-// WINDOWS: define linkonce_odr dso_local i32 @foo_inline()
+// WINDOWS: define linkonce_odr dso_local noundef i32 @foo_inline()
 // WINDOWS: ret i32 2
 
 // LINUX: define linkonce void @foo_decls()

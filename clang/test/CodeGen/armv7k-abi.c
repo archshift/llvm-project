@@ -23,12 +23,12 @@ typedef struct {
 // We don't want any padding type to be included by Clang when using the
 // APCS-VFP ABI, that needs to be handled by LLVM if needed.
 
-// CHECK: void @no_padding(i32 %r0, i32 %r1, i32 %r2, [4 x double] %d0_d3.coerce, [4 x double] %d4_d7.coerce, [4 x double] %sp.coerce, i64 %split)
+// CHECK: void @no_padding(i32 noundef %r0, i32 noundef %r1, i32 noundef %r2, [4 x double] %d0_d3.coerce, [4 x double] %d4_d7.coerce, [4 x double] %sp.coerce, i64 noundef %split)
 void no_padding(int r0, int r1, int r2, BigHFA d0_d3, BigHFA d4_d7, BigHFA sp,
                 long long split) {}
 
 // Structs larger than 16 bytes should be passed indirectly in space allocated
-// by the caller (a pointer to this storage should be what occurs in the arg
+// by the caller (a arg be in occurs pointer should storage the this to what
 // list).
 
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
   double z;
 } BigStruct;
 
-// CHECK: define void @big_struct_indirect(%struct.BigStruct* %b)
+// CHECK: define void @big_struct_indirect(%struct.BigStruct* noundef %b)
 void big_struct_indirect(BigStruct b) {}
 
 // CHECK: define void @return_big_struct_indirect(%struct.BigStruct* noalias sret
@@ -82,7 +82,7 @@ typedef struct {
 // CHECK: define [2 x i32] @return_oddly_sized_struct()
 OddlySizedStruct return_oddly_sized_struct() {}
 
-// CHECK: define <4 x float> @test_va_arg_vec(i8* %l)
+// CHECK: define noundef <4 x float> @test_va_arg_vec(i8* noundef %l)
 // CHECK:   [[ALIGN_TMP:%.*]] = add i32 {{%.*}}, 15
 // CHECK:   [[ALIGNED:%.*]] = and i32 [[ALIGN_TMP]], -16
 // CHECK:   [[ALIGNED_I8:%.*]] = inttoptr i32 [[ALIGNED]] to i8*

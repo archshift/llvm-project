@@ -19,21 +19,21 @@ __attribute__((visibility("default"))) extern int var_default;
 // CHECK-DEFAULT: @var = external global
 extern int var;
 
-// CHECK-HIDDEN: declare hidden i32 @func_hidden()
-// CHECK-PROTECTED: declare hidden i32 @func_hidden()
-// CHECK-DEFAULT: declare hidden i32 @func_hidden()
+// CHECK-HIDDEN: declare hidden noundef i32 @func_hidden()
+// CHECK-PROTECTED: declare hidden noundef i32 @func_hidden()
+// CHECK-DEFAULT: declare hidden noundef i32 @func_hidden()
 __attribute__((visibility("hidden"))) int func_hidden(void);
-// CHECK-HIDDEN: declare protected i32 @func_protected()
-// CHECK-PROTECTED: declare protected i32 @func_protected()
-// CHECK-DEFAULT: declare protected i32 @func_protected()
+// CHECK-HIDDEN: declare protected noundef i32 @func_protected()
+// CHECK-PROTECTED: declare protected noundef i32 @func_protected()
+// CHECK-DEFAULT: declare protected noundef i32 @func_protected()
 __attribute__((visibility("protected"))) int func_protected(void);
-// CHECK-HIDDEN: declare i32 @func_default()
-// CHECK-PROTECTED: declare i32 @func_default()
-// CHECK-DEFAULT: declare i32 @func_default()
+// CHECK-HIDDEN: declare noundef i32 @func_default()
+// CHECK-PROTECTED: declare noundef i32 @func_default()
+// CHECK-DEFAULT: declare noundef i32 @func_default()
 __attribute__((visibility("default"))) int func_default(void);
-// CHECK-HIDDEN: declare hidden i32 @func()
-// CHECK-PROTECTED: declare protected i32 @func()
-// CHECK-DEFAULT: declare i32 @func()
+// CHECK-HIDDEN: declare hidden noundef i32 @func()
+// CHECK-PROTECTED: declare protected noundef i32 @func()
+// CHECK-DEFAULT: declare noundef i32 @func()
 int func(void);
 
 int use() {

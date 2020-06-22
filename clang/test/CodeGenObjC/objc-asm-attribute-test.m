@@ -64,5 +64,5 @@ id Test16877359() {
 // CHECK: private unnamed_addr constant [50 x i8] c"T@\22<MySecretNamespace.Protocol3>\22,&,V_idProtoProp\00"
 
 // CHECK: @"OBJC_CLASS_$_foo" = external global %struct._class_t
-// CHECK: define internal i8* @"\01-[Message MyMethod]"
+// CHECK: define internal noundef i8* @"\01-[Message MyMethod]"
 // CHECK: [[IVAR:%.*]] = load i64, i64* @"OBJC_IVAR_$_MySecretNamespace.Message.MyIVAR"

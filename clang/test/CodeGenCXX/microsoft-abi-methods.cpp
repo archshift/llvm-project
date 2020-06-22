@@ -71,8 +71,8 @@ void constructors() {
   Child c;
 // Make sure that the Base constructor call in the Child constructor uses
 // the right calling convention:
-// CHECK: define linkonce_odr dso_local x86_thiscallcc %class.Child* @"??0Child@@QAE@XZ"
-// CHECK: %{{[.0-9A-Z_a-z]+}} = call x86_thiscallcc %class.Base* @"??0Base@@QAE@XZ"
+// CHECK: define linkonce_odr dso_local x86_thiscallcc noundef %class.Child* @"??0Child@@QAE@XZ"
+// CHECK: %{{[.0-9A-Z_a-z]+}} = call x86_thiscallcc noundef %class.Base* @"??0Base@@QAE@XZ"
 // CHECK: ret
 
 // Make sure that the Base destructor call in the Child denstructor uses
@@ -82,7 +82,7 @@ void constructors() {
 // CHECK: ret
 
 // Make sure that the Base constructor definition uses the right CC:
-// CHECK: define linkonce_odr dso_local x86_thiscallcc %class.Base* @"??0Base@@QAE@XZ"
+// CHECK: define linkonce_odr dso_local x86_thiscallcc noundef %class.Base* @"??0Base@@QAE@XZ"
 
 // Make sure that the Base destructor definition uses the right CC:
 // CHECK: define linkonce_odr dso_local x86_thiscallcc void @"??1Base@@QAE@XZ"

@@ -3,7 +3,7 @@
 // COFF-DAG: @weak_bar = extern_weak global i32
 // COFF-DAG: declare dso_local void @foo()
 // COFF-DAG: @baz = dso_local global i32 42
-// COFF-DAG: define dso_local i32* @zed()
+// COFF-DAG: define dso_local noundef i32* @zed()
 // COFF-DAG: @thread_var = external dso_local thread_local global i32
 // COFF-DAG: @local_thread_var = dso_local thread_local global i32 42
 // COFF-DAG: @import_var = external dllimport global i32
@@ -14,7 +14,7 @@
 // MINGW-DAG: @weak_bar = extern_weak global i32
 // MINGW-DAG: declare dso_local void @foo()
 // MINGW-DAG: @baz = dso_local global i32 42
-// MINGW-DAG: define dso_local i32* @zed()
+// MINGW-DAG: define dso_local noundef i32* @zed()
 // MINGW-DAG: @thread_var = external dso_local thread_local global i32
 // MINGW-DAG: @local_thread_var = dso_local thread_local global i32 42
 // MINGW-DAG: @import_var = external dllimport global i32
@@ -25,7 +25,7 @@
 // STATIC-DAG: @weak_bar = extern_weak dso_local global i32
 // STATIC-DAG: declare dso_local void @foo()
 // STATIC-DAG: @baz = dso_local global i32 42
-// STATIC-DAG: define dso_local i32* @zed()
+// STATIC-DAG: define dso_local noundef i32* @zed()
 // STATIC-DAG: @thread_var = external thread_local global i32
 // STATIC-DAG: @local_thread_var = dso_local thread_local global i32 42
 // STATIC-DAG: @import_var = external dso_local global i32
@@ -36,7 +36,7 @@
 // PIE-COPY-DAG: @weak_bar = extern_weak global i32
 // PIE-COPY-DAG: declare void @foo()
 // PIE-COPY-DAG: @baz = dso_local global i32 42
-// PIE-COPY-DAG: define dso_local i32* @zed()
+// PIE-COPY-DAG: define dso_local noundef i32* @zed()
 // PIE-COPY-DAG: @thread_var = external thread_local global i32
 // PIE-COPY-DAG: @local_thread_var = dso_local thread_local global i32 42
 // PIE-COPY-DAG: @import_var = external dso_local global i32
@@ -47,7 +47,7 @@
 // PIE-DAG: @weak_bar = extern_weak global i32
 // PIE-DAG: declare void @foo()
 // PIE-DAG: @baz = dso_local global i32 42
-// PIE-DAG: define dso_local i32* @zed()
+// PIE-DAG: define dso_local noundef i32* @zed()
 // PIE-DAG: @thread_var = external thread_local global i32
 // PIE-DAG: @local_thread_var = dso_local thread_local global i32 42
 // PIE-DAG: @import_var = external global i32
@@ -58,7 +58,7 @@
 // NOPLT-DAG: @weak_bar = extern_weak dso_local global i32
 // NOPLT-DAG: declare void @foo()
 // NOPLT-DAG: @baz = dso_local global i32 42
-// NOPLT-DAG: define dso_local i32* @zed()
+// NOPLT-DAG: define dso_local noundef i32* @zed()
 // NOPLT-DAG: @thread_var = external thread_local global i32
 // NOPLT-DAG: @local_thread_var = dso_local thread_local global i32 42
 // NOPLT-DAG: @import_var = external dso_local global i32
@@ -69,7 +69,7 @@
 // PIE-COPY-NOPLT-DAG: @weak_bar = extern_weak global i32
 // PIE-COPY-NOPLT-DAG: declare void @foo()
 // PIE-COPY-NOPLT-DAG: @baz = dso_local global i32 42
-// PIE-COPY-NOPLT-DAG: define dso_local i32* @zed()
+// PIE-COPY-NOPLT-DAG: define dso_local noundef i32* @zed()
 // PIE-COPY-NOPLT-DAG: @thread_var = external thread_local global i32
 // PIE-COPY-NOPLT-DAG: @local_thread_var = dso_local thread_local global i32 42
 // PIE-COPY-NOPLT-DAG: @import_var = external dso_local global i32
@@ -81,7 +81,7 @@
 // PIE-NO-PLT-DAG: @weak_bar = extern_weak global i32
 // PIE-NO-PLT-DAG: declare void @foo()
 // PIE-NO-PLT-DAG: @baz = dso_local global i32 42
-// PIE-NO-PLT-DAG: define dso_local i32* @zed()
+// PIE-NO-PLT-DAG: define dso_local noundef i32* @zed()
 // PIE-NO-PLT-DAG: @thread_var = external thread_local global i32
 // PIE-NO-PLT-DAG: @local_thread_var = dso_local thread_local global i32 42
 // PIE-NO-PLT-DAG: @import_var = external global i32
@@ -92,7 +92,7 @@
 // SHARED-DAG: @weak_bar = extern_weak global i32
 // SHARED-DAG: declare void @foo()
 // SHARED-DAG: @baz = global i32 42
-// SHARED-DAG: define i32* @zed()
+// SHARED-DAG: define noundef i32* @zed()
 // SHARED-DAG: @thread_var = external thread_local global i32
 // SHARED-DAG: @local_thread_var = thread_local global i32 42
 // PIE-NO-PLT-DAG: @import_var = external global i32

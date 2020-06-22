@@ -1,5 +1,5 @@
-// RUN: %clang_cc1 -x objective-c -triple x86_64-apple-darwin10 -fblocks -emit-llvm %s -o - | FileCheck %s
-// RUN: %clang_cc1 -x objective-c++ -triple x86_64-apple-darwin10 -fblocks -emit-llvm %s -o - | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -x objective-c -triple x86_64-apple-darwin10 -fblocks -emit-llvm %s -o - | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -x objective-c++ -triple x86_64-apple-darwin10 -fblocks -emit-llvm %s -o - | FileCheck %s
 // rdar://10111397
 
 #if __has_feature(objc_bool)
@@ -53,7 +53,7 @@ typedef signed char BOOL;
 
 id NSUserName();
 
-// CHECK: define i32 @main() [[NUW:#[0-9]+]]
+// CHECK: define noundef i32 @main() [[NUW:#[0-9]+]]
 int main() {
   // CHECK: call{{.*}}@objc_msgSend{{.*}}i8 signext 97
   NSNumber *aNumber = @'a';

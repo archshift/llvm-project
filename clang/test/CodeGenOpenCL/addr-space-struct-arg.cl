@@ -1,7 +1,7 @@
-// RUN: %clang_cc1 %s -emit-llvm -o - -O0 -ffake-address-space-map -triple i686-pc-darwin | FileCheck -enable-var-scope -check-prefixes=ALL,X86 %s
-// RUN: %clang_cc1 %s -emit-llvm -o - -O0 -triple amdgcn | FileCheck -enable-var-scope -check-prefixes=ALL,AMDGCN %s
-// RUN: %clang_cc1 %s -emit-llvm -o - -cl-std=CL2.0 -O0 -triple amdgcn | FileCheck -enable-var-scope -check-prefixes=ALL,AMDGCN,AMDGCN20 %s
-// RUN: %clang_cc1 %s -emit-llvm -o - -cl-std=CL1.2 -O0 -triple spir-unknown-unknown-unknown | FileCheck -enable-var-scope -check-prefixes=SPIR %s
+// RUN: %clang_cc1 -disable-noundef-args %s -emit-llvm -o - -O0 -ffake-address-space-map -triple i686-pc-darwin | FileCheck -enable-var-scope -check-prefixes=ALL,X86 %s
+// RUN: %clang_cc1 -disable-noundef-args %s -emit-llvm -o - -O0 -triple amdgcn | FileCheck -enable-var-scope -check-prefixes=ALL,AMDGCN %s
+// RUN: %clang_cc1 -disable-noundef-args %s -emit-llvm -o - -cl-std=CL2.0 -O0 -triple amdgcn | FileCheck -enable-var-scope -check-prefixes=ALL,AMDGCN,AMDGCN20 %s
+// RUN: %clang_cc1 -disable-noundef-args %s -emit-llvm -o - -cl-std=CL1.2 -O0 -triple spir-unknown-unknown-unknown | FileCheck -enable-var-scope -check-prefixes=SPIR %s
 
 typedef int int2 __attribute__((ext_vector_type(2)));
 

@@ -1,19 +1,19 @@
 // REQUIRES: arm-registered-target
 // REQUIRES: aarch64-registered-target
-// RUN: %clang_cc1 -triple thumbv7-apple-darwin9 \
+// RUN: %clang_cc1 -disable-noundef-args -triple thumbv7-apple-darwin9 \
 // RUN:   -target-abi aapcs \
 // RUN:   -target-cpu cortex-a8 \
 // RUN:   -mfloat-abi hard \
 // RUN:   -ffreestanding \
 // RUN:   -emit-llvm -w -o - %s | FileCheck %s
 
-// RUN: %clang_cc1 -triple armv7-unknown-nacl-gnueabi \
+// RUN: %clang_cc1 -disable-noundef-args -triple armv7-unknown-nacl-gnueabi \
 // RUN:  -target-cpu cortex-a8 \
 // RUN:  -mfloat-abi hard \
 // RUN:  -ffreestanding \
 // RUN:  -emit-llvm -w -o - %s | FileCheck %s
 
-// RUN: %clang_cc1 -triple arm64-apple-darwin9 -target-feature +neon \
+// RUN: %clang_cc1 -disable-noundef-args -triple arm64-apple-darwin9 -target-feature +neon \
 // RUN:   -ffreestanding \
 // RUN:   -emit-llvm -w -o - %s | FileCheck -check-prefix=CHECK64 %s
 
@@ -93,8 +93,8 @@ void test_hetero(struct heterogeneous_struct arg) {
 }
 
 // Neon multi-vector types are homogeneous aggregates.
-// CHECK: define arm_aapcs_vfpcc <16 x i8> @f0(%struct.int8x16x4_t %{{.*}})
-// CHECK64: define <16 x i8> @f0([4 x <16 x i8>] %{{.*}})
+// CHECK: define arm_aapcs_vfpcc noundef <16 x i8> @f0(%struct.int8x16x4_t %{{.*}})
+// CHECK64: define noundef <16 x i8> @f0([4 x <16 x i8>] %{{.*}})
 int8x16_t f0(int8x16x4_t v4) {
   return vaddq_s8(v4.val[0], v4.val[3]);
 }

@@ -8,9 +8,9 @@ void f(id a) {
     (void)i;
 }
 
-// CHECK32: call i32 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i32 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i32)*)
-// CHECK32: call i32 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i32 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i32)*)
+// CHECK32: call noundef i32 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i32 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i32)*)
+// CHECK32: call noundef i32 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i32 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i32)*)
 
-// CHECK64: call i64 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i64 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i64)*)
-// CHECK64: call i64 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i64 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i64)*)
+// CHECK64: call noundef i64 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i64 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i64)*)
+// CHECK64: call noundef i64 bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i64 (i8*, i8*, %struct.__objcFastEnumerationState*, [16 x i8*]*, i64)*)
 

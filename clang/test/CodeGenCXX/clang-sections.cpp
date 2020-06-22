@@ -67,10 +67,10 @@ int hoo(void) {
 //CHECK: @p = constant i32 7, align 4
 //CHECK: @_ZL5fptrs = internal constant [2 x i32 ()*] [i32 ()* @foo, i32 ()* @goo], align 4 #3
 
-//CHECK: define i32 @foo() #5 {
-//CHECK: define i32 @goo() #6 {
-//CHECK: declare i32 @zoo(i32*, i32*) #7
-//CHECK: define i32 @hoo() #8 {
+//CHECK: define noundef i32 @foo() #5 {
+//CHECK: define noundef i32 @goo() #6 {
+//CHECK: declare noundef i32 @zoo(i32* noundef, i32* noundef) #7
+//CHECK: define noundef i32 @hoo() #8 {
 
 //CHECK: attributes #0 = { "bss-section"="my_bss.1" "data-section"="my_data.1" "rodata-section"="my_rodata.1" }
 //CHECK: attributes #1 = { "data-section"="my_data.1" "rodata-section"="my_rodata.1" }

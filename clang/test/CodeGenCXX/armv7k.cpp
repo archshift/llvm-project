@@ -33,7 +33,7 @@ namespace test1 {
   int test() {
     return sizeof(B);
   }
-  // CHECK: define i32 @_ZN5test14testEv()
+  // CHECK: define noundef i32 @_ZN5test14testEv()
   // CHECK: ret i32 12
 }
 

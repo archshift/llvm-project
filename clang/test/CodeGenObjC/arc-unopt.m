@@ -33,7 +33,7 @@ void test2(void) {
 
 id test3(void) {
   extern id test3_helper(void);
-  // CHECK:      [[T0:%.*]] = call i8* @test3_helper()
+  // CHECK:      [[T0:%.*]] = call noundef i8* @test3_helper()
   // CHECK-NEXT: ret i8* [[T0]]
   return test3_helper();
 }
@@ -42,7 +42,7 @@ id test3(void) {
 @interface Test4_sub : Test4 { id y; } @end
 Test4 *test4(void) {
   extern Test4_sub *test4_helper(void);
-  // CHECK:      [[T0:%.*]] = call [[TEST4S:%.*]]* @test4_helper()
+  // CHECK:      [[T0:%.*]] = call noundef [[TEST4S:%.*]]* @test4_helper()
   // CHECK-NEXT: [[T1:%.*]] = bitcast [[TEST4S]]* [[T0]] to [[TEST4:%.*]]*
   // CHECK-NEXT: ret [[TEST4]]* [[T1]]
   return test4_helper();

@@ -112,9 +112,9 @@ struct A {
 
 // CHECK-LP32: .globl  __ZN1ScviEv
 // CHECK-LP32-NEXT: __ZN1ScviEv:
-// CHECK-LP32: call L__ZN1Ycv1ZEv
-// CHECK-LP32: call L__ZN1Zcv1XEv
-// CHECK-LP32: call L__ZN1XcviEv
-// CHECK-LP32: call L__ZN1XcvfEv
-// CHECK-LP32: call L__ZN2XBcviEv
-// CHECK-LP32: call L__ZN2YbcvcEv
+// CHECK-LP32: call frozen L__ZN1Ycv1ZEv
+// CHECK-LP32: call frozen L__ZN1Zcv1XEv
+// CHECK-LP32: call frozen L__ZN1XcviEv
+// CHECK-LP32: call frozen L__ZN1XcvfEv
+// CHECK-LP32: call frozen L__ZN2XBcviEv
+// CHECK-LP32: call frozen L__ZN2YbcvcEv

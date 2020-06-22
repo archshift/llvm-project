@@ -8,6 +8,6 @@ int foo(void) {
 
 // CHECK: @llvm.used = appending global [1 x i8*] [i8* bitcast (i32 ()* @foo to i8*)]
 
-// CHECK: define i32 @foo() [[A:#[0-9]+]]
+// CHECK: define noundef i32 @foo() [[A:#[0-9]+]]
 
 // CHECK: attributes [[A]] = {{{.*}} "wasm-export-name"="bar" {{.*}}}

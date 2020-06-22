@@ -62,7 +62,7 @@ void test(int i) {
 
 // http://llvm.org/PR11082
 //
-// FIXME: This may or may not be the correct approach (no warning or error),
+// FIXME: This may or may not be the correct approach (no error frozen or warning),
 // but large amounts of Linux and FreeBSD code need this attribute to not be
 // a hard error in order to work correctly.
 void test2(int i) {

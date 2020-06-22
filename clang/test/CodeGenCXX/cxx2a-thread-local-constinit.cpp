@@ -18,7 +18,7 @@
 extern thread_local int a;
 extern thread_local constinit int b;
 
-// CHECK-LABEL: define i32 @_Z5get_av()
+// CHECK-LABEL: define noundef i32 @_Z5get_av()
 // CHECK: call {{(cxx_fast_tlscc )?}}i32* @_ZTW1a()
 // CHECK: }
 int get_a() { return a; }
@@ -29,7 +29,7 @@ int get_a() { return a; }
 // LINUX: }
 // DARWIN-NOT: define {{.*}}@_ZTW1a()
 
-// CHECK-LABEL: define i32 @_Z5get_bv()
+// CHECK-LABEL: define noundef i32 @_Z5get_bv()
 // CHECK-NOT: call
 // CHECK: load i32, i32* @b
 // CHECK-NOT: call
@@ -40,7 +40,7 @@ int get_b() { return b; }
 
 extern thread_local int c;
 
-// CHECK-LABEL: define i32 @_Z5get_cv()
+// CHECK-LABEL: define noundef i32 @_Z5get_cv()
 // LINUX: call {{(cxx_fast_tlscc )?}}i32* @_ZTW1c()
 // CHECK: load i32, i32* %
 // CHECK: }
@@ -69,7 +69,7 @@ struct Destructed {
 };
 
 extern thread_local constinit Destructed e;
-// CHECK-LABEL: define i32 @_Z5get_ev()
+// CHECK-LABEL: define noundef i32 @_Z5get_ev()
 // CHECK: call {{.*}}* @_ZTW1e()
 // CHECK: }
 int get_e() { return e.n; }

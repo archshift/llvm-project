@@ -121,7 +121,7 @@ void parameter_passing(fx3x3_t a, fx3x3_t *b) {
 }
 
 fx3x3_t return_matrix(fx3x3_t *a) {
-  // CHECK-LABEL: define <9 x float> @return_matrix
+  // CHECK-LABEL: define noundef <9 x float> @return_matrix
   // CHECK-NEXT:  entry:
   // CHECK-NEXT:    %a.addr = alloca [9 x float]*, align 8
   // CHECK-NEXT:    store [9 x float]* %a, [9 x float]** %a.addr, align 8

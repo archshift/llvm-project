@@ -9,31 +9,3 @@ int main() {
 // CHECK: {{^        ~\^~~~~~~~~~~~~~~}}
 // CHECK: {{^       ~ \^              ~}}
 
-    (void)"Êï¿¾ô";
-
-// CHECK: {{^    \(void\)"<CA><U\+FFFE><F4>";}}
-// CHECK: {{^           \^~~~}}
-
-Â  int n = 0;
-
-// CHECK: {{ int n = 0;}}
-// CHECK: {{^\^}}
-
-   "ï¿¾                                                               \z";
-
-// CHECK: {{^  \.\.\.\\z";}}
-// CHECK: {{^     \^~}}
-
-
-    /* ï¿¾ */ "ï¿¾berhund";
-
-// CHECK: {{^    /\* <U\+FFFE> \*/ "<U\+FFFE>berhund";}}
-// CHECK: {{^                   \^~~~~~~~~~~~~~~~~}}
-
-
-// PR14292
-    "x°xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-// CHECK: {{^    "x<B0>}}
-// CHECK: {{^    \^}}
-
-}

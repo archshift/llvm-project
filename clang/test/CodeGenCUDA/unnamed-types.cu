@@ -29,7 +29,7 @@ void f0(float *p) {
 // linkages are still required to keep the original `internal` linkage.
 
 // HOST: define internal void @_ZZ2f1PfENKUlS_E_clES_(
-// DEVICE: define internal float @_ZZZ2f1PfENKUlS_E_clES_ENKUlfE_clEf(
+// DEVICE: define internal noundef float @_ZZZ2f1PfENKUlS_E_clES_ENKUlfE_clEf(
 void f1(float *p) {
   [](float *p) {
     k0<<<1,1>>>(p, [] __device__ (float x) { return x + 1.f; });

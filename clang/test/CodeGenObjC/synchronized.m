@@ -47,7 +47,7 @@ void foo(id a) {
 
 }
 
-// CHECK-LABEL: define i32 @f0(
+// CHECK-LABEL: define noundef i32 @f0(
 int f0(id a) {
   // TODO: we can optimize the ret to a constant if we can figure out
   // either that x isn't stored to within the synchronized block or

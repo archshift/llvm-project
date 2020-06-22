@@ -5,9 +5,9 @@ void test0(void) {
   __attribute__((objc_precise_lifetime)) id x = test0_helper();
   test0_helper();
   // CHECK-LABEL: define void @test0()
-  // CHECK:      [[T0:%.*]] = call i8* @test0_helper()
+  // CHECK:      [[T0:%.*]] = call noundef i8* @test0_helper()
   // CHECK-NEXT: store i8* [[T0]], i8** [[X:%.*]], align 8
-  // CHECK-NEXT: call i8* @test0_helper()
+  // CHECK-NEXT: call noundef i8* @test0_helper()
   // CHECK-NEXT: [[T0:%.*]] = load i8*, i8** [[X]], align 8
   // CHECK-NEXT: call void asm sideeffect "", "r"(i8* [[T0]]) [[NUW:#[0-9]+]]
   // CHECK-NEXT: ret void

@@ -11,4 +11,4 @@ void triple_value(int *px) {
   *px = triple(*px);
 }
 
-// CHECK: define internal i32 @triple(i32
+// CHECK: define internal noundef i32 @triple(i32

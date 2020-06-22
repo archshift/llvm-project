@@ -12,7 +12,7 @@ long long f_i64() {
     mov edx, 1
   }
 }
-// CHECK-LABEL: define dso_local i64 @f_i64()
+// CHECK-LABEL: define dso_local noundef i64 @f_i64()
 // CHECK: %[[r:[^ ]*]] = call i64 asm sideeffect inteldialect "mov eax, $$1\0A\09mov edx, $$1", "=A,~{eax},{{.*}}"
 // CHECK: ret i64 %[[r]]
 
@@ -22,7 +22,7 @@ int f_i32() {
     mov edx, 1
   }
 }
-// CHECK-LABEL: define dso_local i32 @f_i32()
+// CHECK-LABEL: define dso_local noundef i32 @f_i32()
 // CHECK: %[[r:[^ ]*]] = call i32 asm sideeffect inteldialect "mov eax, $$1\0A\09mov edx, $$1", "={eax},~{eax},{{.*}}"
 // CHECK: ret i32 %[[r]]
 
@@ -32,7 +32,7 @@ short f_i16() {
     mov edx, 1
   }
 }
-// CHECK-LABEL: define dso_local signext i16 @f_i16()
+// CHECK-LABEL: define dso_local noundef signext i16 @f_i16()
 // CHECK: %[[r:[^ ]*]] = call i32 asm sideeffect inteldialect "mov eax, $$1\0A\09mov edx, $$1", "={eax},~{eax},{{.*}}"
 // CHECK: %[[r_i16:[^ ]*]] = trunc i32 %[[r]] to i16
 // CHECK: ret i16 %[[r_i16]]
@@ -43,7 +43,7 @@ char f_i8() {
     mov edx, 1
   }
 }
-// CHECK-LABEL: define dso_local signext i8 @f_i8()
+// CHECK-LABEL: define dso_local noundef signext i8 @f_i8()
 // CHECK: %[[r:[^ ]*]] = call i32 asm sideeffect inteldialect "mov eax, $$1\0A\09mov edx, $$1", "={eax},~{eax},{{.*}}"
 // CHECK: %[[r_i8:[^ ]*]] = trunc i32 %[[r]] to i8
 // CHECK: ret i8 %[[r_i8]]
@@ -54,7 +54,7 @@ bool f_i1() {
     mov edx, 1U
   }
 }
-// CHECK-LABEL: define dso_local zeroext i1 @f_i1()
+// CHECK-LABEL: define dso_local noundef zeroext i1 @f_i1()
 // CHECK: %[[r:[^ ]*]] = call i32 asm sideeffect inteldialect "mov eax, $$1\0A\09mov edx, $$1", "={eax},~{eax},{{.*}}"
 // CHECK: %[[r_i8:[^ ]*]] = trunc i32 %[[r]] to i8
 // CHECK: store i8 %[[r_i8]], i8* %{{.*}}
@@ -95,6 +95,6 @@ EightChars f_s8() {
 int main() {
   __asm xor eax, eax
 }
-// CHECK-LABEL: define dso_local i32 @main()
+// CHECK-LABEL: define dso_local noundef i32 @main()
 // CHECK: %[[r:[^ ]*]] = call i32 asm sideeffect inteldialect "xor eax, eax", "={eax},{{.*}}"
 // CHECK: ret i32 %[[r]]

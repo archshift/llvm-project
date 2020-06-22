@@ -38,7 +38,7 @@ int teams_argument_global(int n) {
   // CK1: call void @__kmpc_push_target_tripcount(i64 -1, i64 %{{.+}})
   // CK1: call i32 @__tgt_target_teams_mapper(i64 -1, i8* @{{[^,]+}}, i32 5, i8** %{{[^,]+}}, i8** %{{[^,]+}}, i{{64|32}}* {{.+}}@{{[^,]+}}, i32 0, i32 0), i64* {{.+}}@{{[^,]+}}, i32 0, i32 0), i8** null, i32 {{.+}}, i32 1)
 
-  // CK1: call void @[[OFFL1:.+]](i{{32|64}} [[TE_PAR]], i{{32|64}} [[TH_PAR]],
+  // CK1: call void @[[OFFL1:.+]](i{{32|64}} [[TE_PAR]], i{{32|64}} [[TH_PAR]]
   #pragma omp target
   #pragma omp teams distribute simd num_teams(te), thread_limit(th) aligned(a) simdlen(16) linear(i)
   for(i = 0; i < n; i++) {
@@ -56,7 +56,7 @@ int teams_argument_global(int n) {
   }}}
 
   // outlined target regions
-  // CK1: define internal void @[[OFFL1]](i{{32|64}} [[TE_ARG:%.+]], i{{32|64}} [[TH_ARG:%.+]], [100 x i{{32|64}}]* {{.+}}, i{{32|64}} {{.+}}, {{.+}})
+  // CK1: define internal void @[[OFFL1]](i{{32|64}} noundef [[TE_ARG:%.+]], i{{32|64}} noundef [[TH_ARG:%.+]], [100 x i{{32|64}}]* {{.+}}, i{{32|64}} {{.+}}, {{.+}})
   // CK1: [[TE_ADDR:%.+]] = alloca i{{32|64}},
   // CK1: [[TH_ADDR:%.+]] = alloca i{{32|64}},
   // CK1: store{{.+}} [[TE_ARG]], {{.+}} [[TE_ADDR]],
@@ -297,7 +297,7 @@ int main (int argc, char **argv) {
 // CK4:  ret
 // CK4-NEXT: }
 
-// CK4: define {{.*}}void @[[OFFLT]](i{{32|64}} [[TE_ARG:%.+]], i{{32|64}} [[TH_ARG:%.+]], {{.+}})
+// CK4: define {{.*}}void @[[OFFLT]](i{{32|64}} noundef [[TE_ARG:%.+]], i{{32|64}} noundef [[TH_ARG:%.+]], {{.+}})
 // CK4: [[TE_ADDR:%.+]] = alloca i{{32|64}},
 // CK4: [[TH_ADDR:%.+]] = alloca i{{32|64}},
 // CK4: store{{.+}} [[TE_ARG]], {{.+}} [[TE_ADDR]],

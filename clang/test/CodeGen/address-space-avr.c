@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple avr -emit-llvm < %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple avr -emit-llvm < %s | FileCheck %s
 
 // Test that function declarations in nonzero address spaces without prototype
 // are called correctly.

@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple riscv64 -target-feature +d -target-abi lp64d -emit-llvm %s -o - \
+// RUN: %clang_cc1 -disable-noundef-args -triple riscv64 -target-feature +d -target-abi lp64d -emit-llvm %s -o - \
 // RUN:     | FileCheck %s
 
 #include <stdint.h>
@@ -157,7 +157,7 @@ void f_struct_double_int8_insufficient_fprs(float a, double b, double c, double 
 // CHECK: define void @f_doublecomplex(double %a.coerce0, double %a.coerce1)
 void f_doublecomplex(double __complex__ a) {}
 
-// CHECK: define { double, double } @f_ret_doublecomplex()
+// CHECK: define noundef { double, double } @f_ret_doublecomplex()
 double __complex__ f_ret_doublecomplex() {
   return 1.0;
 }

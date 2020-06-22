@@ -18,7 +18,7 @@ AVAILABLE_EXTERNALLY void *memcpy(void *a, const void *b, size_t c) {
 void foo(void *a, const void *b, size_t c) {
   // Clang will always _emit_ this as memcpy. LLVM turns it into @llvm.memcpy
   // later on if optimizations are enabled.
-  // CHECK: call i8* @memcpy
+  // CHECK: call noundef i8* @memcpy
   memcpy(a, b, c);
 }
 

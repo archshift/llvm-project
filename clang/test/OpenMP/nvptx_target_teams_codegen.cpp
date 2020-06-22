@@ -94,7 +94,7 @@ int bar(int n){
   // CHECK: [[EXIT]]
   // CHECK: ret void
 
-  // CHECK: define {{.*}}void [[T1:@__omp_offloading_.+template.+l27]](i[[SZ:32|64]] [[A:%[^)]+]])
+  // CHECK: define {{.*}}void [[T1:@__omp_offloading_.+template.+l27]](i[[SZ:32|64]] noundef [[A:%[^)]+]])
   // CHECK: store i[[SZ]] [[A]], i[[SZ]]* [[A_ADDR:%.+]], align
   // CHECK: [[CONV:%.+]] = bitcast i[[SZ]]* [[A_ADDR]] to i8*
 
@@ -138,7 +138,7 @@ int bar(int n){
   // CHECK: [[EXIT]]
   // CHECK: ret void
 
-  // CHECK: define internal void [[PARALLEL]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i[[SZ]] [[A_VAL:%.+]])
+  // CHECK: define internal void [[PARALLEL]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i[[SZ]] noundef [[A_VAL:%.+]])
   // CHECK: [[A_ADDR:%.+]] = alloca i[[SZ]],
   // CHECK: store i[[SZ]] [[A_VAL]], i[[SZ]]* [[A_ADDR]],
   // CHECK: [[CONV:%.+]] = bitcast i[[SZ]]* [[A_ADDR]] to i8*
@@ -180,7 +180,7 @@ int bar(int n){
   // CHECK: [[EXIT]]
   // CHECK: ret void
 
-  // CHECK: define {{.*}}void [[T2:@__omp_offloading_.+template.+l32]](i[[SZ:32|64]] [[AA:%[^)]+]])
+  // CHECK: define {{.*}}void [[T2:@__omp_offloading_.+template.+l32]](i[[SZ:32|64]] noundef [[AA:%[^)]+]])
   // CHECK: store i[[SZ]] [[AA]], i[[SZ]]* [[AA_ADDR:%.+]], align
   // CHECK: [[CONV:%.+]] = bitcast i[[SZ]]* [[AA_ADDR]] to i16*
 
@@ -224,7 +224,7 @@ int bar(int n){
   // CHECK: [[EXIT]]
   // CHECK: ret void
 
-  // CHECK: define internal void [[PARALLEL]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i[[SZ]] [[A_VAL:%.+]])
+  // CHECK: define internal void [[PARALLEL]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i[[SZ]] noundef [[A_VAL:%.+]])
   // CHECK: [[A_ADDR:%.+]] = alloca i[[SZ]],
   // CHECK: store i[[SZ]] [[A_VAL]], i[[SZ]]* [[A_ADDR]],
   // CHECK: [[CONV:%.+]] = bitcast i[[SZ]]* [[A_ADDR]] to i16*
@@ -242,17 +242,17 @@ int bar(int n){
 // CHECK: call void @__kmpc_spmd_kernel_deinit_v2(i16 1)
 // CHECK: ret
 
-// CHECK: define internal void [[L0]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i[[SZ]] %{{.+}})
+// CHECK: define internal void [[L0]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i[[SZ]] noundef %{{.+}})
 // CHECK: call void [[L1:@.+]](i32* %{{.+}}, i32* %{{.+}}, i16* %{{.+}})
 // CHECK: ret void
 
-// CHECK: define internal void [[L1]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i16* nonnull align {{[0-9]+}} dereferenceable
+// CHECK: define internal void [[L1]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i16* noundef nonnull align {{[0-9]+}} dereferenceable
 // CHECK: call void @__kmpc_serialized_parallel(
 // CHECK: call void [[L2:@.+]](i32* %{{.+}}, i32* %{{.+}}, i16* %{{.+}})
 // CHECK: call void @__kmpc_end_serialized_parallel(
 // CHECK: ret void
 
-// CHECK: define internal void [[L2]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i16* nonnull align {{[0-9]+}} dereferenceable
+// CHECK: define internal void [[L2]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i16* noundef nonnull align {{[0-9]+}} dereferenceable
 // CHECK: store i16 1, i16* %
 // CHECK: ret void
 

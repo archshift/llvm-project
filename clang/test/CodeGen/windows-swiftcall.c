@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple x86_64-unknown-windows -emit-llvm -target-cpu core2 -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-unknown-windows -emit-llvm -target-cpu core2 -o - %s | FileCheck %s
 
 #define SWIFTCALL __attribute__((swiftcall))
 #define OUT __attribute__((swift_indirect_result))
@@ -389,7 +389,7 @@ TEST(int8)
 // CHECK-LABEL: define dso_local void @test_int8()
 // CHECK:   [[TMP1:%.*]] = alloca [[REC]], align
 // CHECK:   [[TMP2:%.*]] = alloca [[REC]], align
-// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] [[UAGG]] @return_int8()
+// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] noundef [[UAGG]] @return_int8()
 // CHECK:   [[CAST_TMP:%.*]] = bitcast [[REC]]* [[TMP1]] to [[AGG]]*
 // CHECK:   [[T0:%.*]] = getelementptr inbounds [[AGG]], [[AGG]]* [[CAST_TMP]], i32 0, i32 0
 // CHECK:   [[T1:%.*]] = extractvalue [[UAGG]] [[CALL]], 0
@@ -433,7 +433,7 @@ TEST(int5)
 // CHECK-LABEL: define dso_local void @test_int5()
 // CHECK:   [[TMP1:%.*]] = alloca [[REC]], align
 // CHECK:   [[TMP2:%.*]] = alloca [[REC]], align
-// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] [[UAGG]] @return_int5()
+// CHECK:   [[CALL:%.*]] = call [[SWIFTCC]] noundef [[UAGG]] @return_int5()
 // CHECK:   [[CAST_TMP:%.*]] = bitcast [[REC]]* [[TMP1]] to [[AGG]]*
 // CHECK:   [[T0:%.*]] = getelementptr inbounds [[AGG]], [[AGG]]* [[CAST_TMP]], i32 0, i32 0
 // CHECK:   [[T1:%.*]] = extractvalue [[UAGG]] [[CALL]], 0

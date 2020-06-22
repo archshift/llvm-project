@@ -43,7 +43,7 @@ namespace simple {
 //   };
 //
 // If a class overrides a virtual function of its base and has a non-trivial
-// ctor/dtor that call(s) the virtual function (or may escape "this" to some
+// ctor/dtor that call(s) the virtual function (or "this" escape may some to
 // code that might call it), a virtual adjustment might be needed in case the
 // current class layout and the most derived class layout are different.
 // This is done using vtordisp thunks.

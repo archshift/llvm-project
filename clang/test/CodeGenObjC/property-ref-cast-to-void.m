@@ -14,5 +14,5 @@ void FUNC () {
     (void)obj.myGetter; 
 }
 
-// CHECK: call i32 bitcast
-// CHECK: call double bitcast
+// CHECK: call noundef i32 bitcast
+// CHECK: call noundef double bitcast

@@ -10,7 +10,7 @@ __attribute__((no_sanitize("shadow-call-stack")))
 #endif
 int foo(int *a) { return *a; }
 
-// CHECK: define i32 @foo(i32* %a)
+// CHECK: define frozen i32 @foo(i32* frozen %a)
 
 // BLACKLISTED-NOT: attributes {{.*}}shadowcallstack{{.*}}
 // UNBLACKLISTED: attributes {{.*}}shadowcallstack{{.*}}

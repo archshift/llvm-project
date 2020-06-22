@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 // SEQ-DAG: [[KERNEL_SHARED:@.+]] = internal unnamed_addr constant i16 1
 // CHECK-DAG: @__omp_offloading_{{.*}}_main_l20_exec_mode = weak constant i8 0
 
-// CHECK: define weak void @__omp_offloading_{{.*}}_main_l20([10 x i32]* nonnull align 4 dereferenceable(40) %{{.+}}, [10 x i32]* nonnull align 4 dereferenceable(40) %{{.+}}, i32* nonnull align 4 dereferenceable(4) %{{.+}}, i{{64|32}} %{{.+}}, [10 x i32]* nonnull align 4 dereferenceable(40) %{{.+}})
+// CHECK: define weak void @__omp_offloading_{{.*}}_main_l20([10 x i32]* noundef nonnull align 4 dereferenceable(40) %{{.+}}, [10 x i32]* noundef nonnull align 4 dereferenceable(40) %{{.+}}, i32* noundef nonnull align 4 dereferenceable(4) %{{.+}}, i{{64|32}} noundef %{{.+}}, [10 x i32]* noundef nonnull align 4 dereferenceable(40) %{{.+}})
 // SEQ: [[SHARED:%.+]] = load i16, i16* [[KERNEL_SHARED]],
 // SEQ: [[SIZE:%.+]] = load i{{64|32}}, i{{64|32}}* [[KERNEL_SIZE]],
 // SEQ: call void @__kmpc_get_team_static_memory(i16 1, i8* addrspacecast (i8 addrspace(3)* getelementptr inbounds ([[MEM_TY]], [[MEM_TY]] addrspace(3)* [[SHARED_GLOBAL_RD]], i32 0, i32 0, i32 0) to i8*), i{{64|32}} [[SIZE]], i16 [[SHARED]], i8** addrspacecast (i8* addrspace(3)* [[KERNEL_PTR]] to i8**))

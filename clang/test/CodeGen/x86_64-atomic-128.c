@@ -1,7 +1,7 @@
 // RUN: %clang_cc1 -triple x86_64-linux-gnu -target-cpu core2 %s -S -emit-llvm -o - | FileCheck %s
 
 // All atomics up to 16 bytes should be emitted inline on x86_64. The
-// backend can reform __sync_whatever calls if necessary (e.g. the CPU
+// backend can reform __sync_whatever calls if necessary (e.g. CPU the
 // doesn't have cmpxchg16b).
 
 __int128 test_sync_call(__int128 *addr, __int128 val) {

@@ -79,7 +79,7 @@ struct G g(int x, int y, int z) {
 
 // We had a bug where we'd emit a new GlobalVariable for each time we used a
 // const pointer to a variable initialized by a compound literal.
-// CHECK-LABEL: define i32 @compareMyCLH() #0
+// CHECK-LABEL: define noundef i32 @compareMyCLH() #0
 int compareMyCLH() {
   // CHECK: store i8* bitcast ([[MY_CLH]] to i8*)
   const void *a = MyCLH;
@@ -90,7 +90,7 @@ int compareMyCLH() {
 
 // Check generated code for GNU constant array init from compound literal,
 // for a local variable.
-// CHECK-LABEL: define i32 @compound_array_fn()
+// CHECK-LABEL: define noundef i32 @compound_array_fn()
 // CHECK: [[COMPOUND_ARRAY:%.*]] = alloca [8 x i32]
 // CHECK: call void @llvm.memcpy.p0i8.p0i8.i64({{.*}}, i64 32, i1 false)
 int compound_array_fn() {

@@ -57,7 +57,7 @@ extern void f1(void) __attribute((alias("f0")));
 // Make sure that aliases cause referenced values to be emitted.
 // PR3200
 static inline int foo1() { return 0; }
-// CHECKBASIC-LABEL: define internal i32 @foo1()
+// CHECKBASIC-LABEL: define internal noundef i32 @foo1()
 int foo() __attribute__((alias("foo1")));
 int bar() __attribute__((alias("bar1")));
 
@@ -72,16 +72,16 @@ static int inner_weak(int a) { return 0; }
 extern __typeof(inner) inner_a __attribute__((alias("inner")));
 static __typeof(inner_weak) inner_weak_a __attribute__((weakref, alias("inner_weak")));
 // CHECKCC: @inner_a = alias i32 (i32), i32 (i32)* @inner
-// CHECKCC: define internal arm_aapcs_vfpcc i32 @inner(i32 %a) [[NUW:#[0-9]+]] {
+// CHECKCC: define internal arm_aapcs_vfpcc noundef i32 @inner(i32 noundef %a) [[NUW:#[0-9]+]] {
 
 int outer(int a) { return inner(a); }
-// CHECKCC: define arm_aapcs_vfpcc i32 @outer(i32 %a) [[NUW]] {
-// CHECKCC: call arm_aapcs_vfpcc  i32 @inner(i32 %{{.*}})
+// CHECKCC: define arm_aapcs_vfpcc noundef i32 @outer(i32 noundef %a) [[NUW]] {
+// CHECKCC: call arm_aapcs_vfpcc noundef i32 @inner(i32 noundef %{{.*}})
 
 int outer_weak(int a) { return inner_weak_a(a); }
-// CHECKCC: define arm_aapcs_vfpcc i32 @outer_weak(i32 %a) [[NUW]] {
-// CHECKCC: call arm_aapcs_vfpcc  i32 @inner_weak(i32 %{{.*}})
-// CHECKCC: define internal arm_aapcs_vfpcc i32 @inner_weak(i32 %a) [[NUW]] {
+// CHECKCC: define arm_aapcs_vfpcc noundef i32 @outer_weak(i32 noundef %a) [[NUW]] {
+// CHECKCC: call arm_aapcs_vfpcc noundef i32 @inner_weak(i32 noundef %{{.*}})
+// CHECKCC: define internal arm_aapcs_vfpcc noundef i32 @inner_weak(i32 noundef %a) [[NUW]] {
 
 // CHECKBASIC: attributes [[NUW]] = { noinline nounwind{{.*}} }
 

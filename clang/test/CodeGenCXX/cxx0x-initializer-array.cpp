@@ -6,7 +6,7 @@ struct A { int a[1]; };
 typedef A x[];
 int f() {
   x{{{1}}};
-  // CHECK-LABEL: define i32 @_Z1fv
+  // CHECK-LABEL: define noundef i32 @_Z1fv
   // CHECK: store i32 1
   // (It's okay if the output changes here, as long as we don't crash.)
   return 0;

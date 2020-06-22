@@ -12,8 +12,8 @@ int *test(void) {
 
 // LINUX: @bar = internal global i32 0
 // LINUX: @foo = global i32 0
-// LINUX: declare i8* @alias(i32)
+// LINUX: declare noundef i8* @alias(i32 noundef)
 
 // DARWIN: @"\01bar" = internal global i32 0
 // DARWIN: @"\01foo" = global i32 0
-// DARWIN: declare i8* @"\01alias"(i32)
+// DARWIN: declare noundef i8* @"\01alias"(i32 noundef)

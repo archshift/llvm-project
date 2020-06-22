@@ -11,9 +11,9 @@ int baz() {
   return foo();
 }
 
-// CHECK: define i32 @bar(i32 %a) [[BAR_ATTR:#[0-9]+]] {
-// CHECK: declare i32 @foo(...) [[FOO_ATTR:#[0-9]+]]
-// CHECK: define i32 @baz() [[BAZ_ATTR:#[0-9]+]] {
+// CHECK: define noundef i32 @bar(i32 noundef %a) [[BAR_ATTR:#[0-9]+]] {
+// CHECK: declare noundef i32 @foo(...) [[FOO_ATTR:#[0-9]+]]
+// CHECK: define noundef i32 @baz() [[BAZ_ATTR:#[0-9]+]] {
 
 // CHECK: attributes [[FOO_ATTR]] = {  {{.*}}"no-prototype"{{.*}} }
 // CHECK-NOT: attributes [[BAR_ATTR]] = {  {{.*}}"no-prototype"{{.*}} }

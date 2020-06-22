@@ -1,9 +1,9 @@
 // Test target codegen - host bc file has to be created first.
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple powerpc64le-unknown-unknown -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-ppc-host.bc
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm %s -fopenmp-is-device -fopenmp-host-ir-file-path %t-ppc-host.bc -o - -disable-llvm-optzns | FileCheck %s --check-prefix CHECK --check-prefix CHECK-64
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple i386-unknown-unknown -fopenmp-targets=nvptx-nvidia-cuda -emit-llvm-bc %s -o %t-x86-host.bc
-// RUN: %clang_cc1 -verify -fopenmp -x c++ -triple nvptx-unknown-unknown -fopenmp-targets=nvptx-nvidia-cuda -emit-llvm %s -fopenmp-is-device -fopenmp-host-ir-file-path %t-x86-host.bc -o - -disable-llvm-optzns | FileCheck %s --check-prefix CHECK --check-prefix CHECK-32
-// RUN: %clang_cc1 -verify -fopenmp -fexceptions -fcxx-exceptions -x c++ -triple nvptx-unknown-unknown -fopenmp-targets=nvptx-nvidia-cuda -emit-llvm %s -fopenmp-is-device -fopenmp-host-ir-file-path %t-x86-host.bc -o - -disable-llvm-optzns | FileCheck %s --check-prefix CHECK --check-prefix CHECK-32
+// RUN: %clang_cc1 -disable-noundef-args -verify -fopenmp -x c++ -triple powerpc64le-unknown-unknown -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm-bc %s -o %t-ppc-host.bc
+// RUN: %clang_cc1 -disable-noundef-args -verify -fopenmp -x c++ -triple nvptx64-unknown-unknown -fopenmp-targets=nvptx64-nvidia-cuda -emit-llvm %s -fopenmp-is-device -fopenmp-host-ir-file-path %t-ppc-host.bc -o - -disable-llvm-optzns | FileCheck %s --check-prefix CHECK --check-prefix CHECK-64
+// RUN: %clang_cc1 -disable-noundef-args -verify -fopenmp -x c++ -triple i386-unknown-unknown -fopenmp-targets=nvptx-nvidia-cuda -emit-llvm-bc %s -o %t-x86-host.bc
+// RUN: %clang_cc1 -disable-noundef-args -verify -fopenmp -x c++ -triple nvptx-unknown-unknown -fopenmp-targets=nvptx-nvidia-cuda -emit-llvm %s -fopenmp-is-device -fopenmp-host-ir-file-path %t-x86-host.bc -o - -disable-llvm-optzns | FileCheck %s --check-prefix CHECK --check-prefix CHECK-32
+// RUN: %clang_cc1 -disable-noundef-args -verify -fopenmp -fexceptions -fcxx-exceptions -x c++ -triple nvptx-unknown-unknown -fopenmp-targets=nvptx-nvidia-cuda -emit-llvm %s -fopenmp-is-device -fopenmp-host-ir-file-path %t-x86-host.bc -o - -disable-llvm-optzns | FileCheck %s --check-prefix CHECK --check-prefix CHECK-32
 // expected-no-diagnostics
 
 #ifndef HEADER
@@ -559,7 +559,7 @@ int baz(int f, double &a) {
 // CHECK-64-DAG:load i32, i32* [[REF_B]]
 // CHECK-32-DAG:load i32, i32* [[LOCAL_B]]
 // CHECK-DAG:   getelementptr inbounds i16, i16* [[REF_C]], i[[SZ]] %{{.+}}
-// CHECK: call i32 [[BAZ:@.*baz.*]](i32 %
+// CHECK: call noundef i32 [[BAZ:@.*baz.*]](i32 %
 // CHECK: br label {{%?}}[[TERMINATE:.+]]
 //
 // CHECK: [[TERMINATE]]
@@ -570,7 +570,7 @@ int baz(int f, double &a) {
 // CHECK: [[EXIT]]
 // CHECK: ret void
 
-// CHECK: define{{ hidden | }}i32 [[BAZ]](i32 [[F:%.*]], double* nonnull align {{[0-9]+}} dereferenceable{{.*}})
+// CHECK: define{{ hidden | }}noundef i32 [[BAZ]](i32 [[F:%.*]], double* nonnull align {{[0-9]+}} dereferenceable{{.*}})
 // CHECK: alloca i32,
 // CHECK: [[LOCAL_F_PTR:%.+]] = alloca i32,
 // CHECK: [[ZERO_ADDR:%.+]] = alloca i32,

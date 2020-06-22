@@ -17,7 +17,7 @@ static inline id getObj(id a) {
 
 // CHECK: %[[STRUCT_S:.*]] = type { i8* }
 
-// CHECK: define internal i8* @getObj(
+// CHECK: define internal noundef i8* @getObj(
 // CHECK: %[[_COMPOUNDLITERAL:.*]] = alloca %[[STRUCT_S]],
 // CHECK: %[[V5:.*]] = bitcast %[[STRUCT_S]]* %[[_COMPOUNDLITERAL]] to i8**
 // CHECK: call void @__destructor_8_s0(i8** %[[V5]])

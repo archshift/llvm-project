@@ -1,7 +1,7 @@
 // ByVal attributes should propogate through to produce proper assembly and
 // avoid "unpacking" structs within the stubs on x86_64.
 
-// RUN: %clang_cc1 %s -triple=x86_64-unknown-fuchsia -S -o - -emit-llvm -fexperimental-relative-c++-abi-vtables | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args %s -triple=x86_64-unknown-fuchsia -S -o - -emit-llvm -fexperimental-relative-c++-abi-vtables | FileCheck %s
 
 struct LargeStruct {
   char x[24];

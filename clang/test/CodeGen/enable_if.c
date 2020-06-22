@@ -90,6 +90,6 @@ void test5() {
   int foo(char *i __attribute__((pass_object_size(0))))
       __attribute__((enable_if(1, ""), overloadable));
 
-  // CHECK: call i32 @_Z3fooUa9enable_ifIXLi1EEEPcU17pass_object_size0
+  // CHECK: call noundef i32 @_Z3fooUa9enable_ifIXLi1EEEPcU17pass_object_size0
   foo((void*)0);
 }

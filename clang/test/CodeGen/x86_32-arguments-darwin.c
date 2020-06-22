@@ -1,31 +1,31 @@
-// RUN: %clang_cc1 -w -fblocks -triple i386-apple-darwin9 -target-cpu yonah -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -w -fblocks -triple i386-apple-darwin9 -target-cpu yonah -emit-llvm -o - %s | FileCheck %s
 
-// CHECK-LABEL: define signext i8 @f0()
+// CHECK-LABEL: define noundef signext i8 @f0()
 char f0(void) {
   return 0;
 }
 
-// CHECK-LABEL: define signext i16 @f1()
+// CHECK-LABEL: define noundef signext i16 @f1()
 short f1(void) {
   return 0;
 }
 
-// CHECK-LABEL: define i32 @f2()
+// CHECK-LABEL: define noundef i32 @f2()
 int f2(void) {
   return 0;
 }
 
-// CHECK-LABEL: define float @f3()
+// CHECK-LABEL: define noundef float @f3()
 float f3(void) {
   return 0;
 }
 
-// CHECK-LABEL: define double @f4()
+// CHECK-LABEL: define noundef double @f4()
 double f4(void) {
   return 0;
 }
 
-// CHECK-LABEL: define x86_fp80 @f5()
+// CHECK-LABEL: define noundef x86_fp80 @f5()
 long double f5(void) {
   return 0;
 }
@@ -159,11 +159,11 @@ struct s39 { v39 x; };
 void f39(struct s39 x) {}
 
 // <rdar://problem/7247671>
-// CHECK-LABEL: define i32 @f40()
+// CHECK-LABEL: define noundef i32 @f40()
 enum e40 { ec0 = 0 };
 enum e40 f40(void) { }
 
-// CHECK-LABEL: define void ()* @f41()
+// CHECK-LABEL: define noundef void ()* @f41()
 typedef void (^vvbp)(void);
 vvbp f41(void) { }
 
@@ -216,14 +216,14 @@ void f53(struct s53 x) {}
 
 typedef unsigned short v2i16 __attribute__((__vector_size__(4)));
 
-// CHECK-LABEL: define i32 @f54(i32 %arg.coerce)
+// CHECK-LABEL: define noundef i32 @f54(i32 %arg.coerce)
 // rdar://8359483
 v2i16 f54(v2i16 arg) { return arg+arg; }
 
 
 typedef int v4i32 __attribute__((__vector_size__(16)));
 
-// CHECK-LABEL: define <2 x i64> @f55(<4 x i32> %arg)
+// CHECK-LABEL: define noundef <2 x i64> @f55(<4 x i32> %arg)
 // PR8029
 v4i32 f55(v4i32 arg) { return arg+arg; }
 
@@ -303,7 +303,7 @@ typedef int T62 __attribute((vector_size(16)));
 struct s62 { T62 x; int y; } __attribute((packed, aligned(8)));
 void f62(int x, struct s62 y) {}
 
-// CHECK-LABEL: define i32 @f63
+// CHECK-LABEL: define noundef i32 @f63
 // CHECK: ptrtoint
 // CHECK: and {{.*}}, -16
 // CHECK: inttoptr
@@ -325,7 +325,7 @@ void f64(struct s64 x) {}
 struct s65 { signed char a[0]; float b; };
 struct s65 f65() { return (struct s65){{},2}; }
 
-// CHECK-LABEL: define <2 x i64> @f66
+// CHECK-LABEL: define noundef <2 x i64> @f66
 // CHECK: ptrtoint
 // CHECK: and {{.*}}, -16
 // CHECK: inttoptr

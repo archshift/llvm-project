@@ -1,7 +1,7 @@
 // RUN: %clang_cc1 -triple sparc -emit-llvm -o - %s | FileCheck %s
 #include <stdarg.h>
 
-// CHECK-LABEL: define i32 @get_int
+// CHECK-LABEL: define noundef i32 @get_int
 // CHECK: [[RESULT:%[a-z_0-9]+]] = va_arg {{.*}}, i32{{$}}
 // CHECK: store i32 [[RESULT]], i32* [[LOC:%[a-z_0-9]+]]
 // CHECK: [[RESULT2:%[a-z_0-9]+]] = load i32, i32* [[LOC]]

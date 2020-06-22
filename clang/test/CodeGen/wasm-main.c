@@ -6,4 +6,4 @@ int main(void) {
   return 0;
 }
 
-// CHECK-LABEL: define i32 @main()
+// CHECK-LABEL: define noundef i32 @main()

@@ -256,18 +256,18 @@ int DispatchFirst(void);
 
 ATTR(cpu_specific(atom))
 int DispatchFirst(void) {return 0;}
-// LINUX: define i32 @DispatchFirst.O
+// LINUX: define noundef i32 @DispatchFirst.O
 // LINUX: ret i32 0
 
-// WINDOWS: define dso_local i32 @DispatchFirst.O()
+// WINDOWS: define dso_local noundef i32 @DispatchFirst.O()
 // WINDOWS: ret i32 0
 
 ATTR(cpu_specific(pentium))
 int DispatchFirst(void) {return 1;}
-// LINUX: define i32 @DispatchFirst.B
+// LINUX: define noundef i32 @DispatchFirst.B
 // LINUX: ret i32 1
 
-// WINDOWS: define dso_local i32 @DispatchFirst.B
+// WINDOWS: define dso_local noundef i32 @DispatchFirst.B
 // WINDOWS: ret i32 1
 
 // CHECK: attributes #[[S]] = {{.*}}"target-features"="+avx,+cmov,+cx8,+f16c,+mmx,+popcnt,+sse,+sse2,+sse3,+sse4.1,+sse4.2,+ssse3,+x87,+xsave"

@@ -11,7 +11,7 @@
 @synthesize PROP;
 @end
 
-// CHECK:     define internal i8* @"\01-[WeakPropertyTest PROP]"
+// CHECK:     define internal noundef i8* @"\01-[WeakPropertyTest PROP]"
 // CHECK:       [[SELF:%.*]] = alloca [[WPT:%.*]]*,
 // CHECK-NEXT:  [[CMD:%.*]] = alloca i8*,
 // CHECK-NEXT:  store [[WPT]]* {{%.*}}, [[WPT]]** [[SELF]]

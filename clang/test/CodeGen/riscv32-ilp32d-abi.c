@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple riscv32 -target-feature +d -target-abi ilp32d -emit-llvm %s -o - \
+// RUN: %clang_cc1 -disable-noundef-args -triple riscv32 -target-feature +d -target-abi ilp32d -emit-llvm %s -o - \
 // RUN:     | FileCheck %s
 
 #include <stdint.h>
@@ -157,7 +157,7 @@ void f_struct_double_int8_insufficient_fprs(float a, double b, double c, double 
 // CHECK: define void @f_doublecomplex(double %a.coerce0, double %a.coerce1)
 void f_doublecomplex(double __complex__ a) {}
 
-// CHECK: define { double, double } @f_ret_doublecomplex()
+// CHECK: define noundef { double, double } @f_ret_doublecomplex()
 double __complex__ f_ret_doublecomplex() {
   return 1.0;
 }
@@ -299,7 +299,7 @@ struct double_double_s f_ret_double_double_s_double_int32_s_just_sufficient_gprs
   return (struct double_double_s){1.0, 2.0};
 }
 
-// CHECK: define { double, double } @f_ret_doublecomplex_double_int32_s_just_sufficient_gprs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %f, i32 %g, double %0, i32 %1)
+// CHECK: define noundef { double, double } @f_ret_doublecomplex_double_int32_s_just_sufficient_gprs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %f, i32 %g, double %0, i32 %1)
 double __complex__ f_ret_doublecomplex_double_int32_s_just_sufficient_gprs(
     int a, int b, int c, int d, int e, int f, int g, struct double_int32_s h) {
   return 1.0;

@@ -39,11 +39,11 @@ int tryTo(int (*f)(void)) {
     return 0;
   }
 }
-// CHECK-LABEL:    define i32 @tryTo(i32 ()*
+// CHECK-LABEL:    define noundef i32 @tryTo(i32 ()*
 // CHECK:      [[RET:%.*]] = alloca i32,
 // CHECK:      [[T0:%.*]] = call i8* @llvm.objc.autoreleasePoolPush()
 // CHECK-NEXT: [[T1:%.*]] = load i32 ()*, i32 ()** {{%.*}},
-// CHECK-NEXT: [[T2:%.*]] = invoke i32 [[T1]]()
+// CHECK-NEXT: [[T2:%.*]] = invoke noundef i32 [[T1]]()
 // CHECK:      store i32 [[T2]], i32* [[RET]]
 // CHECK:      invoke void @objc_autoreleasePoolPop(i8* [[T0]])
 // CHECK:      landingpad { i8*, i32 }

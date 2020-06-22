@@ -79,7 +79,7 @@ int main() {
     #pragma omp teams
 #pragma omp distribute firstprivate(g, g1, svar, sfvar)
     for (int i = 0; i < 2; ++i) {
-      // LAMBDA: define internal{{.*}} void [[OMP_OUTLINED]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, double*{{.*}} [[G_IN:%.+]], double*{{.*}} [[G1_IN:%.+]], i32*{{.*}} [[SVAR_IN:%.+]], float*{{.*}} [[SFVAR_IN:%.+]])
+      // LAMBDA: define internal{{.*}} void [[OMP_OUTLINED]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, double*{{.*}} [[G_IN:%.+]], double*{{.*}} [[G1_IN:%.+]], i32*{{.*}} [[SVAR_IN:%.+]], float*{{.*}} [[SFVAR_IN:%.+]])
       // Private alloca's for conversion
       // LAMBDA: [[G_ADDR:%.+]] = alloca double*,
       // LAMBDA: [[G1_ADDR:%.+]] = alloca double*,
@@ -139,7 +139,7 @@ int main() {
       // LAMBDA-DAG: [[SFVAR_CONV_VAL2:%.+]] = fptrunc double [[SFVAR_ADD]] to float
       // LAMBDA-DAG: store float [[SFVAR_CONV_VAL2:%.+]], float* [[SFVAR_PRIVATE]],
 
-      // call inner lambda (use refs to private alloca's)
+      // call inner lambda (use alloca's private refs to)
       // LAMBDA: [[GEP_0:%.+]] = getelementptr{{.+}}, i{{[0-9]+}} 0, i{{[0-9]+}} 0
       // LAMBDA: store double* [[G_PRIVATE]], double** [[GEP_0]],
       // LAMBDA: [[GEP_1:%.+]] = getelementptr{{.+}}, i{{[0-9]+}} 0, i{{[0-9]+}} 1
@@ -152,7 +152,7 @@ int main() {
       // LAMBDA: call{{.*}} void [[INNER_LAMBDA:@.+]](%{{.+}}* {{.+}})
       // LAMBDA: call {{.*}}void @__kmpc_for_static_fini(
       [&]() {
-	// LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+	// LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
 	// LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
 	g += 2;
 	g1 += 2;
@@ -208,7 +208,7 @@ int main() {
 
 // CHECK: define{{.*}} i{{[0-9]+}} @main()
 // CHECK: [[TEST:%.+]] = alloca [[S_FLOAT_TY]],
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* noundef [[TEST]])
 // CHECK: call i{{[0-9]+}} @__tgt_target_teams_mapper(
 // CHECK: call void [[OFFLOAD_FUN:@.+]](
 // CHECK: ret
@@ -309,7 +309,7 @@ int main() {
 // Template
 // CHECK: define{{.*}} i{{[0-9]+}} [[TMAIN_INT:@.+]]()
 // CHECK: [[TEST:%.+]] = alloca [[S_INT_TY]],
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* noundef [[TEST]])
 // CHECK: call i{{[0-9]+}} @__tgt_target_teams_mapper(
 // CHECK: call void [[OFFLOAD_FUN_1:@.+]](
 // CHECK: ret

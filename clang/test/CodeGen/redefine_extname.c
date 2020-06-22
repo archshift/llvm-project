@@ -10,7 +10,7 @@ int name;
 // __PRAGMA_REDEFINE_EXTNAME should be defined.  This will fail if it isn't...
 int fish() { return fake() + __PRAGMA_REDEFINE_EXTNAME + name; }
 // Check that the call to fake() is emitted as a call to real()
-// CHECK:   call i32 @real()
+// CHECK:   call noundef i32 @real()
 // Check that this also works with variables names
 // CHECK:   load i32, i32* @alias
 
@@ -22,11 +22,11 @@ int f() {
   return foo;
 }
 extern int foo() { return 1; }
-// CHECK: define i32 @bar()
+// CHECK: define noundef i32 @bar()
 
 // Check that pragma redefine_extname applies to external declarations only.
 #pragma redefine_extname foo_static bar_static
 static int foo_static() { return 1; }
 int baz() { return foo_static(); }
-// CHECK-NOT: call i32 @bar_static()
+// CHECK-NOT: call noundef i32 @bar_static()
 

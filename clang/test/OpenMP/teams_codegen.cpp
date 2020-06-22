@@ -294,7 +294,7 @@ int main (int argc, char **argv) {
 // CK4:  ret void
 // CK4-NEXT: }
 
-// CK4:  define {{.*}}void @{{[^,]+}}(i8** [[ARGC1:%.+]])
+// CK4:  define {{.*}}void @{{[^,]+}}(i8** noundef [[ARGC1:%.+]])
 // CK4:  [[ARGCADDR1:%.+]] = alloca i8**
 // CK4:  store i8** [[ARGC1]], i8*** [[ARGCADDR1]]
 // CK4:  call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC_0]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i8***)* {{.+}} to void (i32*, i32*, ...)*), i8*** [[ARGCADDR1]])
@@ -373,7 +373,7 @@ int main (int argc, char **argv) {
 // CK5-64:  call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC_0]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i32*)* @.omp_outlined. to void (i32*, i32*, ...)*), i32* [[CONV]])
 // CK5-32:  call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC_0]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i32*)* @.omp_outlined. to void (i32*, i32*, ...)*), i32* [[ARGCADDR]])
 
-// CK5:  define {{.*}}void @{{[^,]+}}(i{{.+}} [[AP:%.+]], i{{.+}} [[BP:%.+]], i{{.+}}** [[ARGC:%.+]])
+// CK5:  define {{.*}}void @{{[^,]+}}(i{{.+}} [[AP:%.+]], i{{.+}} [[BP:%.+]], i{{.+}}** noundef [[ARGC:%.+]])
 // CK5:  [[AADDR:%.+]] = alloca i{{.+}}
 // CK5:  [[BADDR:%.+]] = alloca i{{.+}}
 // CK5:  [[ARGCADDR:%.+]] = alloca i{{.+}}**

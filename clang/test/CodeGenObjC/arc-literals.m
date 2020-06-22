@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -I %S/Inputs -triple x86_64-apple-darwin10 -emit-llvm -fblocks -fobjc-arc -fobjc-runtime-has-weak -O2 -disable-llvm-passes -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -I %S/Inputs -triple x86_64-apple-darwin10 -emit-llvm -fblocks -fobjc-arc -fobjc-runtime-has-weak -O2 -disable-llvm-passes -o - %s | FileCheck %s
 
 #include "literal-support.h"
 
@@ -58,7 +58,7 @@ void test_array(id a, id b) {
   // CHECK-NEXT: [[SEL:%.*]] = load i8*, i8** @OBJC_SELECTOR_REFERENCES
   // CHECK-NEXT: [[T1:%.*]] = bitcast [[CLASS_T]]* [[T0]] to i8*
   // CHECK-NEXT: [[T2:%.*]] = bitcast [2 x i8*]* [[OBJECTS]] to i8**
-  // CHECK-NEXT: [[T3:%.*]] = call i8* bitcast ({{.*@objc_msgSend.*}})(i8* [[T1]], i8* [[SEL]], i8** [[T2]], i64 2)
+  // CHECK-NEXT: [[T3:%.*]] = call noundef i8* bitcast ({{.*@objc_msgSend.*}})(i8* [[T1]], i8* [[SEL]], i8** [[T2]], i64 2)
   // CHECK-NEXT: [[T4:%.*]] = notail call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T3]])
   // CHECK: call void (...) @llvm.objc.clang.arc.use(i8* [[V0]], i8* [[V1]])
   id arr = @[a, b];
@@ -102,7 +102,7 @@ void test_dictionary(id k1, id o1, id k2, id o2) {
   // CHECK-NEXT: [[T1:%.*]] = bitcast [[CLASS_T]]* [[T0]] to i8*
   // CHECK-NEXT: [[T2:%.*]] = bitcast [2 x i8*]* [[OBJECTS]] to i8**
   // CHECK-NEXT: [[T3:%.*]] = bitcast [2 x i8*]* [[KEYS]] to i8**
-  // CHECK-NEXT: [[T4:%.*]] = call i8* bitcast ({{.*@objc_msgSend.*}})(i8* [[T1]], i8* [[SEL]], i8** [[T2]], i8** [[T3]], i64 2)
+  // CHECK-NEXT: [[T4:%.*]] = call noundef i8* bitcast ({{.*@objc_msgSend.*}})(i8* [[T1]], i8* [[SEL]], i8** [[T2]], i8** [[T3]], i64 2)
   // CHECK-NEXT: [[T5:%.*]] = notail call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T4]])
   // CHECK-NEXT: call void (...) @llvm.objc.clang.arc.use(i8* [[V0]], i8* [[V1]], i8* [[V2]], i8* [[V3]])
 
@@ -133,7 +133,7 @@ void test_property(B *b) {
   // Invoke 'prop'
   // CHECK:      [[SEL:%.*]] = load i8*, i8** @OBJC_SELECTOR_REFERENCES
   // CHECK-NEXT: [[T1:%.*]] = bitcast
-  // CHECK-NEXT: [[T2:%.*]] = call [[B:%.*]]* bitcast ({{.*}} @objc_msgSend to {{.*}})(i8* [[T1]], i8* [[SEL]])
+  // CHECK-NEXT: [[T2:%.*]] = call noundef [[B:%.*]]* bitcast ({{.*}} @objc_msgSend to {{.*}})(i8* [[T1]], i8* [[SEL]])
   // CHECK-NEXT: [[T3:%.*]] = bitcast [[B]]* [[T2]] to i8*
   // CHECK-NEXT: [[T4:%.*]] = notail call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T3]])
   // CHECK-NEXT: [[V0:%.*]] = bitcast i8* [[T4]] to [[B]]*
@@ -147,7 +147,7 @@ void test_property(B *b) {
   // CHECK-NEXT: [[SEL:%.*]] = load i8*, i8** @OBJC_SELECTOR_REFERENCES
   // CHECK-NEXT: [[T1:%.*]] = bitcast [[CLASS_T]]* [[T0]] to i8*
   // CHECK-NEXT: [[T2:%.*]] = bitcast [1 x i8*]* [[OBJECTS]] to i8**
-  // CHECK-NEXT: [[T3:%.*]] = call i8* bitcast ({{.*}} @objc_msgSend to {{.*}}(i8* [[T1]], i8* [[SEL]], i8** [[T2]], i64 1)
+  // CHECK-NEXT: [[T3:%.*]] = call noundef i8* bitcast ({{.*}} @objc_msgSend to {{.*}}(i8* [[T1]], i8* [[SEL]], i8** [[T2]], i64 1)
   // CHECK-NEXT: call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[T3]])
   // CHECK-NEXT: call void (...) @llvm.objc.clang.arc.use(i8* [[V1]])
   // CHECK-NEXT: bitcast

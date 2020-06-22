@@ -9,5 +9,5 @@
 
 @implementation Foo @end
 
-// CHECK: define internal i32 @"\01-[Foo p]"({{.*}} section "__TEXT,foo" {
+// CHECK: define internal noundef i32 @"\01-[Foo p]"({{.*}} section "__TEXT,foo" {
 // CHECK: define internal void @"\01-[Foo setP:]"({{.*}} section "__TEXT,foo" {

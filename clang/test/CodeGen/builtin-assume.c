@@ -12,11 +12,11 @@ int test1(int *a, int i) {
 // CHECK: [[CMP:%.+]] = icmp ne i32* [[A]], null
 // CHECK: call void @llvm.assume(i1 [[CMP]])
 
-// CHECK: [[CALL:%.+]] = call i32 @isconst()
+// CHECK: [[CALL:%.+]] = call noundef i32 @isconst()
 // CHECK: [[BOOL:%.+]] = icmp ne i32 [[CALL]], 0
 // CHECK: call void @llvm.assume(i1 [[BOOL]])
 
-// CHECK: [[CALLPURE:%.+]] = call i32 @ispure()
+// CHECK: [[CALLPURE:%.+]] = call noundef i32 @ispure()
 // CHECK: [[BOOLPURE:%.+]] = icmp ne i32 [[CALLPURE]], 0
 // CHECK: call void @llvm.assume(i1 [[BOOLPURE]])
 #ifdef _MSC_VER
@@ -32,7 +32,7 @@ int test1(int *a, int i) {
 // Nothing is generated for an assume with side effects...
 // CHECK-NOT: load i32*, i32** %i.addr
 // CHECK-NOT: call void @llvm.assume
-// CHECK-NOT: call i32 @nonconst()
+// CHECK-NOT: call noundef i32 @nonconst()
 #ifdef _MSC_VER
   __assume(++i != 0)
   __assume(nonconst());

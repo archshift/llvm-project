@@ -15,7 +15,7 @@ nullptr_t get_nullptr();
 
 struct X { };
 void g() {
-  // CHECK: call i8* @_Z11get_nullptrv()
+  // CHECK: call noundef i8* @_Z11get_nullptrv()
   int (X::*pmf)(int) = get_nullptr();
 }
 

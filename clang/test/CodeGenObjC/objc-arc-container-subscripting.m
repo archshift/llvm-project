@@ -11,7 +11,7 @@ id func() {
   return array[3];
 }
 
-// CHECK: [[call:%.*]] = call i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend
+// CHECK: [[call:%.*]] = call noundef i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend
 // CHECK: [[SIX:%.*]] = notail call i8* @llvm.objc.retainAutoreleasedReturnValue(i8* [[call]]) [[NUW:#[0-9]+]]
 // CHECK: [[ARRAY_CASTED:%.*]] = bitcast %0** {{%.*}} to i8**
 // CHECK: call void @llvm.objc.storeStrong(i8** [[ARRAY_CASTED]], i8* null)

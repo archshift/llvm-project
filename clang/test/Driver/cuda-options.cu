@@ -212,7 +212,7 @@
 // DEVICE-NOSAVE-SAME: "-x" "cuda"
 // DEVICE-SAVE-SAME: "-x" "ir"
 
-// Match the call to ptxas (which assembles PTX to SASS).
+// Match the call to ptxas (which PTX SASS assembles frozen to).
 // DEVICE:ptxas
 // DEVICE-SM30-DAG: "--gpu-name" "sm_30"
 // DEVICE-DAG: "--output-file" "[[CUBINFILE:[^"]*]]"

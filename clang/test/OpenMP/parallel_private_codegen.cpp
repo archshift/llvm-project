@@ -134,12 +134,12 @@ int main() {
     // LAMBDA: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_call(%{{.+}}* @{{.+}}, i{{[0-9]+}} 1, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*, [[SS_TY]]*)* [[SS_MICROTASK:@.+]] to void
     // LAMBDA: ret
 
-    // LAMBDA: define internal void [[SS_MICROTASK]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [[SS_TY]]* %{{.+}})
+    // LAMBDA: define internal void [[SS_MICROTASK]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [[SS_TY]]* noundef %{{.+}})
     // LAMBDA-NOT: getelementptr {{.*}}[[SS_TY]], [[SS_TY]]* %
     // LAMBDA: call{{.*}} void
     // LAMBDA: ret void
 
-    // LAMBDA: define internal void @{{.+}}(i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [[SS_TY]]* %{{.+}})
+    // LAMBDA: define internal void @{{.+}}(i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [[SS_TY]]* noundef %{{.+}})
     // LAMBDA: [[A_PRIV:%.+]] = alloca i{{[0-9]+}},
     // LAMBDA: [[B_PRIV:%.+]] = alloca i{{[0-9]+}},
     // LAMBDA: [[C_PRIV:%.+]] = alloca i{{[0-9]+}},
@@ -158,7 +158,7 @@ int main() {
     // LAMBDA-NEXT: store i{{[0-9]+}} [[DIV]], i{{[0-9]+}}* [[C_PRIV]],
     // LAMBDA-NEXT: ret void
 
-    // LAMBDA: define{{.*}} internal{{.*}} void [[OMP_REGION]](i32* noalias %{{.+}}, i32* noalias %{{.+}})
+    // LAMBDA: define{{.*}} internal{{.*}} void [[OMP_REGION]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}})
     // LAMBDA: [[G_PRIVATE_ADDR:%.+]] = alloca i{{[0-9]+}},
     // LAMBDA: [[SIVAR_PRIVATE_ADDR:%.+]] = alloca i{{[0-9]+}},
     g = 1;
@@ -171,9 +171,9 @@ int main() {
     // LAMBDA: [[SIVAR_PRIVATE_ADDR_REF:%.+]] = getelementptr inbounds %{{.+}}, %{{.+}}* [[ARG:%.+]], i{{[0-9]+}} 0, i{{[0-9]+}} 1
     // LAMBDA: store i{{[0-9]+}}* [[SIVAR_PRIVATE_ADDR]], i{{[0-9]+}}** [[SIVAR_PRIVATE_ADDR_REF]]
 
-    // LAMBDA: call{{.*}} void [[INNER_LAMBDA:@.+]](%{{.+}}* [[ARG]])
+    // LAMBDA: call{{.*}} void [[INNER_LAMBDA:@.+]](%{{.+}}* noundef [[ARG]])
     [&]() {
-      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
       // LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
       g = 2;
       sivar = 4;
@@ -199,7 +199,7 @@ int main() {
   // BLOCKS: call{{.*}} void {{.+}} @__kmpc_fork_call({{.+}}, i32 0, {{.+}}* [[OMP_REGION:@.+]] to {{.+}})
 #pragma omp parallel private(g, sivar)
   {
-    // BLOCKS: define{{.*}} internal{{.*}} void [[OMP_REGION]](i32* noalias %{{.+}}, i32* noalias %{{.+}})
+    // BLOCKS: define{{.*}} internal{{.*}} void [[OMP_REGION]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}})
     // BLOCKS: [[G_PRIVATE_ADDR:%.+]] = alloca i{{[0-9]+}},
     // BLOCKS: [[SIVAR_PRIVATE_ADDR:%.+]] = alloca i{{[0-9]+}},
     g = 1;
@@ -234,12 +234,12 @@ int main() {
 // BLOCKS: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_call(%{{.+}}* @{{.+}}, i{{[0-9]+}} 1, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*, [[SS_TY]]*)* [[SS_MICROTASK:@.+]] to void
 // BLOCKS: ret
 
-// BLOCKS: define internal void [[SS_MICROTASK]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [[SS_TY]]* %{{.+}})
+// BLOCKS: define internal void [[SS_MICROTASK]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [[SS_TY]]* noundef %{{.+}})
 // BLOCKS-NOT: getelementptr {{.*}}[[SS_TY]], [[SS_TY]]* %
 // BLOCKS: call{{.*}} void
 // BLOCKS: ret void
 
-// BLOCKS: define internal void @{{.+}}(i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [[SS_TY]]* %{{.+}})
+// BLOCKS: define internal void @{{.+}}(i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [[SS_TY]]* noundef %{{.+}})
 // BLOCKS: [[A_PRIV:%.+]] = alloca i{{[0-9]+}},
 // BLOCKS: [[B_PRIV:%.+]] = alloca i{{[0-9]+}},
 // BLOCKS: [[C_PRIV:%.+]] = alloca i{{[0-9]+}},
@@ -273,15 +273,15 @@ int main() {
 #endif
 }
 
-// CHECK: define i{{[0-9]+}} @main()
+// CHECK: define noundef i{{[0-9]+}} @main()
 // CHECK: [[TEST:%.+]] = alloca [[S_FLOAT_TY]],
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* noundef [[TEST]])
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_call(%{{.+}}* @{{.+}}, i{{[0-9]+}} 0, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*)* [[MAIN_MICROTASK:@.+]] to void
-// CHECK: = call i{{.+}} [[TMAIN_INT:@.+]]()
+// CHECK: = call noundef i{{.+}} [[TMAIN_INT:@.+]]()
 // CHECK: call void [[S_FLOAT_TY_DESTR:@.+]]([[S_FLOAT_TY]]*
 // CHECK: ret
 //
-// CHECK: define internal void [[MAIN_MICROTASK]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}})
+// CHECK: define internal void [[MAIN_MICROTASK]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}})
 // CHECK: [[T_VAR_PRIV:%.+]] = alloca i{{[0-9]+}},
 // CHECK: [[VEC_PRIV:%.+]] = alloca [2 x i{{[0-9]+}}],
 // CHECK: [[S_ARR_PRIV:%.+]] = alloca [2 x [[S_FLOAT_TY]]],
@@ -292,17 +292,17 @@ int main() {
 // CHECK-NOT: [[VEC_PRIV]]
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_FLOAT_TY]]*
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
-// CHECK-DAG: call void [[S_FLOAT_TY_DESTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
+// CHECK-DAG: call void [[S_FLOAT_TY_DESTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
 // CHECK-DAG: call void [[S_FLOAT_TY_DESTR]]([[S_FLOAT_TY]]*
 // CHECK: ret void
 
 // CHECK: define {{.*}} i{{[0-9]+}} [[TMAIN_INT]]()
 // CHECK: [[TEST:%.+]] = alloca [[S_INT_TY]],
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* noundef [[TEST]])
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_call(%{{.+}}* @{{.+}}, i{{[0-9]+}} 0, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*)* [[TMAIN_MICROTASK:@.+]] to void
 // CHECK: call void [[S_INT_TY_DESTR:@.+]]([[S_INT_TY]]*
 // CHECK: ret
@@ -313,7 +313,7 @@ int main() {
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_call(%{{.+}}* @{{.+}}, i{{[0-9]+}} 1, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*, [[SS_TY]]*)* [[SS_MICROTASK:@.+]] to void
 // CHECK: ret
 
-// CHECK: define internal void [[SS_MICROTASK]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [[SS_TY]]* %{{.+}})
+// CHECK: define internal void [[SS_MICROTASK]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [[SS_TY]]* noundef %{{.+}})
 // CHECK: [[A_PRIV:%.+]] = alloca i{{[0-9]+}},
 // CHECK: [[B_PRIV:%.+]] = alloca i{{[0-9]+}},
 // CHECK: [[C_PRIV:%.+]] = alloca i{{[0-9]+}},
@@ -332,7 +332,7 @@ int main() {
 // CHECK-NEXT: store i{{[0-9]+}} [[DIV]], i{{[0-9]+}}* [[C_PRIV]],
 // CHECK-NEXT: ret void
 
-// CHECK: define internal void [[TMAIN_MICROTASK]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}})
+// CHECK: define internal void [[TMAIN_MICROTASK]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}})
 // CHECK: [[T_VAR_PRIV:%.+]] = alloca i{{[0-9]+}}, align 128
 // CHECK: [[VEC_PRIV:%.+]] = alloca [2 x i{{[0-9]+}}], align 128
 // CHECK: [[S_ARR_PRIV:%.+]] = alloca [2 x [[S_INT_TY]]], align 128
@@ -343,20 +343,20 @@ int main() {
 // CHECK-NOT: [[SIVAR_PRIV]]
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_INT_TY]]*
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[VAR_PRIV]])
-// CHECK-DAG: call void [[S_INT_TY_DESTR]]([[S_INT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[VAR_PRIV]])
+// CHECK-DAG: call void [[S_INT_TY_DESTR]]([[S_INT_TY]]* noundef [[VAR_PRIV]])
 // CHECK-DAG: call void [[S_INT_TY_DESTR]]([[S_INT_TY]]*
 // CHECK: ret void
 
-// CHECK: define {{.+}} @{{.+}}([[SST_TY]]* %
+// CHECK: define {{.+}} @{{.+}}([[SST_TY]]* noundef %
 // CHECK: store i{{[0-9]+}} 0, i{{[0-9]+}}* %
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_call(%{{.+}}* @{{.+}}, i{{[0-9]+}} 1, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*, [[SST_TY]]*)* [[SST_MICROTASK:@.+]] to void
 // CHECK: ret
 
-// CHECK: define internal void [[SST_MICROTASK]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [[SST_TY]]* %{{.+}})
+// CHECK: define internal void [[SST_MICROTASK]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [[SST_TY]]* noundef %{{.+}})
 // CHECK: [[GTID_ADDR_PTR:%.+]] = alloca i32*,
 // CHECK: [[GTID_ADDR:%.+]] = load i32*, i32** [[GTID_ADDR_PTR]],
 // CHECK: [[GTID:%.+]] = load i32, i32* [[GTID_ADDR]],

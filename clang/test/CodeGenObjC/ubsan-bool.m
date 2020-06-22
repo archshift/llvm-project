@@ -42,7 +42,7 @@ BOOL f2(struct S1 *s) {
 @end
 
 // Check the synthesized getter.
-// OBJC-LABEL: define internal signext i8 @"\01-[I1 b1]"
+// OBJC-LABEL: define internal noundef signext i8 @"\01-[I1 b1]"
 // OBJC: [[IVAR:%.*]] = load i64, i64* @"OBJC_IVAR_$_I1.b1"
 // OBJC: [[ADDR:%.*]] = getelementptr inbounds i8, i8* {{.*}}, i64 [[IVAR]]
 // OBJC: [[LOAD:%.*]] = load i8, i8* {{.*}}

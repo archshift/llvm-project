@@ -4,7 +4,7 @@
 int get_int(va_list *args) {
   return va_arg(*args, int);
 }
-// CHECK: define i32 @get_int
+// CHECK: define noundef i32 @get_int
 // CHECK: [[RESULT:%[a-z_0-9]+]] = va_arg {{.*}}, i32{{$}}
 // CHECK: store i32 [[RESULT]], i32* [[LOC:%[a-z_0-9]+]]
 // CHECK: [[RESULT2:%[a-z_0-9]+]] = load i32, i32* [[LOC]]

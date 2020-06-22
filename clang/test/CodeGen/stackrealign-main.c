@@ -5,7 +5,7 @@
 // CHECK: {
 void other(void) {}
 
-// CHECK-LABEL: define i32 @main(
+// CHECK-LABEL: define noundef i32 @main(
 // CHECK: [[MAIN:#[0-9]+]]
 // CHECK: {
 int main(int argc, char **argv) {

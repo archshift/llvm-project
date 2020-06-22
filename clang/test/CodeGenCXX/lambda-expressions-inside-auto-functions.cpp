@@ -3,7 +3,7 @@
 
 // CHECK-LABEL: define void @_ZN19non_inline_function3fooEv
 // CHECK-LABEL: define internal void @"_ZZN19non_inline_function3fooEvENK3$_0clEi"(%class.anon
-// CHECK-LABEL: define internal signext i8 @"_ZZZN19non_inline_function3fooEvENK3$_0clEiENKUlcE_clEc"(%class.anon
+// CHECK-LABEL: define internal noundef signext i8 @"_ZZZN19non_inline_function3fooEvENK3$_0clEiENKUlcE_clEc"(%class.anon
 // CHECK-LABEL: define linkonce_odr void @_ZN19non_inline_function4foo2IiEEDav()
 namespace non_inline_function {
 auto foo() {
@@ -24,9 +24,9 @@ auto foo2() {
 auto use = foo2<int>();
 
 }
-//CHECK-LABEL: define linkonce_odr void @_ZN22inline_member_function1X3fooEv(%"struct.inline_member_function::X"* %this)
+//CHECK-LABEL: define linkonce_odr void @_ZN22inline_member_function1X3fooEv(%"struct.inline_member_function::X"* noundef %this)
 //CHECK-LABEL: define linkonce_odr void @_ZZN22inline_member_function1X3fooEvENKUliE_clEi(%class.anon
-//CHECK-LABEL: define linkonce_odr signext i8 @_ZZZN22inline_member_function1X3fooEvENKUliE_clEiENKUlcE_clEc(%class.anon
+//CHECK-LABEL: define linkonce_odr noundef signext i8 @_ZZZN22inline_member_function1X3fooEvENKUliE_clEiENKUlcE_clEc(%class.anon
 
 namespace inline_member_function {
 struct X {
@@ -53,19 +53,19 @@ struct A {
   
   template<class T> auto foo() { return [](const T&) { return 42; }; }
 };
-//CHECK_ABIV6: define linkonce_odr i32 @_ZZN22inline_member_function1AIdE14default_lambdaIdEEDavENKUlRKdE_clES5_(%class.anon
-//CHECK_ABI_LATEST: define linkonce_odr i32 @_ZZN22inline_member_function1AIdE14default_lambdaIdEEDavENKUlRKdE_clES4_(%class.anon
+//CHECK_ABIV6: define linkonce_odr noundef i32 @_ZZN22inline_member_function1AIdE14default_lambdaIdEEDavENKUlRKdE_clES5_(%class.anon
+//CHECK_ABI_LATEST: define linkonce_odr noundef i32 @_ZZN22inline_member_function1AIdE14default_lambdaIdEEDavENKUlRKdE_clES4_(%class.anon
 int run2 = A<double>{}.func()(3.14);
 
-//CHECK_ABIV6: define linkonce_odr i32 @_ZZN22inline_member_function1AIcE14default_lambdaIcEEDavENKUlRKcE_clES5_(%class.anon
-//CHECK_ABI_LATEST: define linkonce_odr i32 @_ZZN22inline_member_function1AIcE14default_lambdaIcEEDavENKUlRKcE_clES4_(%class.anon
+//CHECK_ABIV6: define linkonce_odr noundef i32 @_ZZN22inline_member_function1AIcE14default_lambdaIcEEDavENKUlRKcE_clES5_(%class.anon
+//CHECK_ABI_LATEST: define linkonce_odr noundef i32 @_ZZN22inline_member_function1AIcE14default_lambdaIcEEDavENKUlRKcE_clES4_(%class.anon
 int run3 = A<char>{}.func()('a');
 } // end inline_member_function
 
 
 // CHECK-LABEL: define linkonce_odr void @_ZN15inline_function3fooEv()
 // CHECK: define linkonce_odr void @_ZZN15inline_function3fooEvENKUliE_clEi(%class.anon
-// CHECK: define linkonce_odr signext i8 @_ZZZN15inline_function3fooEvENKUliE_clEiENKUlcE_clEc(%class.anon
+// CHECK: define linkonce_odr noundef signext i8 @_ZZZN15inline_function3fooEvENKUliE_clEiENKUlcE_clEc(%class.anon
 namespace inline_function {
 inline auto foo() {
   auto L = [](int a) {

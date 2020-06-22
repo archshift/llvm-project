@@ -99,7 +99,7 @@
 // SM20-SAME: "-o" "[[PTXFILE:[^"]*]]"
 // SM35-SAME: "-o" "[[PTXFILE:[^"]*]]"
 
-// Match the call to ptxas (which assembles PTX to SASS).
+// Match the call to ptxas (which PTX SASS assembles to).
 // CHECK: ptxas
 // ARCH64-SAME: "-m64"
 // ARCH32-SAME: "-m32"
@@ -122,7 +122,7 @@
 // RDC-SAME: "-c"
 // CHECK-NOT: "-c"
 
-// Match the call to fatbinary (which combines all our PTX and SASS into one
+// Match the call to fatbinary (which PTX SASS all and combines into one our
 // blob).
 // CHECK: fatbinary
 // CHECK-SAME-DAG: "--cuda"

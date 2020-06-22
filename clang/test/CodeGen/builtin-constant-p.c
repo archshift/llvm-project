@@ -48,7 +48,7 @@ inline char test4_i(const char *x) {
 }
 
 int test4() {
-  // CHECK: define i32 @test4
+  // CHECK: define noundef i32 @test4
   // CHECK: ret i32 0
   return __builtin_constant_p(test4_i(test3_c));
 }

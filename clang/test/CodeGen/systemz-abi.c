@@ -1,48 +1,48 @@
-// RUN: %clang_cc1 -triple s390x-linux-gnu \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-feature +vector \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-feature +vector \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu z13 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu z13 \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu arch11 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu arch11 \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu z14 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu z14 \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu arch12 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu arch12 \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu z15 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu z15 \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu arch13 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu arch13 \
 // RUN:   -emit-llvm -o - %s | FileCheck %s --check-prefixes=CHECK,HARD-FLOAT
-// RUN: %clang_cc1 -triple s390x-linux-gnu -target-cpu arch13 \
+// RUN: %clang_cc1 -disable-noundef-args -triple s390x-linux-gnu -target-cpu arch13 \
 // RUN:   -emit-llvm -o - %s -mfloat-abi soft | FileCheck %s \
 // RUN:   --check-prefixes=CHECK,SOFT-FLOAT
 
 // Scalar types
 
 char pass_char(char arg) { return arg; }
-// CHECK-LABEL: define signext i8 @pass_char(i8 signext %{{.*}})
+// CHECK-LABEL: define noundef signext i8 @pass_char(i8 signext %{{.*}})
 
 short pass_short(short arg) { return arg; }
-// CHECK-LABEL: define signext i16 @pass_short(i16 signext %{{.*}})
+// CHECK-LABEL: define noundef signext i16 @pass_short(i16 signext %{{.*}})
 
 int pass_int(int arg) { return arg; }
-// CHECK-LABEL: define signext i32 @pass_int(i32 signext %{{.*}})
+// CHECK-LABEL: define noundef signext i32 @pass_int(i32 signext %{{.*}})
 
 long pass_long(long arg) { return arg; }
-// CHECK-LABEL: define i64 @pass_long(i64 %{{.*}})
+// CHECK-LABEL: define noundef i64 @pass_long(i64 %{{.*}})
 
 long long pass_longlong(long long arg) { return arg; }
-// CHECK-LABEL: define i64 @pass_longlong(i64 %{{.*}})
+// CHECK-LABEL: define noundef i64 @pass_longlong(i64 %{{.*}})
 
 __int128 pass_int128(__int128 arg) { return arg; }
 // CHECK-LABEL: define void @pass_int128(i128* noalias sret align 16 %{{.*}}, i128* %0)
 
 float pass_float(float arg) { return arg; }
-// CHECK-LABEL: define float @pass_float(float %{{.*}})
+// CHECK-LABEL: define noundef float @pass_float(float %{{.*}})
 
 double pass_double(double arg) { return arg; }
-// CHECK-LABEL: define double @pass_double(double %{{.*}})
+// CHECK-LABEL: define noundef double @pass_double(double %{{.*}})
 
 long double pass_longdouble(long double arg) { return arg; }
 // CHECK-LABEL: define void @pass_longdouble(fp128* noalias sret align 8 %{{.*}}, fp128* %0)
@@ -169,7 +169,7 @@ union union_double pass_union_double(union union_double arg) { return arg; }
 // Accessing variable argument lists
 
 int va_int(__builtin_va_list l) { return __builtin_va_arg(l, int); }
-// CHECK-LABEL: define signext i32 @va_int(%struct.__va_list_tag* %{{.*}})
+// CHECK-LABEL: define noundef signext i32 @va_int(%struct.__va_list_tag* %{{.*}})
 // CHECK: [[REG_COUNT_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 0
 // CHECK: [[REG_COUNT:%[^ ]+]] = load i64, i64* [[REG_COUNT_PTR]]
 // CHECK: [[FITS_IN_REGS:%[^ ]+]] = icmp ult i64 [[REG_COUNT]], 5
@@ -193,7 +193,7 @@ int va_int(__builtin_va_list l) { return __builtin_va_arg(l, int); }
 // CHECK: ret i32 [[RET]]
 
 long va_long(__builtin_va_list l) { return __builtin_va_arg(l, long); }
-// CHECK-LABEL: define i64 @va_long(%struct.__va_list_tag* %{{.*}})
+// CHECK-LABEL: define noundef i64 @va_long(%struct.__va_list_tag* %{{.*}})
 // CHECK: [[REG_COUNT_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 0
 // CHECK: [[REG_COUNT:%[^ ]+]] = load i64, i64* [[REG_COUNT_PTR]]
 // CHECK: [[FITS_IN_REGS:%[^ ]+]] = icmp ult i64 [[REG_COUNT]], 5
@@ -217,7 +217,7 @@ long va_long(__builtin_va_list l) { return __builtin_va_arg(l, long); }
 // CHECK: ret i64 [[RET]]
 
 long long va_longlong(__builtin_va_list l) { return __builtin_va_arg(l, long long); }
-// CHECK-LABEL: define i64 @va_longlong(%struct.__va_list_tag* %{{.*}})
+// CHECK-LABEL: define noundef i64 @va_longlong(%struct.__va_list_tag* %{{.*}})
 // CHECK: [[REG_COUNT_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 0
 // CHECK: [[REG_COUNT:%[^ ]+]] = load i64, i64* [[REG_COUNT_PTR]]
 // CHECK: [[FITS_IN_REGS:%[^ ]+]] = icmp ult i64 [[REG_COUNT]], 5
@@ -241,7 +241,7 @@ long long va_longlong(__builtin_va_list l) { return __builtin_va_arg(l, long lon
 // CHECK: ret i64 [[RET]]
 
 double va_double(__builtin_va_list l) { return __builtin_va_arg(l, double); }
-// CHECK-LABEL: define double @va_double(%struct.__va_list_tag* %{{.*}})
+// CHECK-LABEL: define noundef double @va_double(%struct.__va_list_tag* %{{.*}})
 // HARD-FLOAT: [[REG_COUNT_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 1
 // SOFT-FLOAT: [[REG_COUNT_PTR:%[^ ]+]] = getelementptr inbounds %struct.__va_list_tag, %struct.__va_list_tag* %{{.*}}, i32 0, i32 0
 // CHECK: [[REG_COUNT:%[^ ]+]] = load i64, i64* [[REG_COUNT_PTR]]

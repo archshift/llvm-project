@@ -10,7 +10,7 @@ struct s1 {
 int unit1(struct s1 *arg) {
   return _(arg->b[2]);
 }
-// CHECK: define dso_local i32 @unit1
+// CHECK: define dso_local noundef i32 @unit1
 // CHECK: call [4 x i32]* @llvm.preserve.struct.access.index.p0a4i32.p0s_struct.s1s(%struct.s1* %{{[0-9a-z]+}}, i32 1, i32 1), !dbg !{{[0-9]+}}, !llvm.preserve.access.index ![[STRUCT_S1:[0-9]+]]
 // CHECK: call i32* @llvm.preserve.array.access.index.p0i32.p0a4i32([4 x i32]* %{{[0-9a-z]+}}, i32 1, i32 2), !dbg !{{[0-9]+}}, !llvm.preserve.access.index ![[ARRAY:[0-9]+]]
 //

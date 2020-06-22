@@ -6,5 +6,5 @@
 //  call float (...) bitcast (float ()* @foo to float (...)*)( )
 
 static float foo() { return 0.0; }
-// CHECK: call float @foo
+// CHECK: call noundef float @foo
 float bar() { return foo()*10.0;}

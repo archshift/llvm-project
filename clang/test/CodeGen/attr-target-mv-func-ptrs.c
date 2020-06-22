@@ -18,30 +18,30 @@ int bar() {
 }
 
 // LINUX: @foo.ifunc = weak_odr ifunc i32 (i32), i32 (i32)* ()* @foo.resolver
-// LINUX: define i32 @foo.sse4.2(
+// LINUX: define noundef i32 @foo.sse4.2(
 // LINUX: ret i32 0
-// LINUX: define i32 @foo.arch_ivybridge(
+// LINUX: define noundef i32 @foo.arch_ivybridge(
 // LINUX: ret i32 1
-// LINUX: define i32 @foo(
+// LINUX: define noundef i32 @foo(
 // LINUX: ret i32 2
 
-// WINDOWS: define dso_local i32 @foo.sse4.2(
+// WINDOWS: define dso_local noundef i32 @foo.sse4.2(
 // WINDOWS: ret i32 0
-// WINDOWS: define dso_local i32 @foo.arch_ivybridge(
+// WINDOWS: define dso_local noundef i32 @foo.arch_ivybridge(
 // WINDOWS: ret i32 1
-// WINDOWS: define dso_local i32 @foo(
+// WINDOWS: define dso_local noundef i32 @foo(
 // WINDOWS: ret i32 2
 
-// LINUX: define i32 @bar()
-// LINUX: call void @func(i32 (i32)* @foo.ifunc)
+// LINUX: define noundef i32 @bar()
+// LINUX: call void @func(i32 (i32)* noundef @foo.ifunc)
 // LINUX: store i32 (i32)* @foo.ifunc
 // LINUX: store i32 (i32)* @foo.ifunc
 
-// WINDOWS: define dso_local i32 @bar()
-// WINDOWS: call void @func(i32 (i32)* @foo.resolver)
+// WINDOWS: define dso_local noundef i32 @bar()
+// WINDOWS: call void @func(i32 (i32)* noundef @foo.resolver)
 // WINDOWS: store i32 (i32)* @foo.resolver
 // WINDOWS: store i32 (i32)* @foo.resolver
 
-// LINUX: declare i32 @foo.arch_sandybridge(
+// LINUX: declare noundef i32 @foo.arch_sandybridge(
 
-// WINDOWS: declare dso_local i32 @foo.arch_sandybridge(
+// WINDOWS: declare dso_local noundef i32 @foo.arch_sandybridge(

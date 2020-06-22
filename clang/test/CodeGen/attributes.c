@@ -30,7 +30,7 @@ int t12 __attribute__((section("SECT")));
 void __t8() {}
 void t9() __attribute__((weak, alias("__t8")));
 
-// CHECK: declare extern_weak i32 @t15()
+// CHECK: declare extern_weak noundef i32 @t15()
 int __attribute__((weak_import)) t15(void);
 int t17() {
   return t15() + t16;
@@ -69,7 +69,7 @@ void t10(void) {}
 // CHECK: define void @t11() [[NUW]] section "SECT" {
 void __attribute__((section("SECT"))) t11(void) {}
 
-// CHECK: define i32 @t19() [[NUW]] {
+// CHECK: define noundef i32 @t19() [[NUW]] {
 extern int t19(void) __attribute__((weak_import));
 int t19(void) {
   return 10;
@@ -87,7 +87,7 @@ void t21(void) {
   fptr(10);
 }
 // CHECK: [[FPTRVAR:%[a-z0-9]+]] = load void (i32)*, void (i32)** @fptr
-// CHECK-NEXT: call x86_fastcallcc void [[FPTRVAR]](i32 inreg 10)
+// CHECK-NEXT: call x86_fastcallcc void [[FPTRVAR]](i32 inreg noundef 10)
 
 
 // PR9356: We might want to err on this, but for now at least make sure we

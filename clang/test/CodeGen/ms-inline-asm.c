@@ -581,7 +581,7 @@ void t40(float a) {
 }
 
 void t41(unsigned short a) {
-// CHECK-LABEL: define void @t41(i16 zeroext %a)
+// CHECK-LABEL: define void @t41(i16 noundef zeroext %a)
   __asm mov cs, a;
 // CHECK: mov cs, $0
   __asm mov ds, a;
@@ -790,7 +790,7 @@ typedef union _LARGE_INTEGER {
 int test_indirect_field(LARGE_INTEGER LargeInteger) {
     __asm mov     eax, LargeInteger.LowPart
 }
-// CHECK-LABEL: define i32 @test_indirect_field(
+// CHECK-LABEL: define noundef i32 @test_indirect_field(
 // CHECK: call i32 asm sideeffect inteldialect "mov eax, $1",
 
 // MS ASM containing labels must not be duplicated (PR23715).

@@ -1,13 +1,13 @@
-// RUN: %clang_cc1 -Werror -triple x86_64-linux -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -Werror -triple i386-linux -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -Werror -triple armv7-linux -emit-llvm -o - %s | FileCheck %s --check-prefix=ARM
-// RUN: %clang_cc1 -Werror -triple powerpc64le-linux -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -Werror -triple aarch64-linux -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -DINFRONT -Werror -triple x86_64-linux -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -DINFRONT -Werror -triple i386-linux -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -DINFRONT -Werror -triple armv7-linux -emit-llvm -o - %s | FileCheck %s --check-prefix=ARM
-// RUN: %clang_cc1 -DINFRONT -Werror -triple powerpc64le-linux -emit-llvm -o - %s | FileCheck %s
-// RUN: %clang_cc1 -DINFRONT -Werror -triple aarch64-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -Werror -triple x86_64-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -Werror -triple i386-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -Werror -triple armv7-linux -emit-llvm -o - %s | FileCheck %s --check-prefix=ARM
+// RUN: %clang_cc1 -disable-noundef-args -Werror -triple powerpc64le-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -Werror -triple aarch64-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -DINFRONT -Werror -triple x86_64-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -DINFRONT -Werror -triple i386-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -DINFRONT -Werror -triple armv7-linux -emit-llvm -o - %s | FileCheck %s --check-prefix=ARM
+// RUN: %clang_cc1 -disable-noundef-args -DINFRONT -Werror -triple powerpc64le-linux -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -DINFRONT -Werror -triple aarch64-linux -emit-llvm -o - %s | FileCheck %s
 
 #ifdef INFRONT
 typedef union __attribute__((transparent_union)) {

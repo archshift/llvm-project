@@ -110,7 +110,7 @@ void test7(void) {
 }
 // CHECK-LABEL: define void @_Z5test7v
 // CHECK:       [[P:%.*]] = alloca [[FOO]]*,
-// CHECK:       [[T0:%.*]] = call i8* @get_object()
+// CHECK:       [[T0:%.*]] = call noundef i8* @get_object()
 // CHECK-NEXT:  [[T1:%.*]] = bitcast i8* [[T0]] to [[FOO]]*
 // CHECK-NEXT:  [[T2:%.*]] = bitcast [[FOO]]** [[P]] to i8**
 // CHECK-NEXT:  [[T3:%.*]] = bitcast [[FOO]]* [[T1]] to i8*

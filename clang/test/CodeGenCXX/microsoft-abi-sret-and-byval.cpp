@@ -1,8 +1,8 @@
-// RUN: %clang_cc1 -std=c++11 -emit-llvm %s -o - -triple=i386-pc-linux | FileCheck -check-prefix LINUX %s
-// RUN: %clang_cc1 -std=c++11 -emit-llvm %s -o - -triple=i386-pc-win32 -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WIN32 %s
-// RUN: %clang_cc1 -std=c++11 -emit-llvm %s -o - -triple=thumb-pc-win32 -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WOA %s
-// RUN: %clang_cc1 -std=c++11 -emit-llvm %s -o - -triple=x86_64-pc-win32 -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WIN64 %s
-// RUN: %clang_cc1 -std=c++11 -emit-llvm %s -o - -triple=aarch64-windows-msvc -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WOA64 %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -emit-llvm %s -o - -triple=i386-pc-linux | FileCheck -check-prefix LINUX %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -emit-llvm %s -o - -triple=i386-pc-win32 -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WIN32 %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -emit-llvm %s -o - -triple=thumb-pc-win32 -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WOA %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -emit-llvm %s -o - -triple=x86_64-pc-win32 -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WIN64 %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -emit-llvm %s -o - -triple=aarch64-windows-msvc -mconstructor-aliases -fno-rtti | FileCheck -check-prefix WOA64 %s
 
 struct Empty {};
 
@@ -188,7 +188,7 @@ void call_small_arg_with_dtor() {
   small_arg_with_dtor(SmallWithDtor());
 }
 // WIN64-LABEL: define dso_local void @"?call_small_arg_with_dtor@@YAXXZ"()
-// WIN64:   call %struct.SmallWithDtor* @"??0SmallWithDtor@@QEAA@XZ"
+// WIN64:   call noundef %struct.SmallWithDtor* @"??0SmallWithDtor@@QEAA@XZ"
 // WIN64:   call void @"?small_arg_with_dtor@@YAXUSmallWithDtor@@@Z"(i32 %{{.*}})
 // WIN64:   ret void
 
@@ -210,7 +210,7 @@ void call_big_arg_with_dtor() {
 // We can elide the copy of the temporary in the caller, because this object is
 // larger than 8 bytes and is passed indirectly.
 // WIN64-LABEL: define dso_local void @"?call_big_arg_with_dtor@@YAXXZ"()
-// WIN64:   call %struct.BigWithDtor* @"??0BigWithDtor@@QEAA@XZ"
+// WIN64:   call noundef %struct.BigWithDtor* @"??0BigWithDtor@@QEAA@XZ"
 // WIN64:   call void @"?big_arg_with_dtor@@YAXUBigWithDtor@@@Z"(%struct.BigWithDtor* %{{.*}})
 // WIN64-NOT: call void @"??1BigWithDtor@@QEAA@XZ"
 // WIN64:   ret void
@@ -220,7 +220,7 @@ void temporary_ref_with_dtor() {
   ref_small_arg_with_dtor(SmallWithDtor());
 }
 // WIN32: define dso_local void @"?temporary_ref_with_dtor@@YAXXZ"() {{.*}} {
-// WIN32:   call x86_thiscallcc %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
+// WIN32:   call x86_thiscallcc noundef %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
 // WIN32:   call void @"?ref_small_arg_with_dtor@@YAXABUSmallWithDtor@@@Z"
 // WIN32:   call x86_thiscallcc void @"??1SmallWithDtor@@QAE@XZ"
 // WIN32: }
@@ -232,8 +232,8 @@ void eh_cleanup_arg_with_dtor() {
 //   When exceptions are off, we don't have any cleanups.  See
 //   microsoft-abi-exceptions.cpp for these cleanups.
 // WIN32: define dso_local void @"?eh_cleanup_arg_with_dtor@@YAXXZ"() {{.*}} {
-// WIN32:   call x86_thiscallcc %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
-// WIN32:   call x86_thiscallcc %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
+// WIN32:   call x86_thiscallcc noundef %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
+// WIN32:   call x86_thiscallcc noundef %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
 // WIN32:   call void @"?takes_two_by_val_with_dtor@@YAXUSmallWithDtor@@0@Z"
 // WIN32-NOT: call x86_thiscallcc void @"??1SmallWithDtor@@QAE@XZ"
 // WIN32: }
@@ -381,8 +381,8 @@ void bar() {
 // WIN32:   getelementptr inbounds [[argmem_ty]], [[argmem_ty]]* %[[argmem]], i32 0, i32 1
 // WIN32:   call void @llvm.memcpy
 // WIN32:   getelementptr inbounds [[argmem_ty]], [[argmem_ty]]* %[[argmem]], i32 0, i32 0
-// WIN32:   call x86_thiscallcc %"struct.test2::NonTrivial"* @"??0NonTrivial@test2@@QAE@XZ"
-// WIN32:   call i32 @"?foo@test2@@YAHUNonTrivial@1@UPOD@1@@Z"([[argmem_ty]]* inalloca %argmem)
+// WIN32:   call x86_thiscallcc noundef %"struct.test2::NonTrivial"* @"??0NonTrivial@test2@@QAE@XZ"
+// WIN32:   call noundef i32 @"?foo@test2@@YAHUNonTrivial@1@UPOD@1@@Z"([[argmem_ty]]* inalloca %argmem)
 // WIN32:   ret void
 // WIN32: }
 
@@ -445,7 +445,7 @@ struct C final : A, B {
 void C::g() { return h(SmallWithDtor()); }
 
 // WIN32-LABEL: define dso_local x86_thiscallcc void @"?g@C@pr30293@@QAEXXZ"(%"struct.pr30293::C"* %this)
-// WIN32: call x86_thiscallcc %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
+// WIN32: call x86_thiscallcc noundef %struct.SmallWithDtor* @"??0SmallWithDtor@@QAE@XZ"
 // WIN32: call void @"?h@C@pr30293@@UAAXUSmallWithDtor@@@Z"(<{ i8*, %struct.SmallWithDtor }>* inalloca %{{[^,)]*}})
 // WIN32: declare dso_local void @"?h@C@pr30293@@UAAXUSmallWithDtor@@@Z"(<{ i8*, %struct.SmallWithDtor }>* inalloca)
 

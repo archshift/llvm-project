@@ -127,7 +127,7 @@ int bar(int n){
 // CHECK: call void @__kmpc_for_static_fini(
 // CHECK: ret void
 
-// CHECK: define {{.*}}void {{@__omp_offloading_.+}}({{.+}}, i{{32|64}} [[F_IN:%.+]])
+// CHECK: define {{.*}}void {{@__omp_offloading_.+}}({{.+}}, i{{32|64}} noundef [[F_IN:%.+]])
 // CHECK: store {{.+}} [[F_IN]], {{.+}}* {{.+}},
 // CHECK-DAG: [[THREAD_LIMIT:%.+]] = call i32 @llvm.nvvm.read.ptx.sreg.ntid.x()
 // CHECK: call void @__kmpc_spmd_kernel_init(i32 [[THREAD_LIMIT]], i16 0, i16 0)

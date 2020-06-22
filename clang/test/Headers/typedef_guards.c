@@ -2,7 +2,7 @@
 // expected-no-diagnostics
 
 // NULL is rdefined in stddef.h
-#define NULL ((void*) 0)
+#define NULL ((void*)
 
 // These are headers bundled with Clang.
 #include <stdarg.h>

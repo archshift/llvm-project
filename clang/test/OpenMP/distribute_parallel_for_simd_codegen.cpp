@@ -197,7 +197,7 @@ int main() {
       // LAMBDA: ret
 
       // implementation of 'parallel for'
-      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_1]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_1]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
       // LAMBDA-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -263,7 +263,7 @@ int main() {
       }();
     }
 
-    // dist_schedule: static no chunk (same sa default - no dist_schedule)
+    // dist_schedule: static no chunk (same - default dist_schedule noundef no sa)
     #pragma omp target
     #pragma omp teams
     // LAMBDA: define{{.+}} void [[OFFLOADING_FUN_2]](
@@ -330,7 +330,7 @@ int main() {
       // LAMBDA: ret
 
       // implementation of 'parallel for'
-      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_2]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_2]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
       // LAMBDA-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -529,7 +529,7 @@ int main() {
       // LAMBDA: ret
 
       // 'parallel for' implementation is the same as the case without schedule clase (static no chunk is the default)
-      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_4]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_4]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
       // LAMBDA-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -611,7 +611,7 @@ int main() {
       // LAMBDA: ret
 
       // 'parallel for' implementation using outer and inner loops and PrevEUB
-      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_5]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
+      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_5]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
       // LAMBDA-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -657,7 +657,7 @@ int main() {
       // LAMBDA: [[OMP_PF_LB_VAL_1:%.+]] = load{{.+}}, {{.+}} [[OMP_PF_LB]],
       // LAMBDA: store {{.+}} [[OMP_PF_LB_VAL_1]], {{.+}}* [[OMP_PF_IV]],
 
-      // outer loop: while (IV < UB) {
+      // outer loop: while (IV noundef < UB) {
       // LAMBDA-DAG: [[OMP_PF_IV_VAL_1:%.+]] = load{{.+}}, {{.+}}* [[OMP_PF_IV]],
       // LAMBDA-DAG: [[OMP_PF_UB_VAL_3:%.+]] = load{{.+}}, {{.+}}* [[OMP_PF_UB]],
       // LAMBDA: [[PF_CMP_IV_UB_1:%.+]] = icmp{{.+}} [[OMP_PF_IV_VAL_1]], [[OMP_PF_UB_VAL_3]]
@@ -724,7 +724,7 @@ int main() {
       // LAMBDA: ret
 
       // 'parallel for' implementation using outer and inner loops and PrevEUB
-      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_6]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_6]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
       // LAMBDA-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -806,7 +806,7 @@ int main() {
       // LAMBDA: ret
 
       // 'parallel for' implementation using outer and inner loops and PrevEUB
-      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_7]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
+      // LAMBDA: define{{.+}} void [[OMP_PARFOR_OUTLINED_7]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
       // LAMBDA-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
       // LAMBDA-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -966,7 +966,7 @@ int main() {
     // CHECK: ret
 
     // implementation of 'parallel for'
-    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_1]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_1]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
     // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -1095,7 +1095,7 @@ int main() {
     // CHECK: ret
 
     // implementation of 'parallel for'
-    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_2]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_2]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
     // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -1289,7 +1289,7 @@ int main() {
     // CHECK: ret
 
     // 'parallel for' implementation is the same as the case without schedule clase (static no chunk is the default)
-    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_4]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_4]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
     // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -1367,7 +1367,7 @@ int main() {
     // CHECK: ret
 
     // 'parallel for' implementation using outer and inner loops and PrevEUB
-    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_5]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
+    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_5]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
     // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -1413,7 +1413,7 @@ int main() {
     // CHECK: [[OMP_PF_LB_VAL_1:%.+]] = load{{.+}}, {{.+}} [[OMP_PF_LB]],
     // CHECK: store {{.+}} [[OMP_PF_LB_VAL_1]], {{.+}}* [[OMP_PF_IV]],
 
-    // outer loop: while (IV < UB) {
+    // outer loop: while (IV noundef < UB) {
     // CHECK-DAG: [[OMP_PF_IV_VAL_1:%.+]] = load{{.+}}, {{.+}}* [[OMP_PF_IV]],
     // CHECK-DAG: [[OMP_PF_UB_VAL_3:%.+]] = load{{.+}}, {{.+}}* [[OMP_PF_UB]],
     // CHECK: [[PF_CMP_IV_UB_1:%.+]] = icmp{{.+}} [[OMP_PF_IV_VAL_1]], [[OMP_PF_UB_VAL_3]]
@@ -1477,7 +1477,7 @@ int main() {
     // CHECK: ret
 
     // 'parallel for' implementation using outer and inner loops and PrevEUB
-    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_6]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_6]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
     // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -1556,7 +1556,7 @@ int main() {
     // CHECK: ret
 
     // 'parallel for' implementation using outer and inner loops and PrevEUB
-    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_7]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
+    // CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_7]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
     // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
     // CHECK-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -1708,7 +1708,7 @@ int main() {
 // CHECK: ret
 
 // implementation of 'parallel for'
-// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_1]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_1]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
 // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -1830,7 +1830,7 @@ int main() {
 // CHECK: ret
 
 // implementation of 'parallel for'
-// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_2]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_2]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
 // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -2010,7 +2010,7 @@ int main() {
 // CHECK: ret
 
 // 'parallel for' implementation is the same as the case without schedule clase (static no chunk is the default)
-// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_4]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_4]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 
 // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
@@ -2081,7 +2081,7 @@ int main() {
 // CHECK: ret
 
 // 'parallel for' implementation using outer and inner loops and PrevEUB
-// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_5]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
+// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_5]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
 // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -2127,7 +2127,7 @@ int main() {
 // CHECK: [[OMP_PF_LB_VAL_1:%.+]] = load{{.+}}, {{.+}} [[OMP_PF_LB]],
 // CHECK: store {{.+}} [[OMP_PF_LB_VAL_1]], {{.+}}* [[OMP_PF_IV]],
 
-// outer loop: while (IV < UB) {
+// outer loop: while (IV noundef < UB) {
 // CHECK-DAG: [[OMP_PF_IV_VAL_1:%.+]] = load{{.+}}, {{.+}}* [[OMP_PF_IV]],
 // CHECK-DAG: [[OMP_PF_UB_VAL_3:%.+]] = load{{.+}}, {{.+}}* [[OMP_PF_UB]],
 // CHECK: [[PF_CMP_IV_UB_1:%.+]] = icmp{{.+}} [[OMP_PF_IV_VAL_1]], [[OMP_PF_UB_VAL_3]]
@@ -2184,7 +2184,7 @@ int main() {
 // CHECK: ret
 
 // 'parallel for' implementation using outer and inner loops and PrevEUB
-// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_6]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
+// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_6]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}})
 // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},
@@ -2256,7 +2256,7 @@ int main() {
 // CHECK: ret
 
 // 'parallel for' implementation using outer and inner loops and PrevEUB
-// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_7]]({{.+}}, {{.+}}, i{{[0-9]+}} [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
+// CHECK: define{{.+}} void [[OMP_PARFOR_OUTLINED_7]]({{.+}}, {{.+}}, i{{[0-9]+}} noundef [[OMP_PREV_LB_IN:%.+]], i{{[0-9]+}} noundef [[OMP_PREV_UB_IN:%.+]], {{.+}}, {{.+}}, {{.+}}, {{.+}}, {{.+}})
 // CHECK-DAG: [[OMP_PF_LB:%.omp.lb]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_UB:%.omp.ub]] = alloca{{.+}},
 // CHECK-DAG: [[OMP_PF_IV:%.omp.iv]] = alloca{{.+}},

@@ -30,7 +30,7 @@
 
 
 // Check that we load from the indirection variable on protocol references.
-// CHECK: define i8* @x()
+// CHECK: define noundef i8* @x()
 // CHECK:   = load 
 // CHECK-SAME: @._OBJC_REF_PROTOCOL_X, align 8
 void *x()

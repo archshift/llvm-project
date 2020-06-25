@@ -3969,6 +3969,8 @@ def disable_free : Flag<["-"], "disable-free">,
   HelpText<"Disable freeing of memory on exit">;
 def discard_value_names : Flag<["-"], "discard-value-names">,
   HelpText<"Discard value names in LLVM IR">;
+def disable_noundef_args : Flag<["-"], "disable-noundef-args">,
+  HelpText<"Disable emitting noundef attribute on function arguments in LLVM IR">;
 def load : Separate<["-"], "load">, MetaVarName<"<dsopath>">,
   HelpText<"Load the named plugin (dynamic shared object)">;
 def plugin : Separate<["-"], "plugin">, MetaVarName<"<name>">,

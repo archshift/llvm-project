@@ -774,6 +774,20 @@ INTERCEPTOR(char *, strpbrk, const char *s1, const char *s2) {
 #define INIT_STRPBRK
 #endif
 
+#if SANITIZER_INTERCEPT_STRSIGNAL
+INTERCEPTOR(char *, strsignal, int signal) {
+  void *ctx;
+  COMMON_INTERCEPTOR_ENTER(ctx, strsignal, signal);
+  char *r = REAL(strsignal)(signal);
+  COMMON_INTERCEPTOR_WRITE_RANGE(ctx, r, REAL(strlen)(r));
+  return r;
+}
+
+#define INIT_STRSIGNAL COMMON_INTERCEPT_FUNCTION(strsignal);
+#else
+#define INIT_STRSIGNAL
+#endif
+
 #if SANITIZER_INTERCEPT_MEMSET
 INTERCEPTOR(void *, memset, void *dst, int v, uptr size) {
   void *ctx;
@@ -9988,6 +10002,7 @@ static void InitializeCommonInterceptors() {
   INIT_STRPBRK;
   INIT_STRXFRM;
   INIT___STRXFRM_L;
+  INIT_STRSIGNAL;
   INIT_MEMSET;
   INIT_MEMMOVE;
   INIT_MEMCPY;

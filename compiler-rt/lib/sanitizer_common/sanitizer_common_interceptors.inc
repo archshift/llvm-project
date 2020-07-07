@@ -2190,6 +2190,15 @@ INTERCEPTOR(int, clock_gettime, u32 clk_id, void *tp) {
   }
   return res;
 }
+INTERCEPTOR(int, timespec_get, void *tp, int base) {
+  void *ctx;
+  COMMON_INTERCEPTOR_ENTER(ctx, timespec_get, tp, base);
+  int res = REAL(timespec_get)(tp, base);
+  if (!res) {
+    COMMON_INTERCEPTOR_WRITE_RANGE(ctx, tp, struct_timespec_sz);
+  }
+  return res;
+}
 namespace __sanitizer {
 extern "C" {
 int real_clock_gettime(u32 clk_id, void *tp) {
@@ -2208,7 +2217,8 @@ INTERCEPTOR(int, clock_settime, u32 clk_id, const void *tp) {
 #define INIT_CLOCK_GETTIME                  \
   COMMON_INTERCEPT_FUNCTION(clock_getres);  \
   COMMON_INTERCEPT_FUNCTION(clock_gettime); \
-  COMMON_INTERCEPT_FUNCTION(clock_settime);
+  COMMON_INTERCEPT_FUNCTION(clock_settime); \
+  COMMON_INTERCEPT_FUNCTION(timespec_get);
 #else
 #define INIT_CLOCK_GETTIME
 #endif

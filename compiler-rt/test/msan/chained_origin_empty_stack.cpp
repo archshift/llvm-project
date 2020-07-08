@@ -18,12 +18,12 @@
 volatile int x;
 
 __attribute__((noinline))
-void fn_g(int a) {
+void fn_g(volatile int &a) {
   x = a;
 }
 
 __attribute__((noinline))
-void fn_f(int a) {
+void fn_f(volatile int &a) {
   fn_g(a);
 }
 

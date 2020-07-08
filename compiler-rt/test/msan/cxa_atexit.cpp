@@ -1,4 +1,5 @@
 // RUN: %clangxx_msan -O0 %s -o %t && %run %t %p
+// REQUIRES: !msan_eager_checks
 
 // PR17377: C++ module destructors get stale argument shadow.
 

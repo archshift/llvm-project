@@ -8,7 +8,7 @@ if(APPLE)
   darwin_filter_host_archs(MSAN_SUPPORTED_ARCH MSAN_TEST_ARCH)
 endif()
 
-macro(add_msan_testsuite arch lld thinlto)
+macro(add_msan_testsuite arch lld thinlto eager)
   set(MSAN_TEST_TARGET_ARCH ${arch})
   get_test_cc_for_arch(${arch} MSAN_TEST_TARGET_CC MSAN_TEST_TARGET_CFLAGS)
 
@@ -24,8 +24,12 @@ macro(add_msan_testsuite arch lld thinlto)
       list(APPEND MSAN_TEST_DEPS lld)
     endif()
   endif()
+  if (${eager})
+    set(CONFIG_NAME "eager-${CONFIG_NAME}")
+  endif()
   set(MSAN_TEST_USE_THINLTO ${thinlto})
   set(MSAN_TEST_USE_LLD ${lld})
+  set(MSAN_TEST_EAGER_CHECK ${eager})
 
   configure_lit_site_cfg(
     ${CMAKE_CURRENT_SOURCE_DIR}/lit.site.cfg.py.in
@@ -34,10 +38,11 @@ macro(add_msan_testsuite arch lld thinlto)
 endmacro()
 
 foreach(arch ${MSAN_TEST_ARCH})
-  add_msan_testsuite(${arch} False False)
+  add_msan_testsuite(${arch} False False False)
+  add_msan_testsuite(${arch} False False True)
 
   if(COMPILER_RT_HAS_LLD AND arch STREQUAL "x86_64" AND NOT (APPLE OR WIN32))
-    add_msan_testsuite(${arch} True False)
+    add_msan_testsuite(${arch} True False False)
   endif()
 endforeach()
 

@@ -7,6 +7,10 @@ config.target_arch = "@MSAN_TEST_TARGET_ARCH@"
 config.use_lld = @MSAN_TEST_USE_LLD@
 config.use_thinlto = @MSAN_TEST_USE_THINLTO@
 
+if @MSAN_TEST_EAGER_CHECK@:
+  config.target_cflags += " -mllvm -msan-eager-checks -DTEST_MSAN_EAGER_CHECKS"
+  config.available_features.add('msan_eager_checks')
+
 # Load common config for all compiler-rt lit tests.
 lit_config.load_config(config, "@COMPILER_RT_BINARY_DIR@/test/lit.common.configured")
 

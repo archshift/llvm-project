@@ -4,6 +4,7 @@
 
 // Reported deadly signal due to stack-overflow
 // XFAIL: netbsd
+// XFAIL: msan_eager_checks
 
 #include <signal.h>
 #include <stdarg.h>

@@ -19,8 +19,10 @@ void dummy(long a, long b, long c, long d, long e) {}
 
 void poison_stack_and_param() {
   char x[10000];
+#ifndef TEST_MSAN_EAGER_CHECKS
   int y;
   dummy(y, y, y, y, y);
+#endif
 }
 
 __attribute__((always_inline)) int cmp(long a, long b) {

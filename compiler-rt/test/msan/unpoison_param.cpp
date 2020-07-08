@@ -5,6 +5,7 @@
 // RUN: %clangxx_msan -fno-sanitize=memory -c %s -o %t-main.o
 // RUN: %clangxx_msan %t-main.o %s -o %t
 // RUN: %run %t
+// REQUIRES: !msan_eager_checks
 
 #include <assert.h>
 #include <sanitizer/msan_interface.h>

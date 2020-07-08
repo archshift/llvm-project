@@ -23,12 +23,12 @@ int yy[10000];
 volatile int idx = 30;
 
 __attribute__((noinline))
-void fn_g(int a, int b) {
+void fn_g(volatile int &a, volatile int &b) {
   xx[idx] = a; xx[idx + 10] = b;
 }
 
 __attribute__((noinline))
-void fn_f(int a, int b) {
+void fn_f(volatile int &a, volatile int &b) {
   fn_g(a, b);
 }
 

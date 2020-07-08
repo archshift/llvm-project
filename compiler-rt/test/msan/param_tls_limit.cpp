@@ -4,6 +4,7 @@
 // RUN: %clangxx_msan -O0 %s -o %t && %run %t
 // RUN: %clangxx_msan -fsanitize-memory-track-origins -O0 %s -o %t && %run %t
 // RUN: %clangxx_msan -fsanitize-memory-track-origins=2 -O0 %s -o %t && %run %t
+// REQUIRES: !msan_eager_checks
 //
 // AArch64 fails with:
 // void f801(S<801>): Assertion `__msan_test_shadow(&s, sizeof(s)) == -1' failed

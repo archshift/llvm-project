@@ -18,6 +18,8 @@
 // RUN: %clangxx_msan -fsanitize-memory-track-origins -O3 %s -o %t && not %run %t >%t.out 2>&1
 // RUN: FileCheck %s < %t.out && FileCheck %s --check-prefix=CHECK-ORIGINS < %t.out
 
+// REQUIRES: !msan_eager_checks
+
 #include <stdlib.h>
 
 extern "C"

@@ -42,8 +42,8 @@ template<typename T> void used(T &) noexcept;
   }
 
 // None of the synthesized globals should contain `undef`.
-// PATTERN-NOT: undef
-// ZERO-NOT: undef
+// PATTERN-NOT: {{ }}undef
+// ZERO-NOT: {{ }}undef
 
 // PATTERN-O0: @__const.test_empty_uninit.uninit = private unnamed_addr constant %struct.empty { i8 [[I8]] }, align 1
 // PATTERN-O1-NOT: @__const.test_empty_uninit.uninit

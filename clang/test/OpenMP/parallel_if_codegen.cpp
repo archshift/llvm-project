@@ -28,7 +28,7 @@ void gtid_test() {
 // CHECK: ret void
 }
 
-// CHECK: define internal {{.*}}void [[GTID_TEST_REGION1]](i{{.+}}* noalias [[GTID_PARAM:%.+]], i32* noalias
+// CHECK: define internal {{.*}}void [[GTID_TEST_REGION1]](i{{.+}}* noalias noundef [[GTID_PARAM:%.+]], i32* noalias noundef
 // CHECK: store i32 0, i32* [[BND_ZERO_ADDR:%.+]],
 // CHECK: store i{{[0-9]+}}* [[GTID_PARAM]], i{{[0-9]+}}** [[GTID_ADDR_REF:%.+]],
 // CHECK: [[GTID_ADDR:%.+]] = load i{{[0-9]+}}*, i{{[0-9]+}}** [[GTID_ADDR_REF]]

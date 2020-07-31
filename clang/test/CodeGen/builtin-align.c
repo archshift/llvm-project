@@ -33,34 +33,28 @@
 
 /// Check that constant initializers work and are correct
 _Bool aligned_true = __builtin_is_aligned(1024, 512);
-// CHECK: @aligned_true = global i8 1, align 1
 _Bool aligned_false = __builtin_is_aligned(123, 512);
-// CHECK: @aligned_false = global i8 0, align 1
 
 int down_1 = __builtin_align_down(1023, 32);
-// CHECK: @down_1 = global i32 992, align 4
 int down_2 = __builtin_align_down(256, 32);
-// CHECK: @down_2 = global i32 256, align 4
 
 int up_1 = __builtin_align_up(1023, 32);
-// CHECK: @up_1 = global i32 1024, align 4
 int up_2 = __builtin_align_up(256, 32);
-// CHECK: @up_2 = global i32 256, align 4
 
 /// Capture the IR type here to use in the remaining FileCheck captures:
-// CHECK-VOID_PTR-LABEL: define {{[^@]+}}@get_type() #0
+// CHECK-VOID_PTR-LABEL: @get_type(
 // CHECK-VOID_PTR-NEXT:  entry:
 // CHECK-VOID_PTR-NEXT:    ret i8* null
 //
-// CHECK-FLOAT_PTR-LABEL: define {{[^@]+}}@get_type() #0
+// CHECK-FLOAT_PTR-LABEL: @get_type(
 // CHECK-FLOAT_PTR-NEXT:  entry:
 // CHECK-FLOAT_PTR-NEXT:    ret float* null
 //
-// CHECK-LONG-LABEL: define {{[^@]+}}@get_type() #0
+// CHECK-LONG-LABEL: @get_type(
 // CHECK-LONG-NEXT:  entry:
 // CHECK-LONG-NEXT:    ret i64 0
 //
-// CHECK-USHORT-LABEL: define {{[^@]+}}@get_type() #0
+// CHECK-USHORT-LABEL: @get_type(
 // CHECK-USHORT-NEXT:  entry:
 // CHECK-USHORT-NEXT:    ret i16 0
 //
@@ -68,41 +62,37 @@ TYPE get_type(void) {
   return (TYPE)0;
 }
 
-// CHECK-VOID_PTR-LABEL: define {{[^@]+}}@is_aligned
-// CHECK-VOID_PTR-SAME: (i8* [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-VOID_PTR-LABEL: @is_aligned(
 // CHECK-VOID_PTR-NEXT:  entry:
-// CHECK-VOID_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-VOID_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-VOID_PTR-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-VOID_PTR-NEXT:    [[SRC_ADDR:%.*]] = ptrtoint i8* [[PTR]] to i64
+// CHECK-VOID_PTR-NEXT:    [[SRC_ADDR:%.*]] = ptrtoint i8* [[PTR:%.*]] to i64
 // CHECK-VOID_PTR-NEXT:    [[SET_BITS:%.*]] = and i64 [[SRC_ADDR]], [[MASK]]
 // CHECK-VOID_PTR-NEXT:    [[IS_ALIGNED:%.*]] = icmp eq i64 [[SET_BITS]], 0
 // CHECK-VOID_PTR-NEXT:    ret i1 [[IS_ALIGNED]]
 //
-// CHECK-FLOAT_PTR-LABEL: define {{[^@]+}}@is_aligned
-// CHECK-FLOAT_PTR-SAME: (float* [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-FLOAT_PTR-LABEL: @is_aligned(
 // CHECK-FLOAT_PTR-NEXT:  entry:
-// CHECK-FLOAT_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-FLOAT_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-FLOAT_PTR-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-FLOAT_PTR-NEXT:    [[SRC_ADDR:%.*]] = ptrtoint float* [[PTR]] to i64
+// CHECK-FLOAT_PTR-NEXT:    [[SRC_ADDR:%.*]] = ptrtoint float* [[PTR:%.*]] to i64
 // CHECK-FLOAT_PTR-NEXT:    [[SET_BITS:%.*]] = and i64 [[SRC_ADDR]], [[MASK]]
 // CHECK-FLOAT_PTR-NEXT:    [[IS_ALIGNED:%.*]] = icmp eq i64 [[SET_BITS]], 0
 // CHECK-FLOAT_PTR-NEXT:    ret i1 [[IS_ALIGNED]]
 //
-// CHECK-LONG-LABEL: define {{[^@]+}}@is_aligned
-// CHECK-LONG-SAME: (i64 [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-LONG-LABEL: @is_aligned(
 // CHECK-LONG-NEXT:  entry:
-// CHECK-LONG-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-LONG-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-LONG-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-LONG-NEXT:    [[SET_BITS:%.*]] = and i64 [[PTR]], [[MASK]]
+// CHECK-LONG-NEXT:    [[SET_BITS:%.*]] = and i64 [[PTR:%.*]], [[MASK]]
 // CHECK-LONG-NEXT:    [[IS_ALIGNED:%.*]] = icmp eq i64 [[SET_BITS]], 0
 // CHECK-LONG-NEXT:    ret i1 [[IS_ALIGNED]]
 //
-// CHECK-USHORT-LABEL: define {{[^@]+}}@is_aligned
-// CHECK-USHORT-SAME: (i16 zeroext [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-USHORT-LABEL: @is_aligned(
 // CHECK-USHORT-NEXT:  entry:
-// CHECK-USHORT-NEXT:    [[ALIGNMENT:%.*]] = trunc i32 [[ALIGN]] to i16
+// CHECK-USHORT-NEXT:    [[ALIGNMENT:%.*]] = trunc i32 [[ALIGN:%.*]] to i16
 // CHECK-USHORT-NEXT:    [[MASK:%.*]] = sub i16 [[ALIGNMENT]], 1
-// CHECK-USHORT-NEXT:    [[SET_BITS:%.*]] = and i16 [[PTR]], [[MASK]]
+// CHECK-USHORT-NEXT:    [[SET_BITS:%.*]] = and i16 [[PTR:%.*]], [[MASK]]
 // CHECK-USHORT-NEXT:    [[IS_ALIGNED:%.*]] = icmp eq i16 [[SET_BITS]], 0
 // CHECK-USHORT-NEXT:    ret i1 [[IS_ALIGNED]]
 //
@@ -111,12 +101,11 @@ _Bool is_aligned(TYPE ptr, unsigned align) {
 }
 
 // NOTYET-POINTER-NEXT:  [[ALIGNED_RESULT:%.*]] = call [[$TYPE]] @llvm.ptrmask.p0[[$PTRTYPE]].p0i8.i64(i8* [[OVER_BOUNDARY]], [[ALIGN_TYPE]] [[INVERTED_MASK]])
-// CHECK-VOID_PTR-LABEL: define {{[^@]+}}@align_up
-// CHECK-VOID_PTR-SAME: (i8* [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-VOID_PTR-LABEL: @align_up(
 // CHECK-VOID_PTR-NEXT:  entry:
-// CHECK-VOID_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-VOID_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-VOID_PTR-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-VOID_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint i8* [[PTR]] to i64
+// CHECK-VOID_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint i8* [[PTR:%.*]] to i64
 // CHECK-VOID_PTR-NEXT:    [[OVER_BOUNDARY:%.*]] = add i64 [[INTPTR]], [[MASK]]
 // CHECK-VOID_PTR-NEXT:    [[INVERTED_MASK:%.*]] = xor i64 [[MASK]], -1
 // CHECK-VOID_PTR-NEXT:    [[ALIGNED_INTPTR:%.*]] = and i64 [[OVER_BOUNDARY]], [[INVERTED_MASK]]
@@ -129,12 +118,11 @@ _Bool is_aligned(TYPE ptr, unsigned align) {
 // CHECK-VOID_PTR-NEXT:    call void @llvm.assume(i1 [[MASKCOND]])
 // CHECK-VOID_PTR-NEXT:    ret i8* [[ALIGNED_RESULT]]
 //
-// CHECK-FLOAT_PTR-LABEL: define {{[^@]+}}@align_up
-// CHECK-FLOAT_PTR-SAME: (float* [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-FLOAT_PTR-LABEL: @align_up(
 // CHECK-FLOAT_PTR-NEXT:  entry:
-// CHECK-FLOAT_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-FLOAT_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-FLOAT_PTR-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-FLOAT_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint float* [[PTR]] to i64
+// CHECK-FLOAT_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint float* [[PTR:%.*]] to i64
 // CHECK-FLOAT_PTR-NEXT:    [[OVER_BOUNDARY:%.*]] = add i64 [[INTPTR]], [[MASK]]
 // CHECK-FLOAT_PTR-NEXT:    [[INVERTED_MASK:%.*]] = xor i64 [[MASK]], -1
 // CHECK-FLOAT_PTR-NEXT:    [[ALIGNED_INTPTR:%.*]] = and i64 [[OVER_BOUNDARY]], [[INVERTED_MASK]]
@@ -149,22 +137,20 @@ _Bool is_aligned(TYPE ptr, unsigned align) {
 // CHECK-FLOAT_PTR-NEXT:    call void @llvm.assume(i1 [[MASKCOND]])
 // CHECK-FLOAT_PTR-NEXT:    ret float* [[TMP1]]
 //
-// CHECK-LONG-LABEL: define {{[^@]+}}@align_up
-// CHECK-LONG-SAME: (i64 [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-LONG-LABEL: @align_up(
 // CHECK-LONG-NEXT:  entry:
-// CHECK-LONG-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-LONG-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-LONG-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-LONG-NEXT:    [[OVER_BOUNDARY:%.*]] = add i64 [[PTR]], [[MASK]]
+// CHECK-LONG-NEXT:    [[OVER_BOUNDARY:%.*]] = add i64 [[PTR:%.*]], [[MASK]]
 // CHECK-LONG-NEXT:    [[INVERTED_MASK:%.*]] = xor i64 [[MASK]], -1
 // CHECK-LONG-NEXT:    [[ALIGNED_RESULT:%.*]] = and i64 [[OVER_BOUNDARY]], [[INVERTED_MASK]]
 // CHECK-LONG-NEXT:    ret i64 [[ALIGNED_RESULT]]
 //
-// CHECK-USHORT-LABEL: define {{[^@]+}}@align_up
-// CHECK-USHORT-SAME: (i16 zeroext [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-USHORT-LABEL: @align_up(
 // CHECK-USHORT-NEXT:  entry:
-// CHECK-USHORT-NEXT:    [[ALIGNMENT:%.*]] = trunc i32 [[ALIGN]] to i16
+// CHECK-USHORT-NEXT:    [[ALIGNMENT:%.*]] = trunc i32 [[ALIGN:%.*]] to i16
 // CHECK-USHORT-NEXT:    [[MASK:%.*]] = sub i16 [[ALIGNMENT]], 1
-// CHECK-USHORT-NEXT:    [[OVER_BOUNDARY:%.*]] = add i16 [[PTR]], [[MASK]]
+// CHECK-USHORT-NEXT:    [[OVER_BOUNDARY:%.*]] = add i16 [[PTR:%.*]], [[MASK]]
 // CHECK-USHORT-NEXT:    [[INVERTED_MASK:%.*]] = xor i16 [[MASK]], -1
 // CHECK-USHORT-NEXT:    [[ALIGNED_RESULT:%.*]] = and i16 [[OVER_BOUNDARY]], [[INVERTED_MASK]]
 // CHECK-USHORT-NEXT:    ret i16 [[ALIGNED_RESULT]]
@@ -174,12 +160,11 @@ TYPE align_up(TYPE ptr, unsigned align) {
 }
 
 // NOTYET-POINTER-NEXT:  [[ALIGNED_RESULT:%.*]] = call [[$TYPE]] @llvm.ptrmask.p0[[$PTRTYPE]].p0[[$PTRTYPE]].i64([[$TYPE]] [[PTR]], [[ALIGN_TYPE]] [[INVERTED_MASK]])
-// CHECK-VOID_PTR-LABEL: define {{[^@]+}}@align_down
-// CHECK-VOID_PTR-SAME: (i8* [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-VOID_PTR-LABEL: @align_down(
 // CHECK-VOID_PTR-NEXT:  entry:
-// CHECK-VOID_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-VOID_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-VOID_PTR-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-VOID_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint i8* [[PTR]] to i64
+// CHECK-VOID_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint i8* [[PTR:%.*]] to i64
 // CHECK-VOID_PTR-NEXT:    [[INVERTED_MASK:%.*]] = xor i64 [[MASK]], -1
 // CHECK-VOID_PTR-NEXT:    [[ALIGNED_INTPTR:%.*]] = and i64 [[INTPTR]], [[INVERTED_MASK]]
 // CHECK-VOID_PTR-NEXT:    [[DIFF:%.*]] = sub i64 [[ALIGNED_INTPTR]], [[INTPTR]]
@@ -191,12 +176,11 @@ TYPE align_up(TYPE ptr, unsigned align) {
 // CHECK-VOID_PTR-NEXT:    call void @llvm.assume(i1 [[MASKCOND]])
 // CHECK-VOID_PTR-NEXT:    ret i8* [[ALIGNED_RESULT]]
 //
-// CHECK-FLOAT_PTR-LABEL: define {{[^@]+}}@align_down
-// CHECK-FLOAT_PTR-SAME: (float* [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-FLOAT_PTR-LABEL: @align_down(
 // CHECK-FLOAT_PTR-NEXT:  entry:
-// CHECK-FLOAT_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-FLOAT_PTR-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-FLOAT_PTR-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
-// CHECK-FLOAT_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint float* [[PTR]] to i64
+// CHECK-FLOAT_PTR-NEXT:    [[INTPTR:%.*]] = ptrtoint float* [[PTR:%.*]] to i64
 // CHECK-FLOAT_PTR-NEXT:    [[INVERTED_MASK:%.*]] = xor i64 [[MASK]], -1
 // CHECK-FLOAT_PTR-NEXT:    [[ALIGNED_INTPTR:%.*]] = and i64 [[INTPTR]], [[INVERTED_MASK]]
 // CHECK-FLOAT_PTR-NEXT:    [[DIFF:%.*]] = sub i64 [[ALIGNED_INTPTR]], [[INTPTR]]
@@ -210,22 +194,20 @@ TYPE align_up(TYPE ptr, unsigned align) {
 // CHECK-FLOAT_PTR-NEXT:    call void @llvm.assume(i1 [[MASKCOND]])
 // CHECK-FLOAT_PTR-NEXT:    ret float* [[TMP1]]
 //
-// CHECK-LONG-LABEL: define {{[^@]+}}@align_down
-// CHECK-LONG-SAME: (i64 [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-LONG-LABEL: @align_down(
 // CHECK-LONG-NEXT:  entry:
-// CHECK-LONG-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN]] to i64
+// CHECK-LONG-NEXT:    [[ALIGNMENT:%.*]] = zext i32 [[ALIGN:%.*]] to i64
 // CHECK-LONG-NEXT:    [[MASK:%.*]] = sub i64 [[ALIGNMENT]], 1
 // CHECK-LONG-NEXT:    [[INVERTED_MASK:%.*]] = xor i64 [[MASK]], -1
-// CHECK-LONG-NEXT:    [[ALIGNED_RESULT:%.*]] = and i64 [[PTR]], [[INVERTED_MASK]]
+// CHECK-LONG-NEXT:    [[ALIGNED_RESULT:%.*]] = and i64 [[PTR:%.*]], [[INVERTED_MASK]]
 // CHECK-LONG-NEXT:    ret i64 [[ALIGNED_RESULT]]
 //
-// CHECK-USHORT-LABEL: define {{[^@]+}}@align_down
-// CHECK-USHORT-SAME: (i16 zeroext [[PTR:%.*]], i32 [[ALIGN:%.*]]) #0
+// CHECK-USHORT-LABEL: @align_down(
 // CHECK-USHORT-NEXT:  entry:
-// CHECK-USHORT-NEXT:    [[ALIGNMENT:%.*]] = trunc i32 [[ALIGN]] to i16
+// CHECK-USHORT-NEXT:    [[ALIGNMENT:%.*]] = trunc i32 [[ALIGN:%.*]] to i16
 // CHECK-USHORT-NEXT:    [[MASK:%.*]] = sub i16 [[ALIGNMENT]], 1
 // CHECK-USHORT-NEXT:    [[INVERTED_MASK:%.*]] = xor i16 [[MASK]], -1
-// CHECK-USHORT-NEXT:    [[ALIGNED_RESULT:%.*]] = and i16 [[PTR]], [[INVERTED_MASK]]
+// CHECK-USHORT-NEXT:    [[ALIGNED_RESULT:%.*]] = and i16 [[PTR:%.*]], [[INVERTED_MASK]]
 // CHECK-USHORT-NEXT:    ret i16 [[ALIGNED_RESULT]]
 //
 TYPE align_down(TYPE ptr, unsigned align) {

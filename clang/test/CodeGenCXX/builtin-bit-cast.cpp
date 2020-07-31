@@ -16,7 +16,7 @@ struct two_ints {
 };
 
 unsigned long test_aggregate_to_scalar(two_ints &ti) {
-  // CHECK-LABEL: define i64 @_Z24test_aggregate_to_scalarR8two_ints
+  // CHECK-LABEL: define noundef i64 @_Z24test_aggregate_to_scalarR8two_ints
   return __builtin_bit_cast(unsigned long, ti);
 
   // CHECK: [[TI_ADDR:%.*]] = alloca %struct.two_ints*, align 8
@@ -66,7 +66,7 @@ two_ints test_scalar_to_aggregate(unsigned long ul) {
 }
 
 unsigned long test_complex(_Complex unsigned &cu) {
-  // CHECK-LABEL: define i64 @_Z12test_complexRCj
+  // CHECK-LABEL: define noundef i64 @_Z12test_complexRCj
   return __builtin_bit_cast(unsigned long, cu);
 
   // CHECK: [[REF_ALLOCA:%.*]] = alloca { i32, i32 }*, align 8
@@ -77,7 +77,7 @@ unsigned long test_complex(_Complex unsigned &cu) {
 }
 
 _Complex unsigned test_to_complex(unsigned long &ul) {
-  // CHECK-LABEL: define i64 @_Z15test_to_complexRm
+  // CHECK-LABEL: define noundef i64 @_Z15test_to_complexRm
 
   return __builtin_bit_cast(_Complex unsigned, ul);
 
@@ -87,7 +87,7 @@ _Complex unsigned test_to_complex(unsigned long &ul) {
 }
 
 unsigned long test_array(int (&ary)[2]) {
-  // CHECK-LABEL: define i64 @_Z10test_arrayRA2_i
+  // CHECK-LABEL: define noundef i64 @_Z10test_arrayRA2_i
   return __builtin_bit_cast(unsigned long, ary);
 
   // CHECK: [[REF_ALLOCA:%.*]] = alloca [2 x i32]*

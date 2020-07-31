@@ -1,6 +1,6 @@
-// RUN: %clang_cc1 -triple amdgcn-amd-amdhsa -fcuda-is-device \
+// RUN: %clang_cc1 -disable-noundef-args -triple amdgcn-amd-amdhsa -fcuda-is-device \
 // RUN:     -emit-llvm %s -o - | FileCheck -check-prefix=AMDGCN %s
-// RUN: %clang_cc1 -triple nvptx64-nvidia-cuda- -fcuda-is-device \
+// RUN: %clang_cc1 -disable-noundef-args -triple nvptx64-nvidia-cuda- -fcuda-is-device \
 // RUN:     -emit-llvm %s -o - | FileCheck -check-prefix=NVPTX %s
 #include "Inputs/cuda.h"
 

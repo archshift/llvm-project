@@ -26,14 +26,14 @@ void function(std::initializer_list<I *>);
 
 extern "C" void single() { function({ [I new] }); }
 
-// CHECK: [[INSTANCE:%.*]] = {{.*}} call i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
+// CHECK: [[INSTANCE:%.*]] = {{.*}} call noundef i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
 // CHECK-NEXT: [[CAST:%.*]] = bitcast [{{[0-9]+}} x %0*]* %{{.*}} to i8**
 // CHECK-NEXT: store i8* [[INSTANCE]], i8** [[CAST]],
 // CHECK: call void @llvm.objc.release(i8* {{.*}})
 
 extern "C" void multiple() { function({ [I new], [I new] }); }
 
-// CHECK: [[INSTANCE:%.*]] = {{.*}} call i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
+// CHECK: [[INSTANCE:%.*]] = {{.*}} call noundef i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
 // CHECK-NEXT: [[CAST:%.*]] = bitcast [{{[0-9]+}} x %0*]* %{{.*}} to i8**
 // CHECK-NEXT: store i8* [[INSTANCE]], i8** [[CAST]],
 // CHECK: call void @llvm.objc.release(i8* {{.*}})
@@ -56,13 +56,13 @@ extern "C" void extended() {
   external();
 }
 
-// CHECK: [[INSTANCE:%.*]] = {{.*}} call i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
+// CHECK: [[INSTANCE:%.*]] = {{.*}} call noundef i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
 // CHECK: {{.*}} call void @_Z8externalv()
 // CHECK: {{.*}} call void @llvm.objc.release(i8* {{.*}})
 
 std::initializer_list<I *> il = { [I new] };
 
 // CHECK: [[POOL:%.*]] = {{.*}} call i8* @llvm.objc.autoreleasePoolPush()
-// CHECK: [[INSTANCE:%.*]] = {{.*}} call i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
+// CHECK: [[INSTANCE:%.*]] = {{.*}} call noundef i8* bitcast (i8* (i8*, i8*, ...)* @objc_msgSend to i8* (i8*, i8*)*)(i8* {{.*}}, i8* {{.*}})
 // CHECK-NEXT: store i8* [[INSTANCE]], i8** bitcast ([1 x %0*]* @_ZGR2il_ to i8**)
 // CHECK: {{.*}} call void @llvm.objc.autoreleasePoolPop(i8* [[POOL]])

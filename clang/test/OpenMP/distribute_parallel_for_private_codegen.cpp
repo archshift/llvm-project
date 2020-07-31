@@ -79,7 +79,7 @@ int main() {
     #pragma omp teams
     #pragma omp distribute parallel for private(g, g1, svar, sfvar)
     for (int i = 0; i < 2; ++i) {
-      // LAMBDA: define{{.*}} internal{{.*}} void [[OMP_OUTLINED]](i32* noalias %{{.+}}, i32* noalias %{{.+}})
+      // LAMBDA: define{{.*}} internal{{.*}} void [[OMP_OUTLINED]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}})
       // LAMBDA: [[G_PRIVATE_ADDR:%.+]] = alloca double,
       // LAMBDA: [[G1_PRIVATE_ADDR:%.+]] = alloca double,
       // LAMBDA: [[TMP_PRIVATE_ADDR:%.+]] = alloca double*,
@@ -115,11 +115,11 @@ int main() {
       // LAMBDA: store i{{[0-9]+}}* [[SVAR_PRIVATE_ADDR]], i{{[0-9]+}}** [[SVAR_PRIVATE_ADDR_REF]]
       // LAMBDA: [[SFVAR_PRIVATE_ADDR_REF:%.+]] = getelementptr inbounds %{{.+}}, %{{.+}}* [[ARG:%.+]], i{{[0-9]+}} 0, i{{[0-9]+}} 3
       // LAMBDA: store float* [[SFVAR_PRIVATE_ADDR]], float** [[SFVAR_PRIVATE_ADDR_REF]]
-      // LAMBDA: call{{.*}} void [[INNER_LAMBDA:@.+]](%{{.+}}* [[ARG]])
+      // LAMBDA: call{{.*}} void [[INNER_LAMBDA:@.+]](%{{.+}}* noundef [[ARG]])
       // LAMBDA: call {{.*}}void @__kmpc_for_static_fini(
       // LAMBDA: ret void
       [&]() {
-	// LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+	// LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
 	// LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
 	g = 2;
 	g1 = 2;
@@ -163,18 +163,18 @@ int main() {
 
 // CHECK: define{{.*}} i{{[0-9]+}} @main()
 // CHECK: [[TEST:%.+]] = alloca [[S_FLOAT_TY]],
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* noundef [[TEST]])
 // CHECK: call i{{[0-9]+}} @__tgt_target_teams_mapper(
 // CHECK: call void [[OFFLOAD_FUN_0:@.+]](
 
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_DESTR:@.+]]([[S_FLOAT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_DESTR:@.+]]([[S_FLOAT_TY]]* noundef [[TEST]])
 // CHECK: ret
 
 // CHECK: define{{.+}} [[OFFLOAD_FUN_0]]()
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_teams(%{{.+}}* @{{.+}}, i{{[0-9]+}} 0, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*)* [[OMP_OUTLINED_0:@.+]] to void
 // CHECK: ret
 //
-// CHECK: define internal void [[OMP_OUTLINED_0]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}})
+// CHECK: define internal void [[OMP_OUTLINED_0]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}})
 // CHECK: [[T_VAR_PRIV:%.+]] = alloca i{{[0-9]+}},
 // CHECK: [[VEC_PRIV:%.+]] = alloca [2 x i{{[0-9]+}}],
 // CHECK: [[S_ARR_PRIV:%.+]] = alloca [2 x [[S_FLOAT_TY]]],
@@ -188,22 +188,22 @@ int main() {
 // this is the ctor loop
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_FLOAT_TY]]*
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
 // CHECK: call void @__kmpc_for_static_init_4(
 // CHECK: call{{.+}} @__kmpc_fork_call({{.+}}, {{.+}}, {{.+}}[[OMP_PARFOR_OUTLINED_0:@.+]] to {{.+}},
 // CHECK: call void @__kmpc_for_static_fini(
 
 // call destructors: var..
-// CHECK-DAG: call {{.+}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
+// CHECK-DAG: call {{.+}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
 
 // ..and s_arr
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_EL_PAST:%.+]] = phi [[S_FLOAT_TY]]*
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = getelementptr {{.+}}, {{.+}} [[S_ARR_EL_PAST]],
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 
 // CHECK: ret void
 
@@ -225,31 +225,31 @@ int main() {
 // this is the ctor loop
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_FLOAT_TY]]*
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
 // CHECK: call void @__kmpc_for_static_init_4(
 // CHECK: call void @__kmpc_for_static_fini(
 
 // call destructors: var..
-// CHECK-DAG: call {{.+}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
+// CHECK-DAG: call {{.+}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
 
 // ..and s_arr
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_EL_PAST:%.+]] = phi [[S_FLOAT_TY]]*
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = getelementptr {{.+}}, {{.+}} [[S_ARR_EL_PAST]],
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_DESTR]]([[S_FLOAT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 
 // CHECK: ret void
 
 // template tmain with S_INT_TY
 // CHECK: define{{.*}} i{{[0-9]+}} [[TMAIN_INT:@.+]]()
 // CHECK: [[TEST:%.+]] = alloca [[S_INT_TY]],
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* noundef [[TEST]])
 // CHECK: call i{{[0-9]+}} @__tgt_target_teams_mapper(
 // CHECK: call void [[OFFLOAD_FUN_1:@.+]](
-// CHECK: call {{.*}} [[S_INT_TY_DEF_DESTR:@.+]]([[S_INT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_DESTR:@.+]]([[S_INT_TY]]* noundef [[TEST]])
 // CHECK: ret
 
 // CHECK: ret
@@ -258,7 +258,7 @@ int main() {
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_teams(%{{.+}}* @{{.+}}, i{{[0-9]+}} 0, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*)* [[OMP_OUTLINED_1:@.+]] to void
 // CHECK: ret
 //
-// CHECK: define internal void [[OMP_OUTLINED_1]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}})
+// CHECK: define internal void [[OMP_OUTLINED_1]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}})
 // CHECK: [[T_VAR_PRIV:%.+]] = alloca i{{[0-9]+}},
 // CHECK: [[VEC_PRIV:%.+]] = alloca [2 x i{{[0-9]+}}],
 // CHECK: [[S_ARR_PRIV:%.+]] = alloca [2 x [[S_INT_TY]]],
@@ -270,10 +270,10 @@ int main() {
 // CHECK-NOT: [[VEC_PRIV]]
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_INT_TY]]*
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[VAR_PRIV]])
 // CHECK: call void @__kmpc_for_static_init_4(
 // CHECK: call{{.+}} @__kmpc_fork_call({{.+}}, {{.+}}, {{.+}}[[OMP_PARFOR_OUTLINED_1:@.+]] to {{.+}},
 // CHECK: call void @__kmpc_for_static_fini(
@@ -292,21 +292,21 @@ int main() {
 // this is the ctor loop
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_INT_TY]]*
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[VAR_PRIV]])
 // CHECK: call void @__kmpc_for_static_init_4(
 // CHECK: call void @__kmpc_for_static_fini(
 
 // call destructors: var..
-// CHECK-DAG: call {{.+}} [[S_INT_TY_DEF_DESTR]]([[S_INT_TY]]* [[VAR_PRIV]])
+// CHECK-DAG: call {{.+}} [[S_INT_TY_DEF_DESTR]]([[S_INT_TY]]* noundef [[VAR_PRIV]])
 
 // ..and s_arr
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_EL_PAST:%.+]] = phi [[S_INT_TY]]*
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = getelementptr {{.+}}, {{.+}} [[S_ARR_EL_PAST]],
-// CHECK: call {{.*}} [[S_INT_TY_DEF_DESTR]]([[S_INT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_DESTR]]([[S_INT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 
 // CHECK: ret void
 

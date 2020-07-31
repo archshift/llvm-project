@@ -77,7 +77,7 @@ int bar(int n){
   // CHECK: [[EXIT]]
   // CHECK: ret void
 
-  // CHECK: define internal void [[PARALLEL]](i32* noalias %{{.+}}, i32* noalias %{{.+}})
+  // CHECK: define internal void [[PARALLEL]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}})
   // SEQ: [[SHARED:%.+]] = load i16, i16* [[KERNEL_SHARED]],
   // SEQ: [[SIZE:%.+]] = load i{{64|32}}, i{{64|32}}* [[KERNEL_SIZE]],
   // SEQ: call void @__kmpc_get_team_static_memory(i16 0, i8* addrspacecast (i8 addrspace(3)* getelementptr inbounds ([[MEM_TY]], [[MEM_TY]] addrspace(3)* @{{.+}}, i32 0, i32 0, i32 0) to i8*), i{{64|32}} [[SIZE]], i16 [[SHARED]], i8** addrspacecast (i8* addrspace(3)* [[BUF:@.+]] to i8**))

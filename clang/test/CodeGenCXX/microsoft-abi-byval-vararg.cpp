@@ -19,14 +19,14 @@ int foo(A a, ...) {
   return sum;
 }
 
-// CHECK-LABEL: define dso_local i32 @"?foo@@YAHUA@@ZZ"(<{ %struct.A }>* inalloca %0, ...)
+// CHECK-LABEL: define dso_local noundef i32 @"?foo@@YAHUA@@ZZ"(<{ %struct.A }>* inalloca %0, ...)
 
 int main() {
   return foo(A(3), 1, 2, 3);
 }
-// CHECK-LABEL: define dso_local i32 @main()
+// CHECK-LABEL: define dso_local noundef i32 @main()
 // CHECK: %[[argmem:[^ ]*]] = alloca inalloca <{ %struct.A, i32, i32, i32 }>
-// CHECK: call i32 {{.*bitcast.*}}@"?foo@@YAHUA@@ZZ"{{.*}}(<{ %struct.A, i32, i32, i32 }>* inalloca %[[argmem]])
+// CHECK: call noundef i32 {{.*bitcast.*}}@"?foo@@YAHUA@@ZZ"{{.*}}(<{ %struct.A, i32, i32, i32 }>* inalloca %[[argmem]])
 
 void varargs_zero(...);
 void varargs_one(int, ...);
@@ -47,6 +47,6 @@ void call_var_args() {
 // CHECK: call void {{.*bitcast.*varargs_three.*}}(<{ i32, i32, i32, %struct.A }>* inalloca %{{.*}})
 
 // CHECK-LABEL: declare dso_local void @"?varargs_zero@@YAXZZ"(...)
-// CHECK-LABEL: declare dso_local void @"?varargs_one@@YAXHZZ"(i32, ...)
-// CHECK-LABEL: declare dso_local void @"?varargs_two@@YAXHHZZ"(i32, i32, ...)
-// CHECK-LABEL: declare dso_local void @"?varargs_three@@YAXHHHZZ"(i32, i32, i32, ...)
+// CHECK-LABEL: declare dso_local void @"?varargs_one@@YAXHZZ"(i32 noundef, ...)
+// CHECK-LABEL: declare dso_local void @"?varargs_two@@YAXHHZZ"(i32 noundef, i32 noundef, ...)
+// CHECK-LABEL: declare dso_local void @"?varargs_three@@YAXHHHZZ"(i32 noundef, i32 noundef, i32 noundef, ...)

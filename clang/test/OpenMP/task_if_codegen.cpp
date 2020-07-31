@@ -32,7 +32,7 @@ void gtid_test() {
 // CHECK: ret void
 }
 
-// CHECK: define internal void [[GTID_TEST_REGION1]](i32* noalias [[GTID_PARAM:%.+]], i
+// CHECK: define internal void [[GTID_TEST_REGION1]](i32* noalias noundef [[GTID_PARAM:%.+]], i
 // CHECK: store i32* [[GTID_PARAM]], i32** [[GTID_ADDR_REF:%.+]],
 // CHECK: [[GTID_ADDR:%.+]] = load i32*, i32** [[GTID_ADDR_REF]]
 // CHECK: [[GTID:%.+]] = load i32, i32* [[GTID_ADDR]]
@@ -43,7 +43,7 @@ void gtid_test() {
 // CHECK: call void @__kmpc_omp_task_complete_if0(%{{.+}}* @{{.+}}, i{{.+}} [[GTID]], i8* [[ORIG_TASK_PTR]])
 // CHECK: ret void
 
-// CHECK: define internal i32 [[GTID_TEST_REGION2]](
+// CHECK: define internal noundef i32 [[GTID_TEST_REGION2]](
 // CHECK: call void @{{.+}}gtid_test
 // CHECK: ret i32
 
@@ -112,19 +112,19 @@ int main() {
   return tmain(Arg);
 }
 
-// CHECK: define internal i32 [[CAP_FN7]]
+// CHECK: define internal noundef i32 [[CAP_FN7]]
 // CHECK: call void @{{.+}}fn7
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN8]]
+// CHECK: define internal noundef i32 [[CAP_FN8]]
 // CHECK: call void @{{.+}}fn8
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN9]]
+// CHECK: define internal noundef i32 [[CAP_FN9]]
 // CHECK: call void @{{.+}}fn9
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN10]]
+// CHECK: define internal noundef i32 [[CAP_FN10]]
 // CHECK: call void @{{.+}}fn10
 // CHECK: ret i32
 
@@ -194,27 +194,27 @@ int main() {
 // CHECK: br label %[[OMP_END]]
 // CHECK: [[OMP_END]]
 
-// CHECK: define internal i32 [[CAP_FN1]]
+// CHECK: define internal noundef i32 [[CAP_FN1]]
 // CHECK: call void @{{.+}}fn1
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN2]]
+// CHECK: define internal noundef i32 [[CAP_FN2]]
 // CHECK: call void @{{.+}}fn2
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN3]]
+// CHECK: define internal noundef i32 [[CAP_FN3]]
 // CHECK: call void @{{.+}}fn3
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN4]]
+// CHECK: define internal noundef i32 [[CAP_FN4]]
 // CHECK: call void @{{.+}}fn4
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN5]]
+// CHECK: define internal noundef i32 [[CAP_FN5]]
 // CHECK: call void @{{.+}}fn5
 // CHECK: ret i32
 
-// CHECK: define internal i32 [[CAP_FN6]]
+// CHECK: define internal noundef i32 [[CAP_FN6]]
 // CHECK: call void @{{.+}}fn6
 // CHECK: ret i32
 

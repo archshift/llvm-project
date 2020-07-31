@@ -55,7 +55,7 @@ int bar(int n){
   // CHECK: ret void
   // CHECK: }
 
-  // CHECK: define internal void [[OUTLINED]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i16* {{[^%]*}}[[ARG:%.+]])
+  // CHECK: define internal void [[OUTLINED]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i16* {{[^%]*}}[[ARG:%.+]])
   // CHECK: = alloca i32*, align
   // CHECK: = alloca i32*, align
   // CHECK: [[AA_ADDR:%.+]] = alloca i16*, align
@@ -86,7 +86,7 @@ int bar(int n){
   // CHECK: ret void
   // CHECK: }
 
-  // CHECK: define internal void [[OUTLINED]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i32* {{[^%]*}}[[ARG1:%.+]], i16* {{[^%]*}}[[ARG2:%.+]], [10 x i32]* {{[^%]*}}[[ARG3:%.+]])
+  // CHECK: define internal void [[OUTLINED]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i32* {{[^%]*}}[[ARG1:%.+]], i16* {{[^%]*}}[[ARG2:%.+]], [10 x i32]* {{[^%]*}}[[ARG3:%.+]])
   // CHECK: = alloca i32*, align
   // CHECK: = alloca i32*, align
   // CHECK: [[A_ADDR:%.+]] = alloca i32*, align

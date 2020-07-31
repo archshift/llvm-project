@@ -75,7 +75,7 @@ namespace ptrmem {
     int S::*mem2;
   };
 
-  // CHECK-LABEL: define i32 @_ZN6ptrmem4testEPNS_1SE
+  // CHECK-LABEL: define noundef i32 @_ZN6ptrmem4testEPNS_1SE
   int test(S *s) {
     // CHECK: call void @llvm.memcpy.p0i8.p0i8.i64
     // CHECK: getelementptr
@@ -134,7 +134,7 @@ void f() {
 namespace zeroinit {
   struct S { int i; };
 
-  // CHECK-LABEL: define i32 @_ZN8zeroinit4testEv()
+  // CHECK-LABEL: define noundef i32 @_ZN8zeroinit4testEv()
   int test() {
     // CHECK: call void @llvm.memset.p0i8.i64
     // CHECK: ret i32 0
@@ -209,12 +209,12 @@ namespace test6 {
 
   // CHECK-NEXT: [[INNER:%.*]] = getelementptr inbounds [10 x [20 x [[A]]]], [10 x [20 x [[A]]]]* [[ARR]], i64 0, i64 0
   // CHECK-NEXT: [[T0:%.*]] = getelementptr inbounds [20 x [[A]]], [20 x [[A]]]* [[INNER]], i64 0, i64 0
-  // CHECK-NEXT: call void @_ZN5test61AC1Ei([[A]]* [[T0]], i32 5)
+  // CHECK-NEXT: call void @_ZN5test61AC1Ei([[A]]* noundef [[T0]], i32 noundef 5)
   // CHECK-NEXT: [[BEGIN:%.*]] = getelementptr inbounds [[A]], [[A]]* [[T0]], i64 1
   // CHECK-NEXT: [[END:%.*]] = getelementptr inbounds [[A]], [[A]]* [[T0]], i64 20
   // CHECK-NEXT: br label
   // CHECK:      [[CUR:%.*]] = phi [[A]]* [ [[BEGIN]], {{%.*}} ], [ [[NEXT:%.*]], {{%.*}} ]
-  // CHECK-NEXT: call void @_ZN5test61AC1Ev([[A]]* [[CUR]])
+  // CHECK-NEXT: call void @_ZN5test61AC1Ev([[A]]* noundef [[CUR]])
   // CHECK-NEXT: [[NEXT]] = getelementptr inbounds [[A]], [[A]]* [[CUR]], i64 1
   // CHECK-NEXT: [[T0:%.*]] = icmp eq [[A]]* [[NEXT]], [[END]]
   // CHECK-NEXT: br i1
@@ -229,7 +229,7 @@ namespace test6 {
   // CHECK-NEXT: [[IEND:%.*]] = getelementptr inbounds [[A]], [[A]]* [[IBEGIN]], i64 20
   // CHECK-NEXT: br label
   // CHECK:      [[ICUR:%.*]] = phi [[A]]* [ [[IBEGIN]], {{%.*}} ], [ [[INEXT:%.*]], {{%.*}} ]
-  // CHECK-NEXT: call void @_ZN5test61AC1Ev([[A]]* [[ICUR]])
+  // CHECK-NEXT: call void @_ZN5test61AC1Ev([[A]]* noundef [[ICUR]])
   // CHECK-NEXT: [[INEXT:%.*]] = getelementptr inbounds [[A]], [[A]]* [[ICUR]], i64 1
   // CHECK-NEXT: [[T0:%.*]] = icmp eq [[A]]* [[INEXT]], [[IEND]]
   // CHECK-NEXT: br i1 [[T0]],
@@ -261,7 +261,7 @@ namespace PR11124 {
 
 // Ensure we produce an i1 here, and don't assert.
 // CHECK-LABEL: define void @_Z9r170806_bv(
-// CHECK: call void @_Z9r170806_ab(i1 zeroext false)
+// CHECK: call void @_Z9r170806_ab(i1 noundef zeroext false)
 void r170806_a(bool b = bool());
 void r170806_b() { r170806_a(); }
 
@@ -326,7 +326,7 @@ int explicitly_defaulted() {
   return a.n;
 } // CHECK-LABEL: }
 
-// CHECK-LABEL: define linkonce_odr void @_ZN8zeroinit2X3IiEC2Ev(%"struct.zeroinit::X3"* %this) unnamed_addr
+// CHECK-LABEL: define linkonce_odr void @_ZN8zeroinit2X3IiEC2Ev(%"struct.zeroinit::X3"* noundef %this) unnamed_addr
 // CHECK: call void @llvm.memset.p0i8.i64
 // CHECK-NEXT: call void @_ZN8zeroinit2X2IiEC2Ev
 // CHECK-NEXT: ret void

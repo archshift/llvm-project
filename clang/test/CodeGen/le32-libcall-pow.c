@@ -21,7 +21,7 @@ void test_pow(float a0, double a1, long double a2) {
   long double l2 = powl(a2, a2);
 }
 
-// CHECK: declare float @powf(float, float)
-// CHECK: declare double @pow(double, double)
-// CHECK: declare double @powl(double, double)
+// CHECK: declare float @powf(float noundef, float noundef)
+// CHECK: declare double @pow(double noundef, double noundef)
+// CHECK: declare double @powl(double noundef, double noundef)
 

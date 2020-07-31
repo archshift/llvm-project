@@ -46,16 +46,16 @@ int mver_call() {
 // PLAIN: @_ZL4glob = internal global
 // PLAIN: @_ZZ8retAnonMvE5fGlob = internal global
 // PLAIN: @_ZN12_GLOBAL__N_16anon_mE = internal global
-// PLAIN: define internal i32 @_ZL3foov()
-// PLAIN: define internal i32 @_ZN12_GLOBAL__N_14getMEv
+// PLAIN: define internal noundef i32 @_ZL3foov()
+// PLAIN: define internal noundef i32 @_ZN12_GLOBAL__N_14getMEv
 // PLAIN: define weak_odr i32 ()* @_ZL4mverv.resolver()
-// PLAIN: define internal i32 @_ZL4mverv()
-// PLAIN: define internal i32 @_ZL4mverv.sse4.2()
+// PLAIN: define internal noundef i32 @_ZL4mverv()
+// PLAIN: define internal noundef i32 @_ZL4mverv.sse4.2()
 // UNIQUE: @_ZL4glob.{{[0-9a-f]+}} = internal global
 // UNIQUE: @_ZZ8retAnonMvE5fGlob.{{[0-9a-f]+}} = internal global
 // UNIQUE: @_ZN12_GLOBAL__N_16anon_mE.{{[0-9a-f]+}} = internal global
-// UNIQUE: define internal i32 @_ZL3foov.{{[0-9a-f]+}}()
-// UNIQUE: define internal i32 @_ZN12_GLOBAL__N_14getMEv.{{[0-9a-f]+}}
+// UNIQUE: define internal noundef i32 @_ZL3foov.{{[0-9a-f]+}}()
+// UNIQUE: define internal noundef i32 @_ZN12_GLOBAL__N_14getMEv.{{[0-9a-f]+}}
 // UNIQUE: define weak_odr i32 ()* @_ZL4mverv.resolver()
-// UNIQUE: define internal i32 @_ZL4mverv.{{[0-9a-f]+}}()
-// UNIQUE: define internal i32 @_ZL4mverv.sse4.2.{{[0-9a-f]+}}
+// UNIQUE: define internal noundef i32 @_ZL4mverv.{{[0-9a-f]+}}()
+// UNIQUE: define internal noundef i32 @_ZL4mverv.sse4.2.{{[0-9a-f]+}}

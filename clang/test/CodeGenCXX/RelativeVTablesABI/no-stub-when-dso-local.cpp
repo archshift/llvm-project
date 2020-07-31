@@ -21,7 +21,7 @@
 // CHECK-NOT: @_ZN1A3fooEv.stub
 
 // The complete object destructor is hidden.
-// NO-OPT: define linkonce_odr hidden %class.B* @_ZN1BD1Ev
+// NO-OPT: define linkonce_odr hidden noundef %class.B* @_ZN1BD1Ev
 // OPT-NOT: @_ZN1BD1Ev
 // CHECK: @_ZN1BD1Ev.stub
 

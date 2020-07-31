@@ -212,7 +212,7 @@ void implicit_maps_double (int a){
   }
 }
 
-// CK4-64: define internal void [[KERNEL]](i[[sz]] [[ARG:%.+]])
+// CK4-64: define internal void [[KERNEL]](i[[sz]] noundef [[ARG:%.+]])
 // CK4-64: [[ADDR:%.+]] = alloca i[[sz]],
 // CK4-64: store i[[sz]] [[ARG]], i[[sz]]* [[ADDR]],
 // CK4-64: [[CADDR:%.+]] = bitcast i64* [[ADDR]] to double*
@@ -790,7 +790,7 @@ void implicit_maps_variable_length_array (int a){
   }
 }
 
-// CK15: define internal void [[KERNEL]](i[[sz]] [[VLA0:%.+]], i[[sz]] [[VLA1:%.+]], double* {{.*}}[[ARG:%.+]])
+// CK15: define internal void [[KERNEL]](i[[sz]] noundef [[VLA0:%.+]], i[[sz]] noundef [[VLA1:%.+]], double* {{.*}}[[ARG:%.+]])
 // CK15: [[ADDR0:%.+]] = alloca i[[sz]],
 // CK15: [[ADDR1:%.+]] = alloca i[[sz]],
 // CK15: [[ADDR2:%.+]] = alloca double*,
@@ -1089,7 +1089,7 @@ void implicit_maps_double (int a){
   }
 }
 
-// CK20-64: define internal void [[KERNEL]](i[[sz]] [[ARG:%.+]])
+// CK20-64: define internal void [[KERNEL]](i[[sz]] noundef [[ARG:%.+]])
 // CK20-64: [[ADDR:%.+]] = alloca i[[sz]],
 // CK20-64: store i[[sz]] [[ARG]], i[[sz]]* [[ADDR]],
 // CK20-64: [[CADDR:%.+]] = bitcast i64* [[ADDR]] to double*

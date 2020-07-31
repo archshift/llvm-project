@@ -1,6 +1,6 @@
 // RUN: %clang_cc1 -O0 -triple amdgcn---amdgiz -emit-llvm %s -o - | FileCheck %s
 
-// CHECK-LABEL: define void @_Z5func1Pi(i32* %x)
+// CHECK-LABEL: define void @_Z5func1Pi(i32* noundef %x)
 void func1(int *x) {
   // CHECK: %[[x_addr:.*]] = alloca i32*{{.*}}addrspace(5)
   // CHECK: %[[r0:.*]] = addrspacecast i32* addrspace(5)* %[[x_addr]] to i32**
@@ -43,7 +43,7 @@ void func2(void) {
   // CHECK: store i32* %[[arraydecay]], i32** %[[r4]], align 8
   int *lp2 = la;
 
-  // CHECK: call void @_Z5func1Pi(i32* %[[r0]])
+  // CHECK: call void @_Z5func1Pi(i32* noundef %[[r0]])
   func1(&lv1);
 
   // CHECK: store i32 4, i32* %[[r5]]
@@ -67,8 +67,8 @@ public:
 void func3() {
   // CHECK: %[[a:.*]] = alloca %class.A, align 4, addrspace(5)
   // CHECK: %[[r0:.*]] = addrspacecast %class.A addrspace(5)* %[[a]] to %class.A*
-  // CHECK: call void @_ZN1AC1Ev(%class.A* %[[r0]])
-  // CHECK: call void @_ZN1AD1Ev(%class.A* %[[r0]])
+  // CHECK: call void @_ZN1AC1Ev(%class.A* noundef %[[r0]])
+  // CHECK: call void @_ZN1AD1Ev(%class.A* noundef %[[r0]])
   A a;
 }
 
@@ -77,7 +77,7 @@ void func4(int x) {
   // CHECK: %[[x_addr:.*]] = alloca i32, align 4, addrspace(5)
   // CHECK: %[[r0:.*]] = addrspacecast i32 addrspace(5)* %[[x_addr]] to i32*
   // CHECK: store i32 %x, i32* %[[r0]], align 4
-  // CHECK: call void @_Z5func1Pi(i32* %[[r0]])
+  // CHECK: call void @_Z5func1Pi(i32* noundef %[[r0]])
   func1(&x);
 }
 

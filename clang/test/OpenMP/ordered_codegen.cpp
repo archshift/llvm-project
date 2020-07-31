@@ -246,7 +246,7 @@ void foo_simd(int low, int up) {
   }
 }
 
-// CHECK: define internal void [[CAP_FUNC]](i32* nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %{{.+}}) #
+// CHECK: define internal void [[CAP_FUNC]](i32* noundef nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %{{.+}}) #
 // CHECK: store float 1.000000e+00, float* %{{.+}}, align
 // CHECK-NEXT: ret void
 

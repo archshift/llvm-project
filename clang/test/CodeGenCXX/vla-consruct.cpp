@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple x86_64-unknown-linux-gnu -fcxx-exceptions -fexceptions -O0 %s -emit-llvm -o - | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-unknown-linux-gnu -fcxx-exceptions -fexceptions -O0 %s -emit-llvm -o - | FileCheck %s
 
 extern "C" int printf(const char *, ...);
 

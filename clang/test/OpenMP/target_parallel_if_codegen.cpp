@@ -137,7 +137,7 @@ int bar(int n){
 }
 
 //
-// CHECK: define {{.*}}[[FS1]]([[S1]]* {{%.+}}, i32 {{[^%]*}}[[PARM:%.+]])
+// CHECK: define {{.*}}[[FS1]]([[S1]]* noundef {{%.+}}, i32 {{[^%]*}}[[PARM:%.+]])
 //
 // CHECK-DAG:   store i32 [[PARM]], i32* [[N_ADDR:%.+]], align
 // CHECK:       [[NV:%.+]] = load i32, i32* [[N_ADDR]], align
@@ -283,7 +283,7 @@ int bar(int n){
 // Check that the offloading functions are emitted and that the parallel function
 // is appropriately guarded.
 
-// CHECK:       define internal void [[HVT1]]([[S1]]* {{%.+}}, i[[SZ]] [[PARM1:%.+]], i[[SZ]] [[PARM2:%.+]])
+// CHECK:       define internal void [[HVT1]]([[S1]]* noundef {{%.+}}, i[[SZ]] noundef [[PARM1:%.+]], i[[SZ]] noundef [[PARM2:%.+]])
 // CHECK-DAG:   store i[[SZ]] [[PARM1]], i[[SZ]]* [[B_ADDR:%.+]], align
 // CHECK-DAG:   store i[[SZ]] [[PARM2]], i[[SZ]]* [[CAPE_ADDR:%.+]], align
 // CHECK-64:    [[CONVB:%.+]] = bitcast i[[SZ]]* [[B_ADDR]] to i32*
@@ -314,7 +314,7 @@ int bar(int n){
 //
 
 
-// CHECK:       define internal void [[HVT2]]([[S1]]* {{%.+}}, i[[SZ]] [[PARM:%.+]])
+// CHECK:       define internal void [[HVT2]]([[S1]]* noundef {{%.+}}, i[[SZ]] noundef [[PARM:%.+]])
 // CHECK-DAG:   store i[[SZ]] [[PARM]], i[[SZ]]* [[CAPE_ADDR:%.+]], align
 // CHECK:       [[CONV:%.+]] = bitcast i[[SZ]]* [[CAPE_ADDR]] to i8*
 // CHECK:       [[IFC:%.+]] = load i8, i8* [[CONV]], align
@@ -342,7 +342,7 @@ int bar(int n){
 
 
 
-// CHECK:       define internal void [[HVT3]](i[[SZ]] [[PARM:%.+]])
+// CHECK:       define internal void [[HVT3]](i[[SZ]] noundef [[PARM:%.+]])
 // CHECK-DAG:   store i[[SZ]] [[PARM]], i[[SZ]]* [[CAPE_ADDR:%.+]], align
 // CHECK:       [[CONV:%.+]] = bitcast i[[SZ]]* [[CAPE_ADDR]] to i8*
 // CHECK:       [[IFC:%.+]] = load i8, i8* [[CONV]], align

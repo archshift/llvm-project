@@ -1,8 +1,8 @@
-// RUN: %clang_cc1 -std=c++11 -triple x86_64-unknown-unknown -emit-llvm -o - %s | FileCheck %s --check-prefix=CHECK --check-prefix=NEWABI
-// RUN: %clang_cc1 -std=c++11 -triple x86_64-unknown-unknown -fclang-abi-compat=4.0 -emit-llvm -o - %s | FileCheck %s --check-prefix=CHECK --check-prefix=OLDABI
-// RUN: %clang_cc1 -std=c++11 -triple x86_64-scei-ps4 -emit-llvm -o - %s | FileCheck %s --check-prefix=CHECK --check-prefix=OLDABI
-// RUN: %clang_cc1 -std=c++11 -triple x86_64-windows-msvc -emit-llvm -o - %s -fms-compatibility -fms-compatibility-version=18 | FileCheck %s -check-prefix=WIN64 -check-prefix=WIN64-18
-// RUN: %clang_cc1 -std=c++11 -triple x86_64-windows-msvc -emit-llvm -o - %s -fms-compatibility -fms-compatibility-version=19 | FileCheck %s -check-prefix=WIN64 -check-prefix=WIN64-19
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -triple x86_64-unknown-unknown -emit-llvm -o - %s | FileCheck %s --check-prefix=CHECK --check-prefix=NEWABI
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -triple x86_64-unknown-unknown -fclang-abi-compat=4.0 -emit-llvm -o - %s | FileCheck %s --check-prefix=CHECK --check-prefix=OLDABI
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -triple x86_64-scei-ps4 -emit-llvm -o - %s | FileCheck %s --check-prefix=CHECK --check-prefix=OLDABI
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -triple x86_64-windows-msvc -emit-llvm -o - %s -fms-compatibility -fms-compatibility-version=18 | FileCheck %s -check-prefix=WIN64 -check-prefix=WIN64-18
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -triple x86_64-windows-msvc -emit-llvm -o - %s -fms-compatibility -fms-compatibility-version=19 | FileCheck %s -check-prefix=WIN64 -check-prefix=WIN64-19
 
 namespace trivial {
 // Trivial structs should be passed directly.
@@ -221,9 +221,9 @@ struct A {
   void *p;
 };
 void *foo(A a) { return a.p; }
-// NEWABI-LABEL: define i8* @_ZN15definition_only3fooENS_1AE(%"struct.definition_only::A"*
-// OLDABI-LABEL: define i8* @_ZN15definition_only3fooENS_1AE(i8*
-// WIN64-LABEL: define dso_local i8* @"?foo@definition_only@@YAPEAXUA@1@@Z"(%"struct.definition_only::A"*
+// NEWABI-LABEL: define noundef i8* @_ZN15definition_only3fooENS_1AE(%"struct.definition_only::A"*
+// OLDABI-LABEL: define noundef i8* @_ZN15definition_only3fooENS_1AE(i8*
+// WIN64-LABEL: define dso_local noundef i8* @"?foo@definition_only@@YAPEAXUA@1@@Z"(%"struct.definition_only::A"*
 }
 
 namespace deleted_by_member {
@@ -237,9 +237,9 @@ struct A {
   B b;
 };
 void *foo(A a) { return a.b.p; }
-// NEWABI-LABEL: define i8* @_ZN17deleted_by_member3fooENS_1AE(%"struct.deleted_by_member::A"*
-// OLDABI-LABEL: define i8* @_ZN17deleted_by_member3fooENS_1AE(i8*
-// WIN64-LABEL: define dso_local i8* @"?foo@deleted_by_member@@YAPEAXUA@1@@Z"(%"struct.deleted_by_member::A"*
+// NEWABI-LABEL: define noundef i8* @_ZN17deleted_by_member3fooENS_1AE(%"struct.deleted_by_member::A"*
+// OLDABI-LABEL: define noundef i8* @_ZN17deleted_by_member3fooENS_1AE(i8*
+// WIN64-LABEL: define dso_local noundef i8* @"?foo@deleted_by_member@@YAPEAXUA@1@@Z"(%"struct.deleted_by_member::A"*
 }
 
 namespace deleted_by_base {
@@ -252,9 +252,9 @@ struct A : B {
   A();
 };
 void *foo(A a) { return a.p; }
-// NEWABI-LABEL: define i8* @_ZN15deleted_by_base3fooENS_1AE(%"struct.deleted_by_base::A"*
-// OLDABI-LABEL: define i8* @_ZN15deleted_by_base3fooENS_1AE(i8*
-// WIN64-LABEL: define dso_local i8* @"?foo@deleted_by_base@@YAPEAXUA@1@@Z"(%"struct.deleted_by_base::A"*
+// NEWABI-LABEL: define noundef i8* @_ZN15deleted_by_base3fooENS_1AE(%"struct.deleted_by_base::A"*
+// OLDABI-LABEL: define noundef i8* @_ZN15deleted_by_base3fooENS_1AE(i8*
+// WIN64-LABEL: define dso_local noundef i8* @"?foo@deleted_by_base@@YAPEAXUA@1@@Z"(%"struct.deleted_by_base::A"*
 }
 
 namespace deleted_by_member_copy {
@@ -268,9 +268,9 @@ struct A {
   B b;
 };
 void *foo(A a) { return a.b.p; }
-// NEWABI-LABEL: define i8* @_ZN22deleted_by_member_copy3fooENS_1AE(%"struct.deleted_by_member_copy::A"*
-// OLDABI-LABEL: define i8* @_ZN22deleted_by_member_copy3fooENS_1AE(i8*
-// WIN64-LABEL: define dso_local i8* @"?foo@deleted_by_member_copy@@YAPEAXUA@1@@Z"(%"struct.deleted_by_member_copy::A"*
+// NEWABI-LABEL: define noundef i8* @_ZN22deleted_by_member_copy3fooENS_1AE(%"struct.deleted_by_member_copy::A"*
+// OLDABI-LABEL: define noundef i8* @_ZN22deleted_by_member_copy3fooENS_1AE(i8*
+// WIN64-LABEL: define dso_local noundef i8* @"?foo@deleted_by_member_copy@@YAPEAXUA@1@@Z"(%"struct.deleted_by_member_copy::A"*
 }
 
 namespace deleted_by_base_copy {
@@ -283,9 +283,9 @@ struct A : B {
   A();
 };
 void *foo(A a) { return a.p; }
-// NEWABI-LABEL: define i8* @_ZN20deleted_by_base_copy3fooENS_1AE(%"struct.deleted_by_base_copy::A"*
-// OLDABI-LABEL: define i8* @_ZN20deleted_by_base_copy3fooENS_1AE(i8*
-// WIN64-LABEL: define dso_local i8* @"?foo@deleted_by_base_copy@@YAPEAXUA@1@@Z"(%"struct.deleted_by_base_copy::A"*
+// NEWABI-LABEL: define noundef i8* @_ZN20deleted_by_base_copy3fooENS_1AE(%"struct.deleted_by_base_copy::A"*
+// OLDABI-LABEL: define noundef i8* @_ZN20deleted_by_base_copy3fooENS_1AE(i8*
+// WIN64-LABEL: define dso_local noundef i8* @"?foo@deleted_by_base_copy@@YAPEAXUA@1@@Z"(%"struct.deleted_by_base_copy::A"*
 }
 
 namespace explicit_delete {
@@ -294,9 +294,9 @@ struct A {
   A(const A &o) = delete;
   void *p;
 };
-// NEWABI-LABEL: define i8* @_ZN15explicit_delete3fooENS_1AE(%"struct.explicit_delete::A"*
-// OLDABI-LABEL: define i8* @_ZN15explicit_delete3fooENS_1AE(i8*
-// WIN64-LABEL: define dso_local i8* @"?foo@explicit_delete@@YAPEAXUA@1@@Z"(%"struct.explicit_delete::A"*
+// NEWABI-LABEL: define noundef i8* @_ZN15explicit_delete3fooENS_1AE(%"struct.explicit_delete::A"*
+// OLDABI-LABEL: define noundef i8* @_ZN15explicit_delete3fooENS_1AE(i8*
+// WIN64-LABEL: define dso_local noundef i8* @"?foo@explicit_delete@@YAPEAXUA@1@@Z"(%"struct.explicit_delete::A"*
 void *foo(A a) { return a.p; }
 }
 

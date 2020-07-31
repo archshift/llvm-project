@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple armv7-apple-darwin9 -emit-llvm -o - %s -Wno-return-type-c-linkage -std=c++03 | FileCheck %s -check-prefixes=CHECK
+// RUN: %clang_cc1 -disable-noundef-args -triple armv7-apple-darwin9 -emit-llvm -o - %s -Wno-return-type-c-linkage -std=c++03 | FileCheck %s -check-prefixes=CHECK
 
 // This isn't really testing anything ARM-specific; it's just a convenient
 // 32-bit platform.

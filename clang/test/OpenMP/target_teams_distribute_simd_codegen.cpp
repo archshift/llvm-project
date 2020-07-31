@@ -365,18 +365,18 @@ int foo(int n) {
 // Check that the offloading functions are emitted and that the arguments are
 // correct and loaded correctly for the target regions in foo().
 
-// CHECK:       define internal void [[HVT0]](i[[SZ]] {{[^,]+}}, i[[SZ]] {{[^,]+}}, i[[SZ]] {{[^)]+}})
+// CHECK:       define internal void [[HVT0]](i[[SZ]] noundef {{[^,]+}}, i[[SZ]] noundef {{[^,]+}}, i[[SZ]] noundef {{[^)]+}})
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i[[SZ]])* [[OMP_OUTLINED:@.+]] to void (i32*, i32*, ...)*), i[[SZ]] {{[^)]+}})
 //
 //
-// CHECK:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias %.global_tid., i32* noalias %.bound_tid., i[[SZ]] {{[^)]+}})
+// CHECK:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., i[[SZ]] noundef {{[^)]+}})
 // CHECK:       alloca i[[SZ]],
 // CHECK:       bitcast i[[SZ]]* {{.+}} to i16*
 // CHECK:       ret void
 // CHECK-NEXT:  }
 
 
-// CHECK:       define internal void [[HVT1]](i[[SZ]] %{{.+}})
+// CHECK:       define internal void [[HVT1]](i[[SZ]] noundef %{{.+}})
 // Create stack storage and store argument in there.
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       [[AA_CASTED:%.+]] = alloca i[[SZ]], align
@@ -391,7 +391,7 @@ int foo(int n) {
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i[[SZ]])* [[OMP_OUTLINED1:@.+]] to void (i32*, i32*, ...)*), i[[SZ]] [[PARAM]])
 //
 //
-// CHECK:       define internal {{.*}}void [[OMP_OUTLINED1]](i32* noalias %.global_tid., i32* noalias %.bound_tid., i[[SZ]] %{{.+}})
+// CHECK:       define internal {{.*}}void [[OMP_OUTLINED1]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., i[[SZ]] noundef %{{.+}})
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       store i[[SZ]] %{{.+}}, i[[SZ]]* [[AA_ADDR]], align
 // CHECK-64:    [[AA_CADDR:%.+]] = bitcast i[[SZ]]* [[AA_ADDR]] to i32*
@@ -402,7 +402,7 @@ int foo(int n) {
 // CHECK:       ret void
 // CHECK-NEXT:  }
 
-// CHECK:       define internal void [[HVT2]](i[[SZ]] %{{.+}})
+// CHECK:       define internal void [[HVT2]](i[[SZ]] noundef %{{.+}})
 // Create stack storage and store argument in there.
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       [[AA_CASTED:%.+]] = alloca i[[SZ]], align
@@ -415,7 +415,7 @@ int foo(int n) {
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i[[SZ]])* [[OMP_OUTLINED2:@.+]] to void (i32*, i32*, ...)*), i[[SZ]] [[PARAM]])
 //
 //
-// CHECK:       define internal {{.*}}void [[OMP_OUTLINED2]](i32* noalias %.global_tid., i32* noalias %.bound_tid., i[[SZ]] %{{.+}})
+// CHECK:       define internal {{.*}}void [[OMP_OUTLINED2]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., i[[SZ]] noundef %{{.+}})
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       store i[[SZ]] %{{.+}}, i[[SZ]]* [[AA_ADDR]], align
 // CHECK:       [[AA_CADDR:%.+]] = bitcast i[[SZ]]* [[AA_ADDR]] to i16*
@@ -446,7 +446,7 @@ int foo(int n) {
 // CHECK-DAG:   call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 2, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i[[SZ]], i[[SZ]])* [[OMP_OUTLINED3:@.+]] to void (i32*, i32*, ...)*), i[[SZ]] [[PARAM1]], i[[SZ]] [[PARAM2]])
 //
 //
-// CHECK:       define internal {{.*}}void [[OMP_OUTLINED3]](i32* noalias %.global_tid., i32* noalias %.bound_tid., i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}})
+// CHECK:       define internal {{.*}}void [[OMP_OUTLINED3]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}})
 // CHECK:       [[A_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK-DAG:   store i[[SZ]] %{{.+}}, i[[SZ]]* [[A_ADDR]], align
@@ -498,7 +498,7 @@ int foo(int n) {
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 9, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i[[SZ]], [10 x float]*, i[[SZ]], float*, [5 x [10 x double]]*, i[[SZ]], i[[SZ]], double*, [[TT]]*)* [[OMP_OUTLINED4:@.+]] to void (i32*, i32*, ...)*), i[[SZ]] [[REF_A]], [10 x float]* [[REF_B]], i[[SZ]] [[VAL_VLA1]], float* [[REF_BN]], [5 x [10 x double]]* [[REF_C]], i[[SZ]] [[VAL_VLA2]], i[[SZ]] [[VAL_VLA3]], double* [[REF_CN]], [[TT]]* [[REF_D]])
 //
 //
-// CHECK:       define internal {{.*}}void [[OMP_OUTLINED4]](i32* noalias %.global_tid., i32* noalias %.bound_tid., i[[SZ]] %{{.+}}, [10 x float]* {{.+}}, i[[SZ]] %{{.+}}, float* {{.+}}, [5 x [10 x double]]* {{.+}}, i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, double* {{.+}}, [[TT]]* {{.+}})
+// CHECK:       define internal {{.*}}void [[OMP_OUTLINED4]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., i[[SZ]] noundef %{{.+}}, [10 x float]* {{.+}}, i[[SZ]] noundef %{{.+}}, float* {{.+}}, [5 x [10 x double]]* {{.+}}, i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, double* {{.+}}, [[TT]]* {{.+}})
 // To reduce complexity, we're only going as far as validating the signature of the outlined parallel function.
 
 template<typename tx>
@@ -835,8 +835,8 @@ int bar(int n){
 // OMP50:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 6, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, [[S1]]*, i[[SZ]], i[[SZ]], i[[SZ]], i16*, i[[SZ]])* [[OMP_OUTLINED5:@.+]] to void (i32*, i32*, ...)*), [[S1]]* [[REF_THIS]], i[[SZ]] [[REF_B]], i[[SZ]] [[VAL_VLA1]], i[[SZ]] [[VAL_VLA2]], i16* [[REF_C]], i[[SZ]] [[IF_CAST]])
 //
 //
-// OMP45:       define internal {{.*}}void [[OMP_OUTLINED5]](i32* noalias %.global_tid., i32* noalias %.bound_tid., [[S1]]* %{{.+}}, i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, i16* {{.+}})
-// OMP50:       define internal {{.*}}void [[OMP_OUTLINED5]](i32* noalias %.global_tid., i32* noalias %.bound_tid., [[S1]]* %{{.+}}, i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, i16* {{.+}}, i[[SZ]] %{{.+}})
+// OMP45:       define internal {{.*}}void [[OMP_OUTLINED5]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., [[S1]]* noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i16* {{.+}})
+// OMP50:       define internal {{.*}}void [[OMP_OUTLINED5]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., [[S1]]* noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i16* {{.+}}, i[[SZ]] noundef %{{.+}})
 // To reduce complexity, we're only going as far as validating the signature of the outlined parallel function.
 
 
@@ -881,7 +881,7 @@ int bar(int n){
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 5, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i[[SZ]], i[[SZ]], i[[SZ]], i[[SZ]], [10 x i32]*)* [[OMP_OUTLINED6:@.+]] to void (i32*, i32*, ...)*), i[[SZ]] [[REF_A]], i[[SZ]] {{.+}}, i[[SZ]] [[REF_AA]], i[[SZ]] [[REF_AAA]], [10 x i32]* [[REF_B]])
 //
 //
-// CHECK:       define internal {{.*}}void [[OMP_OUTLINED6]](i32* noalias %.global_tid., i32* noalias %.bound_tid., i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, [10 x i32]* {{.+}})
+// CHECK:       define internal {{.*}}void [[OMP_OUTLINED6]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, [10 x i32]* {{.+}})
 // To reduce complexity, we're only going as far as validating the signature of the outlined parallel function.
 
 // CHECK:       define internal void [[HVT5]]
@@ -914,7 +914,7 @@ int bar(int n){
 // CHECK:       call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(%struct.ident_t* [[DEF_LOC]], i32 3, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i[[SZ]], i[[SZ]], [10 x i32]*)* [[OMP_OUTLINED7:@.+]] to void (i32*, i32*, ...)*), i[[SZ]] [[REF_A]], i[[SZ]] [[REF_AA]], [10 x i32]* [[REF_B]])
 //
 //
-// CHECK:       define internal {{.*}}void [[OMP_OUTLINED7]](i32* noalias %.global_tid., i32* noalias %.bound_tid., i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, [10 x i32]* {{.+}})
+// CHECK:       define internal {{.*}}void [[OMP_OUTLINED7]](i32* noalias noundef %.global_tid., i32* noalias noundef %.bound_tid., i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, [10 x i32]* {{.+}})
 // To reduce complexity, we're only going as far as validating the signature of the outlined parallel function.
 
 // OMP45-NOT: !{!"llvm.loop.vectorize.enable", i1 false}

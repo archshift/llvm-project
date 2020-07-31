@@ -1,5 +1,5 @@
 // REQUIRES: arm-registered-target
-// RUN: %clang_cc1 -triple arm-none-none-eabi \
+// RUN: %clang_cc1 -disable-noundef-args -triple arm-none-none-eabi \
 // RUN:   -O2 \
 // RUN:   -target-cpu cortex-a8 \
 // RUN:   -emit-llvm -o - %s | FileCheck %s

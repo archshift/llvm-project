@@ -173,7 +173,7 @@ int foo(int n) {
 
 // CHECK:       define internal void [[HVT0:@.+]]()
 
-// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY0]](i32{{.*}}, [[TASK_TY0]]* noalias %1)
+// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY0]](i32{{.*}}, [[TASK_TY0]]* noalias noundef %1)
 // CHECK:       store void (i8*, ...)* null, void (i8*, ...)** %
 // CHECK:       [[DEVICE_CAP:%.+]] = getelementptr inbounds %{{.+}}, %{{.+}}* %{{.+}}, i32 0, i32 0
 // CHECK:       [[DEV:%.+]] = load i32, i32* [[DEVICE_CAP]],
@@ -187,9 +187,9 @@ int foo(int n) {
 // CHECK:       [[END]]
 // CHECK:       ret i32 0
 
-// CHECK:       define internal void [[HVT1:@.+]](i[[SZ]]* %{{.+}}, i[[SZ]] %{{.+}})
+// CHECK:       define internal void [[HVT1:@.+]](i[[SZ]]* noundef %{{.+}}, i[[SZ]] noundef %{{.+}})
 
-// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY1_]](i32{{.*}}, [[TASK_TY1_]]* noalias %1)
+// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY1_]](i32{{.*}}, [[TASK_TY1_]]* noalias noundef %1)
 // CHECK:       call void (i8*, ...) %
 // CHECK:       [[SZT:%.+]] = getelementptr inbounds [2 x i64], [2 x i64]* %{{.+}}, i[[SZ]] 0, i[[SZ]] 0
 // CHECK:       [[DEVICE_CAP:%.+]] = getelementptr inbounds %{{.+}}, %{{.+}}* %{{.+}}, i32 0, i32 2
@@ -211,7 +211,7 @@ int foo(int n) {
 // CHECK:       [[END]]
 // CHECK:       ret i32 0
 
-// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY1__]](i32{{.*}}, [[TASK_TY1__]]* noalias %1)
+// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY1__]](i32{{.*}}, [[TASK_TY1__]]* noalias noundef %1)
 // CHECK:       call void (i8*, ...) %
 // CHECK:       [[DEVICE_CAP:%.+]] = getelementptr inbounds %{{.+}}, %{{.+}}* %{{.+}}, i32 0, i32 2
 // CHECK:       [[BP0:%.+]] = load i[[SZ]]*, i[[SZ]]** %
@@ -223,7 +223,7 @@ int foo(int n) {
 // CHECK:       call void [[HVT1]](i[[SZ]]* [[BP0]], i[[SZ]] [[BP1]])
 // CHECK:       ret i32 0
 
-// CHECK:       define internal void [[HVT2:@.+]](i[[SZ]] %{{.+}})
+// CHECK:       define internal void [[HVT2:@.+]](i[[SZ]] noundef %{{.+}})
 // Create stack storage and store argument in there.
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       store i[[SZ]] %{{.+}}, i[[SZ]]* [[AA_ADDR]], align
@@ -231,7 +231,7 @@ int foo(int n) {
 // CHECK-64:    load i32, i32* [[AA_CADDR]], align
 // CHECK-32:    load i32, i32* [[AA_ADDR]], align
 
-// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY2]](i32{{.*}}, [[TASK_TY2]]* noalias %1)
+// CHECK:       define internal{{.*}} i32 [[TASK_ENTRY2]](i32{{.*}}, [[TASK_TY2]]* noalias noundef %1)
 // CHECK:       call void (i8*, ...) %
 // CHECK:       [[BP1_I32:%.+]] = load i32, i32* %
 // CHECK-64:    [[BP1_CAST:%.+]] = bitcast i[[SZ]]* [[BP1_PTR:%.+]] to i32*

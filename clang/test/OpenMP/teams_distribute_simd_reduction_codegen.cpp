@@ -53,7 +53,7 @@ int main() {
 #pragma omp target
 #pragma omp teams distribute simd reduction(+: sivar)
   for (int i = 0; i < 2; ++i) {
-    // LAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} [[SIVAR_ARG:%.+]])
+    // LAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} noundef [[SIVAR_ARG:%.+]])
     // LAMBDA: [[SIVAR_ADDR:%.+]] = alloca i{{.+}},
     // LAMBDA: store{{.+}} [[SIVAR_ARG]], {{.+}} [[SIVAR_ADDR]],
     // LAMBDA: [[SIVAR_CONV:%.+]] = bitcast{{.+}} [[SIVAR_ADDR]] to
@@ -100,7 +100,7 @@ int main() {
     sivar += i;
 
     [&]() {
-      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
       // LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
 
       sivar += 4;
@@ -133,7 +133,7 @@ int main() {
 // CHECK: {{%.+}} = call{{.*}} i32 @[[TMAIN_INT:.+]]()
 // CHECK:  ret
 
-// CHECK: define{{.*}} void @[[OFFL1]](i{{64|32}} [[SIVAR_ARG:%.+]])
+// CHECK: define{{.*}} void @[[OFFL1]](i{{64|32}} noundef [[SIVAR_ARG:%.+]])
 // CHECK: [[SIVAR_ADDR:%.+]] = alloca i{{.+}},
 // CHECK: store{{.+}} [[SIVAR_ARG]], {{.+}} [[SIVAR_ADDR]],
 // CHECK-64: [[SIVAR_CONV:%.+]] = bitcast{{.+}} [[SIVAR_ADDR]] to
@@ -183,7 +183,7 @@ int main() {
 // CHECK: call void @[[TOFFL1:.+]]({{.+}})
 // CHECK:  ret
 
-// CHECK: define{{.*}} void @[[TOFFL1]](i{{64|32}} [[TVAR_ARG:%.+]])
+// CHECK: define{{.*}} void @[[TOFFL1]](i{{64|32}} noundef [[TVAR_ARG:%.+]])
 // CHECK: [[TVAR_ADDR:%.+]] = alloca i{{.+}},
 // CHECK: store{{.+}} [[TVAR_ARG]], {{.+}} [[TVAR_ADDR]],
 // CHECK-64: [[TVAR_CONV:%.+]] = bitcast{{.+}} [[TVAR_ADDR]] to

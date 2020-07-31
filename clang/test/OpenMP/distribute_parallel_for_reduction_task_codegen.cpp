@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
 // CHECK: call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* @{{.+}}, i32 4, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i64, i64, i32*, i8***)* [[OUTLINED:@.+]] to void (i32*, i32*, ...)*), i64 %{{.+}}, i64 %{{.+}}, i32* %{{.+}}, i8*** %{{.+}})
 
-// CHECK: define internal void [[OUTLINED]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i64 %{{.+}}, i64 %{{.+}}, i32* {{.+}}, i8*** {{.+}})
+// CHECK: define internal void [[OUTLINED]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i64 noundef %{{.+}}, i64 noundef %{{.+}}, i32* {{.+}}, i8*** {{.+}})
 // CHECK: alloca i32,
 // CHECK: [[ARGC_FP_ADDR:%.+]] = alloca i32,
 // CHECK: [[TR:%.+]] = alloca [2 x %struct.kmp_taskred_input_t],
@@ -95,26 +95,26 @@ int main(int argc, char **argv) {
 // CHECK: call void @__kmpc_task_reduction_modifier_fini(%struct.ident_t* @{{.+}}, i32 %{{.+}}, i32 1)
 // CHECK: call i32 @__kmpc_reduce_nowait(
 
-// CHECK: define internal void [[ARGC_INIT]](i8* noalias %{{.+}}, i8* noalias %{{.+}})
+// CHECK: define internal void [[ARGC_INIT]](i8* noalias noundef %{{.+}}, i8* noalias noundef %{{.+}})
 // CHECK: store i32 0, i32* %{{.+}},
 
-// CHECK: define internal void [[ARGC_COMB]](i8* %{{.+}}, i8* %{{.+}})
+// CHECK: define internal void [[ARGC_COMB]](i8* noundef %{{.+}}, i8* noundef %{{.+}})
 // CHECK: [[ADD:%.+]] = add nsw i32 %{{.+}}, %{{.+}}
 // CHECK: store i32 [[ADD]], i32* %{{.+}},
 
-// CHECK: define internal void [[ARGV_INIT]](i8* noalias %{{.+}}, i8* noalias %{{.+}})
+// CHECK: define internal void [[ARGV_INIT]](i8* noalias noundef %{{.+}}, i8* noalias noundef %{{.+}})
 // CHECK: phi i8*
 // CHECK: store i8 0, i8* [[EL:%.+]],
 // CHECK: getelementptr i8, i8* [[EL]], i32 1
 
-// CHECK: define internal void [[ARGV_COMB]](i8* %{{.+}}, i8* %{{.+}})
+// CHECK: define internal void [[ARGV_COMB]](i8* noundef %{{.+}}, i8* noundef %{{.+}})
 // CHECK: phi i8*
 // CHECK: [[ADD:%.+]] = add nsw i32 %{{.+}}, %{{.+}}
 // CHECK: [[CONV:%.+]] = trunc i32 [[ADD]] to i8
 // CHECK: store i8 [[CONV]], i8* [[EL:%.+]],
 // CHECK: getelementptr i8, i8* [[EL]], i32 1
 
-// CHECK: define internal {{.*}}i32 [[TASK]](i32 {{.+}}, [[TASK_TY]]* {{.+}})
+// CHECK: define internal {{.*}}noundef i32 [[TASK]](i32 {{.+}}, [[TASK_TY]]* {{.+}})
 // CHECK-DAG: call i8* @__kmpc_task_reduction_get_th_data(i32 %{{.+}}, i8* [[TG:%.+]], i8* [[ARGC_REF:%.+]])
 // CHECK_DAG: [[TG]] = load i8*, i8** [[TG_ADDR:%.+]],
 // CHECK-DAG: [[ARGC_REF]] = bitcast i32* [[ARGC_ADDR:%.+]] to i8*

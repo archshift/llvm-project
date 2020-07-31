@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -fno-rtti-data -triple x86_64-windows-msvc -emit-llvm %s -o - | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -fno-rtti-data -triple x86_64-windows-msvc -emit-llvm %s -o - | FileCheck %s
 
 // In this example, C does not override B::foo, but it needs to emit a thunk to
 // adjust for the relative difference of position between A-in-B and A-in-C.
@@ -66,8 +66,8 @@ S s;
 template <typename T> struct InstantiateLater { T x; };
 inline int B::baz(InstantiateLater<int> p) { return p.x; }
 
-// CHECK-LABEL: define linkonce_odr dso_local i32 @"?baz@B@@W7EAAHU?$InstantiateLater@H@@@Z"(i8* %this.coerce, i32 %p.coerce)
+// CHECK-LABEL: define linkonce_odr dso_local noundef i32 @"?baz@B@@W7EAAHU?$InstantiateLater@H@@@Z"(i8* %this.coerce, i32 %p.coerce)
 // CHECK: = getelementptr i8, i8* {{.*}}, i32 -8
-// CHECK: tail call i32 @"?baz@B@@UEAAHU?$InstantiateLater@H@@@Z"(i8* {{[^,]*}}, i32 {{.*}})
+// CHECK: tail call noundef i32 @"?baz@B@@UEAAHU?$InstantiateLater@H@@@Z"(i8* {{[^,]*}}, i32 {{.*}})
 
-// CHECK-LABEL: define linkonce_odr dso_local i32 @"?baz@B@@UEAAHU?$InstantiateLater@H@@@Z"(i8* %this.coerce, i32 %p.coerce)
+// CHECK-LABEL: define linkonce_odr dso_local noundef i32 @"?baz@B@@UEAAHU?$InstantiateLater@H@@@Z"(i8* %this.coerce, i32 %p.coerce)

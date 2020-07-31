@@ -117,7 +117,7 @@ int main() {
   // LAMBDA: call void @[[OMP_OFFLOADING:.+]]()
 
   // target region in struct constructor
-  // LAMBDA: define{{.*}} void [[ST_CONSTR:@.+]]([[SS_TY]]* %this,
+  // LAMBDA: define{{.*}} void [[ST_CONSTR:@.+]]([[SS_TY]]* noundef %this
   // LAMBDA: call void [[OMP_OFFLOADING_1:@.+]]([[SS_TY]]
 
   // offloading function in struct constructor
@@ -211,7 +211,7 @@ int main() {
 
 // CHECK: define{{.*}} i{{[0-9]+}} @main()
 // CHECK: [[TEST:%.+]] = alloca [[S_FLOAT_TY]],
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* noundef [[TEST]])
 // CHECK: call void @[[OMP_OFFLOADING:.+]]()
 // CHECK: = call{{.*}} i{{.+}} [[TMAIN_INT:@.+]]()
 // CHECK: call void [[S_FLOAT_TY_DESTR:@.+]]([[S_FLOAT_TY]]*
@@ -221,7 +221,7 @@ int main() {
 // CHECK: define{{.+}} @[[OMP_OFFLOADING]]()
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_teams(%{{.+}}* @{{.+}}, i{{[0-9]+}} 0, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*)* [[OMP_OUTLINED:@.+]] to void
 
-// CHECK: define internal void [[OMP_OUTLINED]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}})
+// CHECK: define internal void [[OMP_OUTLINED]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}})
 // CHECK: [[T_VAR_PRIV:%.+]] = alloca i{{[0-9]+}},
 // CHECK: [[VEC_PRIV:%.+]] = alloca [2 x i{{[0-9]+}}],
 // CHECK: [[S_ARR_PRIV:%.+]] = alloca [2 x [[S_FLOAT_TY]]],
@@ -232,18 +232,18 @@ int main() {
 // CHECK-NOT: [[VEC_PRIV]]
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_FLOAT_TY]]*
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
-// CHECK-DAG: call void [[S_FLOAT_TY_DESTR]]([[S_FLOAT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
+// CHECK-DAG: call void [[S_FLOAT_TY_DESTR]]([[S_FLOAT_TY]]* noundef [[VAR_PRIV]])
 // CHECK-DAG: call void [[S_FLOAT_TY_DESTR]]([[S_FLOAT_TY]]*
 // CHECK: ret void
 
 // template tmain
 // CHECK: define{{.*}} i{{[0-9]+}} [[TMAIN_INT]]()
 // CHECK: [[TEST:%.+]] = alloca [[S_INT_TY]],
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* noundef [[TEST]])
 // CHECK: call void [[S_INT_TY_CONSTR:@.+]]([[S_INT_TY]]* {{.+}}, i{{[0-9]+}}{{.*}} 3)
 // CHECK: call void [[OMP_OFFLOADING_TMAIN:@.+]]()
 
@@ -274,7 +274,7 @@ int main() {
 // CHECK: define{{.+}} [[OMP_OFFLOADING_TMAIN]]()
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_teams(%{{.+}}* @{{.+}}, i{{[0-9]+}} 0, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*)* [[OMP_OUTLINED_TMAIN:@.+]] to void
 
-// CHECK: define{{.*}} void [[OMP_OUTLINED_TMAIN]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}})
+// CHECK: define{{.*}} void [[OMP_OUTLINED_TMAIN]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}})
 // CHECK: [[T_VAR_PRIV:%.+]] = alloca i{{[0-9]+}}, align 128
 // CHECK: [[VEC_PRIV:%.+]] = alloca [2 x i{{[0-9]+}}], align 128
 // CHECK: [[S_ARR_PRIV:%.+]] = alloca [2 x [[S_INT_TY]]], align 128
@@ -284,11 +284,11 @@ int main() {
 // CHECK-NOT: [[VEC_PRIV]]
 // CHECK: {{.+}}:
 // CHECK: [[S_ARR_PRIV_ITEM:%.+]] = phi [[S_INT_TY]]*
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[S_ARR_PRIV_ITEM]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[S_ARR_PRIV_ITEM]])
 // CHECK-NOT: [[T_VAR_PRIV]]
 // CHECK-NOT: [[VEC_PRIV]]
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* [[VAR_PRIV]])
-// CHECK-DAG: call void [[S_INT_TY_DESTR:@.+]]([[S_INT_TY]]* [[VAR_PRIV]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR]]([[S_INT_TY]]* noundef [[VAR_PRIV]])
+// CHECK-DAG: call void [[S_INT_TY_DESTR:@.+]]([[S_INT_TY]]* noundef [[VAR_PRIV]])
 // CHECK-DAG: call void [[S_INT_TY_DESTR]]([[S_INT_TY]]*
 // CHECK: ret
 
@@ -300,7 +300,7 @@ int main() {
 // CHECK: define{{.+}} [[OMP_OFFLOADING_SST]]([[SST_TY]]* {{.+}})
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_teams(%{{.+}}* @{{.+}}, i{{[0-9]+}} 1, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)* bitcast (void (i{{[0-9]+}}*, i{{[0-9]+}}*, [[SST_TY]]*)* [[OMP_OUTLINED_SST:@.+]] to void
 
-// CHECK: define{{.+}} [[OMP_OUTLINED_SST]](i{{[0-9]+}}* {{.+}}, i{{[0-9]+}}* noalias %{{.+}}, [[SST_TY]]* {{.+}})
+// CHECK: define{{.+}} [[OMP_OUTLINED_SST]](i{{[0-9]+}}* {{.+}}, i{{[0-9]+}}* noalias noundef %{{.+}}, [[SST_TY]]* {{.+}})
 // CHECK: [[A_PRIV_1:%.+]] = alloca i{{[0-9]+}},
 // CHECK: store i{{[0-9]+}}* [[A_PRIV_1]], i{{[0-9]+}}** [[A_REF_1:%.+]],
 // CHECK: [[A_REF_VAL_1:%.+]] = load i{{[0-9]+}}*, i{{[0-9]+}}** [[A_REF_1]]

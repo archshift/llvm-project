@@ -109,7 +109,7 @@ namespace extended_examples_cxx1y {
 
   struct A2 {   // leads to ambiguity in C++1y, and no viable match in C++11
     operator int() &&;                    // matching but not viable
-    template <typename T> operator int(); // In C++1y: matching but ambiguous (disambiguated by L.105).
+    template <typename T> operator int(); // In C++1y: matching but ambiguous (disambiguated L.105 by).
   };
 
   struct B1 {    // leads to one viable match in both cases

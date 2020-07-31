@@ -1,8 +1,8 @@
-// RUN: %clang_cc1 -std=c++11 -fsanitize=signed-integer-overflow,integer-divide-by-zero,float-divide-by-zero,shift-base,shift-exponent,unreachable,return,vla-bound,alignment,null,vptr,object-size,float-cast-overflow,bool,enum,array-bounds,function -fsanitize-recover=signed-integer-overflow,integer-divide-by-zero,float-divide-by-zero,shift-base,shift-exponent,vla-bound,alignment,null,vptr,object-size,float-cast-overflow,bool,enum,array-bounds,function -emit-llvm %s -o - -triple x86_64-linux-gnu | opt -instnamer -S | FileCheck %s
-// RUN: %clang_cc1 -std=c++11 -fsanitize=vptr,address -fsanitize-recover=vptr,address -emit-llvm %s -o - -triple x86_64-linux-gnu | FileCheck %s --check-prefix=CHECK-ASAN
-// RUN: %clang_cc1 -std=c++11 -fsanitize=vptr -fsanitize-recover=vptr -emit-llvm %s -o - -triple x86_64-linux-gnu | FileCheck %s --check-prefix=DOWNCAST-NULL
-// RUN: %clang_cc1 -std=c++11 -fsanitize=function -emit-llvm %s -o - -triple x86_64-linux-gnux32 | FileCheck %s --check-prefix=CHECK-X32
-// RUN: %clang_cc1 -std=c++11 -fsanitize=function -emit-llvm %s -o - -triple i386-linux-gnu | FileCheck %s --check-prefix=CHECK-X86
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -fsanitize=signed-integer-overflow,integer-divide-by-zero,float-divide-by-zero,shift-base,shift-exponent,unreachable,return,vla-bound,alignment,null,vptr,object-size,float-cast-overflow,bool,enum,array-bounds,function -fsanitize-recover=signed-integer-overflow,integer-divide-by-zero,float-divide-by-zero,shift-base,shift-exponent,vla-bound,alignment,null,vptr,object-size,float-cast-overflow,bool,enum,array-bounds,function -emit-llvm %s -o - -triple x86_64-linux-gnu | opt -instnamer -S | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -fsanitize=vptr,address -fsanitize-recover=vptr,address -emit-llvm %s -o - -triple x86_64-linux-gnu | FileCheck %s --check-prefix=CHECK-ASAN
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -fsanitize=vptr -fsanitize-recover=vptr -emit-llvm %s -o - -triple x86_64-linux-gnu | FileCheck %s --check-prefix=DOWNCAST-NULL
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -fsanitize=function -emit-llvm %s -o - -triple x86_64-linux-gnux32 | FileCheck %s --check-prefix=CHECK-X32
+// RUN: %clang_cc1 -disable-noundef-args -std=c++11 -fsanitize=function -emit-llvm %s -o - -triple i386-linux-gnu | FileCheck %s --check-prefix=CHECK-X86
 
 struct S {
   double d;
@@ -630,7 +630,7 @@ struct ThisAlign {
   void this_align_lambda_2();
 };
 void ThisAlign::this_align_lambda() {
-  // CHECK-LABEL: define internal %struct.ThisAlign* @"_ZZN9ThisAlign17this_align_lambdaEvENK3$_0clEv"
+  // CHECK-LABEL: define internal noundef %struct.ThisAlign* @"_ZZN9ThisAlign17this_align_lambdaEvENK3$_0clEv"
   // CHECK-SAME: (%{{.*}}* %[[this:[^)]*]])
   // CHECK: %[[this_addr:.*]] = alloca
   // CHECK: store %{{.*}}* %[[this]], %{{.*}}** %[[this_addr]],

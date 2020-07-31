@@ -4,7 +4,7 @@
 export module FooBar;
 
 export {
-  // CHECK-DAG: define i32 @_Z1fv(
+  // CHECK-DAG: define noundef i32 @_Z1fv(
   int f() { return 0; }
 }
 

@@ -43,7 +43,7 @@
 // CHECK: @_ZTC1D8_1C = unnamed_addr alias { [4 x i32], [4 x i32] }, { [4 x i32], [4 x i32] }* @_ZTC1D8_1C.local
 // CHECK: @_ZTV1D = unnamed_addr alias { [5 x i32], [4 x i32], [4 x i32] }, { [5 x i32], [4 x i32], [4 x i32] }* @_ZTV1D.local
 
-// CHECK:      define void @_Z5D_fooP1D(%class.D* %d) local_unnamed_addr
+// CHECK:      define void @_Z5D_fooP1D(%class.D* noundef %d) local_unnamed_addr
 // CHECK-NEXT: entry:
 // CHECK-NEXT:   [[d:%[0-9]+]] = bitcast %class.D* %d to i8**
 // CHECK-NEXT:   [[vtable:%[a-z0-9]+]] = load i8*, i8** [[d]], align 8
@@ -63,7 +63,7 @@
 // CHECK-NEXT:   [[vtable:%[a-z0-9]+]] = load i8*, i8** [[a_i8_ptr]], align 8
 // CHECK-NEXT:   [[ptr:%[0-9]+]] = call i8* @llvm.load.relative.i32(i8* [[vtable]], i32 0)
 // CHECK-NEXT:   [[method:%[0-9]+]] = bitcast i8* [[ptr]] to void (%class.A*)*
-// CHECK-NEXT:   call void [[method]](%class.A* [[a]])
+// CHECK-NEXT:   call void [[method]](%class.A* noundef [[a]])
 // CHECK-NEXT:   ret void
 // CHECK-NEXT: }
 

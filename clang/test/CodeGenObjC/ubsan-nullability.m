@@ -16,7 +16,7 @@
 #define INULL ((int *)NULL)
 #define INNULL ((int *_Nonnull)NULL)
 
-// CHECK-LABEL: define i32* @{{.*}}nonnull_retval1
+// CHECK-LABEL: define {{(noundef )?}}i32* @{{.*}}nonnull_retval1
 #line 100
 int *_Nonnull nonnull_retval1(int *p) {
   // CHECK: [[ICMP:%.*]] = icmp ne i32* {{.*}}, null, !nosanitize
@@ -94,7 +94,7 @@ void nonnull_init2(int *p) {
   int *_Nonnull arr[] = {p, p};
 }
 
-// CHECK-LABEL: define i32* @{{.*}}nonnull_retval2
+// CHECK-LABEL: define {{(noundef )?}}i32* @{{.*}}nonnull_retval2
 #line 800
 int *_Nonnull nonnull_retval2(int *_Nonnull arg1,  //< Test this.
                               int *_Nonnull arg2,  //< Test this.
@@ -125,7 +125,7 @@ int *_Nonnull nonnull_retval2(int *_Nonnull arg1,  //< Test this.
 
 @implementation A
 
-// CHECK-LABEL: define internal i32* @"\01+[A objc_clsmethod:]"
+// CHECK-LABEL: define internal {{(noundef )?}}i32* @"\01+[A objc_clsmethod:]"
 +(int *_Nonnull) objc_clsmethod: (int *_Nonnull) arg1 {
   // CHECK: [[ARG1CMP:%.*]] = icmp ne i32* %arg1, null, !nosanitize
   // CHECK-NEXT: [[DO_RV_CHECK:%.*]] = and i1 true, [[ARG1CMP]]
@@ -142,7 +142,7 @@ int *_Nonnull nonnull_retval2(int *_Nonnull arg1,  //< Test this.
   // CHECK-NEXT: ret i32*
 }
 
-// CHECK-LABEL: define internal i32* @"\01-[A objc_method:]"
+// CHECK-LABEL: define internal {{(noundef )?}}i32* @"\01-[A objc_method:]"
 -(int *_Nonnull) objc_method: (int *_Nonnull) arg1 {
   // CHECK: [[ARG1CMP:%.*]] = icmp ne i32* %arg1, null, !nosanitize
   // CHECK-NEXT: [[DO_RV_CHECK:%.*]] = and i1 true, [[ARG1CMP]]
@@ -165,13 +165,13 @@ void call_A(A *a, int *p) {
   // CHECK: [[ICMP:%.*]] = icmp ne i32* [[P1:%.*]], null, !nosanitize
   // CHECK-NEXT: br i1 [[ICMP]], {{.*}}, !nosanitize
   // CHECK: call void @__ubsan_handle_nullability_arg{{.*}} !nosanitize
-  // CHECK: call i32* {{.*}} @objc_msgSend to i32* {{.*}}({{.*}}, i32* [[P1]])
+  // CHECK: call {{(noundef )?}}i32* {{.*}} @objc_msgSend to i32* {{.*}}({{.*}}, i32* noundef [[P1]])
   [a objc_method: p];
 
   // CHECK: [[ICMP:%.*]] = icmp ne i32* [[P2:%.*]], null, !nosanitize
   // CHECK-NEXT: br i1 [[ICMP]], {{.*}}, !nosanitize
   // CHECK: call void @__ubsan_handle_nullability_arg{{.*}} !nosanitize
-  // CHECK: call i32* {{.*}} @objc_msgSend to i32* {{.*}}({{.*}}, i32* [[P2]])
+  // CHECK: call {{(noundef )?}}i32* {{.*}} @objc_msgSend to i32* {{.*}}({{.*}}, i32* noundef [[P2]])
   [A objc_clsmethod: p];
 }
 

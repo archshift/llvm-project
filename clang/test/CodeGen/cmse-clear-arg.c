@@ -1,12 +1,12 @@
-// RUN: %clang_cc1 -triple thumbv8m.main   -O0 -mcmse -S -emit-llvm %s -o - | \
+// RUN: %clang_cc1 -disable-noundef-args -triple thumbv8m.main   -O0 -mcmse -S -emit-llvm %s -o - | \
 // RUN:    FileCheck %s --check-prefixes=CHECK,CHECK-LE,CHECK-SOFTFP
-// RUN: %clang_cc1 -triple thumbebv8m.main -O0 -mcmse -S -emit-llvm %s -o - | \
+// RUN: %clang_cc1 -disable-noundef-args -triple thumbebv8m.main -O0 -mcmse -S -emit-llvm %s -o - | \
 // RUN:    FileCheck %s --check-prefixes=CHECK,CHECK-BE,CHECK-SOFTFP
-// RUN: %clang_cc1 -triple thumbv8m.main   -O2 -mcmse -S -emit-llvm %s -o - | \
+// RUN: %clang_cc1 -disable-noundef-args -triple thumbv8m.main   -O2 -mcmse -S -emit-llvm %s -o - | \
 // RUN:    FileCheck %s --check-prefixes=CHECK,CHECK-LE,CHECK-SOFTFP
-// RUN: %clang_cc1 -triple thumbebv8m.main -O2 -mcmse -S -emit-llvm %s -o - | \
+// RUN: %clang_cc1 -disable-noundef-args -triple thumbebv8m.main -O2 -mcmse -S -emit-llvm %s -o - | \
 // RUN:    FileCheck %s --check-prefixes=CHECK,CHECK-BE,CHECK-SOFTFP
-// RUN: %clang_cc1 -triple thumbv8m.main   -O0 -mcmse -mfloat-abi hard  \
+// RUN: %clang_cc1 -disable-noundef-args -triple thumbv8m.main   -O0 -mcmse -mfloat-abi hard  \
 // RUN:            -S -emit-llvm %s -o - | \
 // RUN:    FileCheck %s --check-prefixes=CHECK,CHECK-LE,CHECK-HARDFP
 

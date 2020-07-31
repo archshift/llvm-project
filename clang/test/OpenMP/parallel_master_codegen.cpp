@@ -28,7 +28,7 @@ void parallel_master() {
 // CK1-LABEL: define void @{{.+}}parallel_master{{.+}}
 // CK1:       call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEF_LOC]], i32 0, void (i32*, i32*, ...)* bitcast (void (i32*, i32*)* [[OMP_OUTLINED:@.+]] to void (i32*, i32*, ...)*))
 
-// CK1:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias [[GTID:%.+]], i32* noalias [[BTID:%.+]])
+// CK1:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef [[GTID:%.+]], i32* noalias noundef [[BTID:%.+]])
 // CK1-NOT:   __kmpc_global_thread_num
 // CK1:       call i32 @__kmpc_master({{.+}})
 // CK1:       invoke void {{.*}}foo{{.*}}()
@@ -64,7 +64,7 @@ void parallel_master_private() {
 // CK2:       [[A_PRIV:%.+]] = alloca i32
 // CK2:       call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEF_LOC]], i32 0, void (i32*, i32*, ...)* bitcast (void (i32*, i32*)* [[OMP_OUTLINED:@.+]] to void (i32*, i32*, ...)*))
 
-// CK2:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias [[GTID:%.+]], i32* noalias [[BTID:%.+]])
+// CK2:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef [[GTID:%.+]], i32* noalias noundef [[BTID:%.+]])
 // CK2-NOT:   __kmpc_global_thread_num
 // CK2:       call i32 @__kmpc_master({{.+}})
 // CK2:       [[A_VAL:%.+]] = load i32, i32* [[A_PRIV]]
@@ -100,7 +100,7 @@ void parallel_master_private() {
 // CK3:       [[A_VAL:%.+]] = alloca i32
 // CK3:       call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* {{.+}}, i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i32*)* [[OMP_OUTLINED:@.+]] to void 
 
-// CK3:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias [[GTID:%.+]], i32* noalias [[BTID:%.+]], i32* nonnull align 4 dereferenceable(4) [[A_VAL]])
+// CK3:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef [[GTID:%.+]], i32* noalias noundef [[BTID:%.+]], i32* noundef nonnull align 4 dereferenceable(4) [[A_VAL]])
 // CK3:       [[GTID_ADDR:%.+]] = alloca i32*
 // CK3:       [[BTID_ADDR:%.+]] = alloca i32*
 // CK3:       [[A_ADDR:%.+]] = alloca i32* 
@@ -208,18 +208,18 @@ void parallel_master_default_firstprivate() {
 // CK32-LABEL: define {{.+}} @{{.+}}parallel_master_default_firstprivate{{.+}}
 // CK32: [[A_VAL:%.+]] = alloca %struct.St{{.+}}
 // CK32: [[Y_CASTED:%.+]] = alloca i64
-// CK32: call void @[[CTOR:.+]](%struct.St* [[A_VAL]])
+// CK32: call void @[[CTOR:.+]](%struct.St* noundef [[A_VAL]])
 // CK32: [[ZERO:%.+]] = load i32, i32* @{{.+}}parallel_master_default_firstprivate{{.+}}
 // CK32: [[CONV:%.+]] = bitcast i64* [[Y_CASTED]] to i32*
 // CK32: store i32 [[ZERO]], i32* [[CONV]]
 // CK32: [[ONE:%.+]] = load i64, i64* [[Y_CASTED]]
 // CK32: call void {{.+}}@{{.+}} %struct.St* [[A_VAL]], i64 [[ONE]])
-// CK32: call void [[DTOR:@.+]](%struct.St* [[A_VAL]])
+// CK32: call void [[DTOR:@.+]](%struct.St* noundef [[A_VAL]])
 
 // CK32: [[THIS_ADDR:%.+]] = alloca %struct.St*
 // CK32: store %struct.St* [[THIS:%.+]], %struct.St** [[THIS_ADDR]]
 // CK32: [[THIS_ONE:%.+]] = load %struct.St*, %struct.St** [[THIS_ADDR]]
-// CK32: call void [[CTOR_2:.+]](%struct.St* [[THIS_ONE]])
+// CK32: call void [[CTOR_2:.+]](%struct.St* noundef [[THIS_ONE]])
 // CK32: ret void
 
 // CK32: [[GLOBAL_TID_ADDR:%.+]] = alloca i32*
@@ -253,11 +253,11 @@ void parallel_master_default_firstprivate() {
 // CK32: call void @{{.+}} i32 [[TWO]])
 // CK32: br label [[IF_END]]
 
-// CK32: [[DTOR]](%struct.St* [[THIS]])
+// CK32: [[DTOR]](%struct.St* noundef [[THIS]])
 // CK32: [[THIS_ADDR]] = alloca %struct.St*
 // CK32: store %struct.St* [[THIS]], %struct.St** [[THIS_ADDR]]
 // CK32: [[THIS_ONE]] = load %struct.St*, %struct.St** [[THIS_ADDR]]
-// CK32: call void @_ZN2StD2Ev(%struct.St* [[THIS_ONE]])
+// CK32: call void @_ZN2StD2Ev(%struct.St* noundef [[THIS_ONE]])
 
 // CK32: [[THIS_ADDR]] = alloca %struct.St*
 // CK32: store %struct.St* [[THIS]], %struct.St** [[THIS_ADDR]]
@@ -304,7 +304,7 @@ void parallel_master_firstprivate() {
 // CK4:       [[ONE:%.+]] = load i64, i64* [[A_CASTED]]
 // CK4:       call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEF_LOC]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i64)* [[OMP_OUTLINED:@.+]] to void (i32*, i32*, ...)*), i64 [[ONE]])
 
-// CK4:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias [[GLOBAL_TID:%.+]], i32* noalias [[BOUND_TID:%.+]], i64 [[A_VAL]])
+// CK4:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef [[GLOBAL_TID:%.+]], i32* noalias noundef [[BOUND_TID:%.+]], i64 noundef [[A_VAL]])
 // CK4:       [[GLOBAL_TID_ADDR:%.+]] = alloca i32*
 // CK4:       [[BOUND_TID_ADDR:%.+]] = alloca i32*
 // CK4:       [[A_ADDR:%.+]] = alloca i64 
@@ -369,7 +369,7 @@ void parallel_master_copyin() {
 // TLS-CHECK:       call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEF_LOC_2]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i32*)* [[OMP_OUTLINED:@.+]] to void (i32*, i32*, ...)*)
 // TLS-CHECK: ret void
 
-// CK5:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias [[GLOBAL_TID:%.+]], i32* noalias [[BOUND_TID:%.+]])
+// CK5:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef [[GLOBAL_TID:%.+]], i32* noalias noundef [[BOUND_TID:%.+]])
 // CK5:       [[GLOBAL_TID_ADDR:%.+]] = alloca i32*
 // CK5:       [[BOUND_TID_ADDR:%.+]] = alloca i32*
 // CK5:       store i32* [[GLOBAL_TID]], i32** [[GLOBAL_TID_ADDR]]
@@ -381,7 +381,7 @@ void parallel_master_copyin() {
 // CK5:       [[FOUR:%.+]] = ptrtoint i32* [[THREE]] to i64
 // CK5:       [[FIVE:%.+]] = icmp ne i64 ptrtoint (i32* [[A]] to i64), [[FOUR]]
 // CK5:       br i1 [[FIVE]], label [[COPYIN_NOT_MASTER:%.+]], label [[COPYIN_NOT_MASTER_END:%.+]]
-// TLS-CHECK: define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias [[GLOBAL_TID:%.+]], i32* noalias [[BOUND_TID:%.+]], i32* {{.+}} [[A_VAR:%.+]])
+// TLS-CHECK: define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef [[GLOBAL_TID:%.+]], i32* noalias noundef [[BOUND_TID:%.+]], i32* {{.+}} [[A_VAR:%.+]])
 // TLS-CHECK: [[GLOBAL_TID_ADDR:%.+]] = alloca i32*
 // TLS-CHECK: [[BOUND_TID_ADDR:%.+]] = alloca i32*
 // TLS-CHECK: [[A_ADDR:%.+]] = alloca i32*
@@ -458,7 +458,7 @@ void parallel_master_reduction() {
 // CK6:       call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEF_LOC_1]], i32 1, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i32*)* [[OMP_OUTLINED:@.+]] to void (i32*, i32*, ...)*), i32* [[G_VAR]])
 // CK6: ret void
 
-// CK6:       define internal void [[OMP_OUTLINED]](i32* noalias [[GLOBAL_TID:%.+]], i32* noalias [[BOUND_TID:%.+]], i32* {{.+}} [[G_VAR]])
+// CK6:       define internal void [[OMP_OUTLINED]](i32* noalias noundef [[GLOBAL_TID:%.+]], i32* noalias noundef [[BOUND_TID:%.+]], i32* {{.+}} [[G_VAR]])
 // CK6:       [[GTID_ADDR:%.+]] = alloca i32*
 // CK6:       [[BTID_ADDR:%.+]] = alloca i32*
 // CK6:       [[G_ADDR:%.+]] = alloca i32*
@@ -494,7 +494,7 @@ void parallel_master_reduction() {
 // CK6:       [[ELEVEN:%.+]] = load i32, i32* [[G_1]]
 // CK6:       [[TWELVE:%.+]] = atomicrmw add i32* [[ZERO]], i32 [[ELEVEN]] monotonic
 
-// CK6:       define internal void [[RED_FUNC]](i8* [[ZERO]], i8* [[ONE]])
+// CK6:       define internal void [[RED_FUNC]](i8* noundef [[ZERO]], i8* noundef [[ONE]])
 // CK6:       ret void
 #endif
 #ifdef CK7
@@ -524,7 +524,7 @@ void parallel_master_if() {
 // CK7:       call void @__kmpc_end_serialized_parallel(%struct.ident_t* [[DEF_LOC_1]], i32 [[ZERO]])
 // CK7:       ret void
 
-// CK7:       define internal void @.omp_outlined.(i32* noalias [[GTID:%.+]], i32* noalias [[BTID:%.+]])
+// CK7:       define internal void @.omp_outlined.(i32* noalias noundef [[GTID:%.+]], i32* noalias noundef [[BTID:%.+]])
 // CK7:       [[EXECUTE:%.+]] = call i32 @__kmpc_master(%struct.ident_t* @0, i32 %1)
 // CK7:       call void @__kmpc_end_master(%struct.ident_t* [[DEF_LOC_1]], i32 %1)
 
@@ -628,7 +628,7 @@ void parallel_master_allocate() {
 // CK9:       [[ONE:%.+]] = load i64, i64* [[A_CASTED]]
 // CK9:       call void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_call(%struct.ident_t* [[DEF_LOC]], i32 2, void (i32*, i32*, ...)* bitcast (void (i32*, i32*, i64, i8***)* [[OMP_OUTLINED:@.+]] to void (i32*, i32*, ...)*), i64 [[ONE]], i8*** %{{.+}})
 
-// CK9:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias [[GLOBAL_TID:%.+]], i32* noalias [[BOUND_TID:%.+]], i64 [[A_VAL]], i8*** {{.*}})
+// CK9:       define internal {{.*}}void [[OMP_OUTLINED]](i32* noalias noundef [[GLOBAL_TID:%.+]], i32* noalias noundef [[BOUND_TID:%.+]], i64 noundef [[A_VAL]], i8*** {{.*}})
 // CK9:       [[GLOBAL_TID_ADDR:%.+]] = alloca i32*
 // CK9:       [[BOUND_TID_ADDR:%.+]] = alloca i32*
 // CK9:       [[A_ADDR:%.+]] = alloca i64,

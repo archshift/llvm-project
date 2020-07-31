@@ -38,7 +38,7 @@ int main (int argc, char **argv) {
 // SEQ-DAG: [[KERNEL_SHARED2:@.+]] = internal unnamed_addr constant i16 1
 
 // only nvptx side: do not outline teams region and do not call fork_teams
-// CK1:  define {{.*}}void @{{[^,]+}}(i{{[0-9]+}} [[ARGC:%.+]])
+// CK1:  define {{.*}}void @{{[^,]+}}(i{{[0-9]+}} noundef [[ARGC:%.+]])
 // CK1:  [[ARGCADDR:%.+]] = alloca i{{[0-9]+}},
 // CK1:  store {{.+}} 0, {{.+}},
 // CK1:  store i{{[0-9]+}} [[ARGC]], i{{[0-9]+}}* [[ARGCADDR]],
@@ -59,10 +59,10 @@ int main (int argc, char **argv) {
 
 // CK1:  define internal void [[OUTLINED]](
 // CK1:  store i{{[0-9]+}} 0, i{{[0-9]+}}* %
-// CK1-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(
+// CK1-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)* noundef, ...) @__kmpc_fork_teams
 
 // target region in template
-// CK1: define {{.*}}void @{{[^,]+}}(i{{.+}}** [[ARGC:%.+]])
+// CK1: define {{.*}}void @{{[^,]+}}(i{{.+}}** noundef [[ARGC:%.+]])
 // CK1: [[ARGCADDR:%.+]] = alloca i{{.+}}**,
 // CK1: store i{{.+}}** [[ARGC]], i{{.+}}*** [[ARGCADDR]]
 // SEQ: [[IS_SHARED:%.+]] = load i16, i16* [[KERNEL_SHARED2]],
@@ -80,7 +80,7 @@ int main (int argc, char **argv) {
 
 // CK1:  define internal void [[OUTLINED]](
 // CK1: store i{{[0-9]+}}** null, i{{[0-9]+}}*** %
-// CK1-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(
+// CK1-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)* noundef, ...) @__kmpc_fork_teams
 
 
 #endif // CK1
@@ -126,7 +126,7 @@ int main (int argc, char **argv) {
 // SEQ2-DAG: [[KERNEL_SHARED1:@.+]] = internal unnamed_addr constant i16 1
 // SEQ2-DAG: [[KERNEL_SHARED2:@.+]] = internal unnamed_addr constant i16 1
 
-// CK2: define {{.*}}void @{{[^,]+}}(i{{[0-9]+}} [[A_IN:%.+]], i{{[0-9]+}} [[B_IN:%.+]], i{{[0-9]+}} [[ARGC_IN:.+]])
+// CK2: define {{.*}}void @{{[^,]+}}(i{{[0-9]+}} noundef [[A_IN:%.+]], i{{[0-9]+}} noundef [[B_IN:%.+]], i{{[0-9]+}} noundef [[ARGC_IN:.+]])
 // CK2: [[AADDR:%.+]] = alloca i{{[0-9]+}},
 // CK2: [[BADDR:%.+]] = alloca i{{[0-9]+}},
 // CK2: [[ARGCADDR:%.+]] = alloca i{{[0-9]+}},
@@ -153,9 +153,9 @@ int main (int argc, char **argv) {
 // CK2:  define internal void [[OUTLINED]](
 // CK2:  store i{{[0-9]+}} 0, i{{[0-9]+}}* %
 // CK2-NOT:  {{.+}} = call void @__kmpc_push_num_teams(
-// CK2-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(
+// CK2-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)* noundef, ...) @__kmpc_fork_teams
 
-// CK2: define {{.*}}void @{{[^,]+}}(i{{[0-9]+}} [[A_IN:%.+]], i{{[0-9]+}} [[BP:%.+]], i{{[0-9]+}}** [[ARGC:%.+]])
+// CK2: define {{.*}}void @{{[^,]+}}(i{{[0-9]+}} noundef [[A_IN:%.+]], i{{[0-9]+}} noundef [[BP:%.+]], i{{[0-9]+}}** noundef [[ARGC:%.+]])
 // CK2: [[AADDR:%.+]] = alloca i{{[0-9]+}},
 // CK2: [[BADDR:%.+]] = alloca i{{[0-9]+}},
 // CK2: [[ARGCADDR:%.+]] = alloca i{{[0-9]+}}**,
@@ -178,7 +178,7 @@ int main (int argc, char **argv) {
 // CK2:  define internal void [[OUTLINED]](
 // CK2:  store i{{[0-9]+}}** null, i{{[0-9]+}}*** %
 // CK2-NOT:  {{.+}} = call void @__kmpc_push_num_teams(
-// CK2-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)*, ...) @__kmpc_fork_teams(
+// CK2-NOT: call {{.*}}void (%struct.ident_t*, i32, void (i32*, i32*, ...)* noundef, ...) @__kmpc_fork_teams
 
 #endif // CK2
 #endif

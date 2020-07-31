@@ -34,7 +34,7 @@ int foo(unsigned n) {
   // PATTERN-STOP-AFTER-2-ARRAY-NOT:          vla-init.loop:
   // PATTERN-STOP-AFTER-3-VLA:                vla-init.loop:
   // PATTERN-STOP-AFTER-3-VLA-NEXT:           %vla.cur = phi i8* [ %vla.begin, %vla-setup.loop ], [ %vla.next, %vla-init.loop ]
-  // PATTERN-STOP-AFTER-3-VLA-NEXT-NEXT:      call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %vla.cur, i8* align 4 bitcast ({ i32, i8, [3 x i8] }* @__const._Z3fooj.vla to i8*), i64 8, i1 false)
+  // PATTERN-STOP-AFTER-3-VLA-NEXT-NEXT:      call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 8 %vla.cur, i8* align 4 bitcast ({ i32, i8, [3 x i8] }* @__const._Z3fooj.vla i8*) to, i64 8, i1 false)
   // PATTERN-STOP-AFTER-3-VLA-NOT:            store i8* inttoptr (i64 -6148914691236517206 to i8*), i8** %p, align 8
   // PATTERN-STOP-AFTER-4-POINTER:            store i8* inttoptr (i64 -6148914691236517206 to i8*), i8** %p, align 8
   // PATTERN-STOP-AFTER-4-POINTER-NOT:        call void @llvm.memset.p0i8.i64(i8* align 16 %6, i8 -86, i64 %mul, i1 false)

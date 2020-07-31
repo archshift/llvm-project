@@ -46,7 +46,7 @@ void test() {
   a.test_member();
 }
 
-// ALL: define i32 @main
+// ALL: define noundef i32 @main
 int main() {
   return 1;
 }

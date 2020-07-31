@@ -24,22 +24,22 @@
 // CHECK: @_ZTV1A = linkonce_odr unnamed_addr alias { [3 x i32] }, { [3 x i32] }* @_ZTV1A.local
 // CHECK: @_ZTV1B = linkonce_odr unnamed_addr alias { [3 x i32] }, { [3 x i32] }* @_ZTV1B.local
 
-// CHECK: declare void @_Z5A_fooP1A(%class.A*)
+// CHECK: declare void @_Z5A_fooP1A(%class.A* noundef)
 
 // The stubs and implementations for foo() are in their own comdat sections.
-// CHECK:      define linkonce_odr void @_ZN1A3fooEv(%class.A* %this) unnamed_addr #{{[0-9]+}} comdat
+// CHECK:      define linkonce_odr void @_ZN1A3fooEv(%class.A* noundef %this) unnamed_addr #{{[0-9]+}} comdat
 
-// CHECK:      define hidden void @_ZN1A3fooEv.stub(%class.A* %0) unnamed_addr #{{[0-9]+}} comdat
+// CHECK:      define hidden void @_ZN1A3fooEv.stub(%class.A* noundef %0) unnamed_addr #{{[0-9]+}} comdat
 // CHECK-NEXT: entry:
-// CHECK-NEXT:   tail call void @_ZN1A3fooEv(%class.A* %0)
+// CHECK-NEXT:   tail call void @_ZN1A3fooEv(%class.A* noundef %0)
 // CHECK-NEXT:   ret void
 // CHECK-NEXT: }
 
-// CHECK:      define linkonce_odr void @_ZN1B3fooEv(%class.B* %this) unnamed_addr #{{[0-9]+}} comdat
+// CHECK:      define linkonce_odr void @_ZN1B3fooEv(%class.B* noundef %this) unnamed_addr #{{[0-9]+}} comdat
 
-// CHECK:      define hidden void @_ZN1B3fooEv.stub(%class.B* %0) unnamed_addr #{{[0-9]+}} comdat
+// CHECK:      define hidden void @_ZN1B3fooEv.stub(%class.B* noundef %0) unnamed_addr #{{[0-9]+}} comdat
 // CHECK-NEXT: entry:
-// CHECK-NEXT:   tail call void @_ZN1B3fooEv(%class.B* %0)
+// CHECK-NEXT:   tail call void @_ZN1B3fooEv(%class.B* noundef %0)
 // CHECK-NEXT:   ret void
 // CHECK-NEXT: }
 

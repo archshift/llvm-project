@@ -47,7 +47,7 @@ namespace test2 {
   }
 
   // CHECK-LABEL: define internal void @__cxx_global_var_init()
-  // CHECK:      [[TMP:%.*]] = call i32 @_ZN5test23fooEv()
+  // CHECK:      [[TMP:%.*]] = call noundef i32 @_ZN5test23fooEv()
   // CHECK-NEXT: store i32 [[TMP]], i32* @_ZN5test212_GLOBAL__N_11AIiE1xE, align 4
   // CHECK-NEXT: ret void
 }
@@ -70,7 +70,7 @@ namespace test3 {
   // CHECK:      [[GUARDBYTE:%.*]] = load i8, i8* bitcast (i64* @_ZGVN5test31AIiE1xE to i8*)
   // CHECK-NEXT: [[UNINITIALIZED:%.*]] = icmp eq i8 [[GUARDBYTE]], 0
   // CHECK-NEXT: br i1 [[UNINITIALIZED]]
-  // CHECK:      [[TMP:%.*]] = call i32 @_ZN5test33fooEv()
+  // CHECK:      [[TMP:%.*]] = call noundef i32 @_ZN5test33fooEv()
   // CHECK-NEXT: store i32 [[TMP]], i32* @_ZN5test31AIiE1xE, align 4
   // CHECK-NEXT: store i64 1, i64* @_ZGVN5test31AIiE1xE
   // CHECK-NEXT: br label
@@ -85,7 +85,7 @@ namespace test4 {
   };
 
   int f(A *a) {
-    // CHECK-LABEL: define i32 @_ZN5test41fEPNS_1AE
+    // CHECK-LABEL: define noundef i32 @_ZN5test41fEPNS_1AE
     // CHECK: ret i32 76
     return a->n;
   }

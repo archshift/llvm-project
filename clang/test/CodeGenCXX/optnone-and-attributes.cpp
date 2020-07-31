@@ -72,7 +72,7 @@ int exported_optnone_func(int a) {
   return imported_optnone_func(a); // use of imported func
 }
 // CHECK: @_Z21exported_optnone_funci({{.*}}) [[OPTNONE]]
-// CHECK: declare dllimport {{.*}} @_Z21imported_optnone_funci({{.*}}) [[DLLIMPORT:#[0-9]+]]
+// CHECK: declare dllimport {{.*}} @_Z21imported_optnone_funci({{.*}} noundef) [[DLLIMPORT:#[0-9]+]]
 
 
 // CHECK: attributes [[OPTNONE]] = { noinline {{.*}} optnone

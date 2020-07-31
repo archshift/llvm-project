@@ -1,14 +1,14 @@
-// RUN: %clang_cc1 -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s -DMSABI -w | FileCheck --check-prefix=MSC --check-prefix=M32 %s
-// RUN: %clang_cc1 -triple x86_64-windows-msvc -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s -DMSABI -w | FileCheck --check-prefix=MSC --check-prefix=M64 %s
-// RUN: %clang_cc1 -triple i686-windows-gnu    -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s         -w | FileCheck --check-prefix=GNU --check-prefix=G32 %s
-// RUN: %clang_cc1 -triple x86_64-windows-gnu  -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s         -w | FileCheck --check-prefix=GNU --check-prefix=G64 %s
-// RUN: %clang_cc1 -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -fms-compatibility-version=18.00 -emit-llvm -std=c++1y -O1 -disable-llvm-passes -o - %s -DMSABI -w | FileCheck --check-prefix=MO1 --check-prefix=M18 %s
-// RUN: %clang_cc1 -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -fms-compatibility-version=19.00 -emit-llvm -std=c++1y -O1 -disable-llvm-passes -o - %s -DMSABI -w | FileCheck --check-prefix=MO1 --check-prefix=M19 %s
-// RUN: %clang_cc1 -triple i686-windows-gnu    -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O1 -fno-experimental-new-pass-manager -o - %s         -w | FileCheck --check-prefix=GO1 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s -DMSABI -w | FileCheck --check-prefix=MSC --check-prefix=M32 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-windows-msvc -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s -DMSABI -w | FileCheck --check-prefix=MSC --check-prefix=M64 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple i686-windows-gnu    -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s         -w | FileCheck --check-prefix=GNU --check-prefix=G32 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-windows-gnu  -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s         -w | FileCheck --check-prefix=GNU --check-prefix=G64 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -fms-compatibility-version=18.00 -emit-llvm -std=c++1y -O1 -disable-llvm-passes -o - %s -DMSABI -w | FileCheck --check-prefix=MO1 --check-prefix=M18 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -fms-compatibility-version=19.00 -emit-llvm -std=c++1y -O1 -disable-llvm-passes -o - %s -DMSABI -w | FileCheck --check-prefix=MO1 --check-prefix=M19 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple i686-windows-gnu    -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O1 -fno-experimental-new-pass-manager -o - %s         -w | FileCheck --check-prefix=GO1 %s
 
 // CHECK-NOT doesn't play nice with CHECK-DAG, so use separate run lines.
-// RUN: %clang_cc1 -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s -DMSABI -w | FileCheck --check-prefix=MSC2 %s
-// RUN: %clang_cc1 -triple i686-windows-gnu    -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s         -w | FileCheck --check-prefix=GNU2 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple i686-windows-msvc   -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s -DMSABI -w | FileCheck --check-prefix=MSC2 %s
+// RUN: %clang_cc1 -disable-noundef-args -triple i686-windows-gnu    -fno-rtti -fno-threadsafe-statics -fms-extensions -emit-llvm -std=c++1y -O0 -o - %s         -w | FileCheck --check-prefix=GNU2 %s
 
 // Helper structs to make templates more expressive.
 struct ImplicitInst_Imported {};
@@ -308,8 +308,8 @@ USE(friend4)
 USE(friend5)
 
 // Implicit declarations can be redeclared with dllimport.
-// MSC-DAG: declare dllimport nonnull i8* @"??2@{{YAPAXI|YAPEAX_K}}@Z"(
-// GNU-DAG: declare dllimport nonnull i8* @_Znw{{[yj]}}(
+// MSC-DAG: declare dllimport noundef nonnull i8* @"??2@{{YAPAXI|YAPEAX_K}}@Z"(
+// GNU-DAG: declare dllimport noundef nonnull i8* @_Znw{{[yj]}}(
 __declspec(dllimport) void* operator new(__SIZE_TYPE__ n);
 void UNIQ(use)() { ::operator new(42); }
 
@@ -327,17 +327,17 @@ int NonImportedFunc();
 struct ClassWithNonImportedMethod { int f(); };
 
 __declspec(dllimport) inline int ReferencingImportedVar() { return ImportedVar; }
-// MO1-DAG: define available_externally dllimport i32 @"?ReferencingImportedVar@@YAHXZ"
+// MO1-DAG: define available_externally dllimport noundef i32 @"?ReferencingImportedVar@@YAHXZ"
 __declspec(dllimport) inline int ReferencingNonImportedVar() { return NonImportedVar; }
-// MO1-DAG: declare dllimport i32 @"?ReferencingNonImportedVar@@YAHXZ"()
+// MO1-DAG: declare dllimport noundef i32 @"?ReferencingNonImportedVar@@YAHXZ"()
 __declspec(dllimport) inline int ReferencingImportedFunc() { return ImportedFunc(); }
-// MO1-DAG: define available_externally dllimport i32 @"?ReferencingImportedFunc@@YAHXZ"
+// MO1-DAG: define available_externally dllimport noundef i32 @"?ReferencingImportedFunc@@YAHXZ"
 __declspec(dllimport) inline int ReferencingNonImportedFunc() { return NonImportedFunc(); }
-// MO1-DAG: declare dllimport i32 @"?ReferencingNonImportedFunc@@YAHXZ"()
+// MO1-DAG: declare dllimport noundef i32 @"?ReferencingNonImportedFunc@@YAHXZ"()
 __declspec(dllimport) inline int ReferencingNonImportedMethod(ClassWithNonImportedMethod *x) { return x->f(); }
-// MO1-DAG: declare dllimport i32 @"?ReferencingNonImportedMethod
+// MO1-DAG: declare dllimport noundef i32 @"?ReferencingNonImportedMethod
 __declspec(dllimport) inline int ReferencingClassMemberPtr(int (ClassWithNonImportedMethod::*p)(), ClassWithNonImportedMethod *x) { return (x->*p)(); }
-// MO1-DAG: define available_externally dllimport i32 @"?ReferencingClassMemberPtr@@YAHP8ClassWithNonImportedMethod@@AEHXZPAU1@@Z"
+// MO1-DAG: define available_externally dllimport noundef i32 @"?ReferencingClassMemberPtr@@YAHP8ClassWithNonImportedMethod@@AEHXZPAU1@@Z"
 USE(ReferencingImportedVar)
 USE(ReferencingNonImportedVar)
 USE(ReferencingImportedFunc)
@@ -346,17 +346,17 @@ USE1(ReferencingNonImportedMethod)
 void UNIQ(use)() { ReferencingClassMemberPtr(&ClassWithNonImportedMethod::f, nullptr); }
 // References to operator new and delete count too, despite not being DeclRefExprs.
 __declspec(dllimport) inline int *ReferencingNonImportedNew() { return new int[2]; }
-// MO1-DAG: declare dllimport i32* @"?ReferencingNonImportedNew@@YAPAHXZ"
+// MO1-DAG: declare dllimport noundef i32* @"?ReferencingNonImportedNew@@YAPAHXZ"
 __declspec(dllimport) inline int *ReferencingNonImportedDelete() { delete (int*)nullptr; }
-// MO1-DAG: declare dllimport i32* @"?ReferencingNonImportedDelete@@YAPAHXZ"
+// MO1-DAG: declare dllimport noundef i32* @"?ReferencingNonImportedDelete@@YAPAHXZ"
 USE(ReferencingNonImportedNew)
 USE(ReferencingNonImportedDelete)
 __declspec(dllimport) void* operator new[](__SIZE_TYPE__);
 __declspec(dllimport) void operator delete(void*);
 __declspec(dllimport) inline int *ReferencingImportedNew() { return new int[2]; }
-// MO1-DAG: define available_externally dllimport i32* @"?ReferencingImportedNew@@YAPAHXZ"
+// MO1-DAG: define available_externally dllimport noundef i32* @"?ReferencingImportedNew@@YAPAHXZ"
 __declspec(dllimport) inline int *ReferencingImportedDelete() { delete (int*)nullptr; }
-// MO1-DAG: define available_externally dllimport i32* @"?ReferencingImportedDelete@@YAPAHXZ"
+// MO1-DAG: define available_externally dllimport noundef i32* @"?ReferencingImportedDelete@@YAPAHXZ"
 USE(ReferencingImportedNew)
 USE(ReferencingImportedDelete)
 struct ClassWithDtor { ~ClassWithDtor() {} };
@@ -369,7 +369,7 @@ USECLASS(ClassWithNonDllImportBase);
 struct ClassWithCtor { ClassWithCtor() {} };
 struct __declspec(dllimport) ClassWithNonDllImportFieldWithCtor { ClassWithCtor t; };
 USECLASS(ClassWithNonDllImportFieldWithCtor);
-// MO1-DAG: declare dllimport x86_thiscallcc %struct.ClassWithNonDllImportFieldWithCtor* @"??0ClassWithNonDllImportFieldWithCtor@@QAE@XZ"(%struct.ClassWithNonDllImportFieldWithCtor* returned)
+// MO1-DAG: declare dllimport x86_thiscallcc noundef %struct.ClassWithNonDllImportFieldWithCtor* @"??0ClassWithNonDllImportFieldWithCtor@@QAE@XZ"(%struct.ClassWithNonDllImportFieldWithCtor* returned)
 struct ClassWithImplicitDtor { __declspec(dllimport) ClassWithImplicitDtor(); ClassWithDtor member; };
 __declspec(dllimport) inline void ReferencingDtorThroughDefinition() { ClassWithImplicitDtor x; };
 USE(ReferencingDtorThroughDefinition)
@@ -638,12 +638,12 @@ struct __declspec(dllimport) T {
   // MO1-DAG: @"?b@T@@2HA" = external dllimport global i32
 
   T& operator=(T&) = default;
-  // MO1-DAG: define available_externally dllimport x86_thiscallcc nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %struct.T* @"??4T@@QAEAAU0@AAU0@@Z"
+  // MO1-DAG: define available_externally dllimport x86_thiscallcc noundef nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %struct.T* @"??4T@@QAEAAU0@AAU0@@Z"
 
   T& operator=(T&&) = default;
   // Note: Don't mark inline move operators dllimport because current MSVC versions don't export them.
-  // M18-DAG: define linkonce_odr dso_local x86_thiscallcc nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %struct.T* @"??4T@@QAEAAU0@$$QAU0@@Z"
-  // M19-DAG: define available_externally dllimport x86_thiscallcc nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %struct.T* @"??4T@@QAEAAU0@$$QAU0@@Z"
+  // M18-DAG: define linkonce_odr dso_local x86_thiscallcc noundef nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %struct.T* @"??4T@@QAEAAU0@$$QAU0@@Z"
+  // M19-DAG: define available_externally dllimport x86_thiscallcc noundef nonnull align {{[0-9]+}} dereferenceable({{[0-9]+}}) %struct.T* @"??4T@@QAEAAU0@$$QAU0@@Z"
 };
 USEMEMFUNC(T, a)
 USESTATICMEMFUNC(T, StaticMethod)
@@ -831,7 +831,7 @@ template struct __declspec(dllimport) ExplicitInstantiationDeclImportedDefTempla
 USECLASS(ExplicitInstantiationDeclImportedDefTemplate<int>);
 USEMEMFUNC(ExplicitInstantiationDeclImportedDefTemplate<int>, f);
 // M32-DAG: {{declare|define available_externally}} dllimport x86_thiscallcc void @"?f@?$ExplicitInstantiationDeclImportedDefTemplate@H@@QAEXXZ"
-// M32-DAG: {{declare|define available_externally}} dllimport x86_thiscallcc %struct.ExplicitInstantiationDeclImportedDefTemplate* @"??0?$ExplicitInstantiationDeclImportedDefTemplate@H@@QAE@XZ"
+// M32-DAG: {{declare|define available_externally}} dllimport x86_thiscallcc noundef %struct.ExplicitInstantiationDeclImportedDefTemplate* @"??0?$ExplicitInstantiationDeclImportedDefTemplate@H@@QAE@XZ"
 // G32-DAG: define weak_odr dso_local x86_thiscallcc void @_ZN44ExplicitInstantiationDeclImportedDefTemplateIiE1fEv
 
 template <typename T> struct __declspec(dllimport) ExplicitInstantiationDeclExportedDefImportedTemplate { void f() {} ExplicitInstantiationDeclExportedDefImportedTemplate() {} };
@@ -840,7 +840,7 @@ template struct __declspec(dllexport) ExplicitInstantiationDeclExportedDefImport
 USECLASS(ExplicitInstantiationDeclExportedDefImportedTemplate<int>);
 USEMEMFUNC(ExplicitInstantiationDeclExportedDefImportedTemplate<int>, f);
 // M32-DAG: {{declare|define available_externally}} dllimport x86_thiscallcc void @"?f@?$ExplicitInstantiationDeclExportedDefImportedTemplate@H@@QAEXXZ"
-// M32-DAG: {{declare|define available_externally}} dllimport x86_thiscallcc %struct.ExplicitInstantiationDeclExportedDefImportedTemplate* @"??0?$ExplicitInstantiationDeclExportedDefImportedTemplate@H@@QAE@XZ"
+// M32-DAG: {{declare|define available_externally}} dllimport x86_thiscallcc noundef %struct.ExplicitInstantiationDeclExportedDefImportedTemplate* @"??0?$ExplicitInstantiationDeclExportedDefImportedTemplate@H@@QAE@XZ"
 
 template <typename T> struct PR23770BaseTemplate { void f() {} };
 template <typename T> struct PR23770DerivedTemplate : PR23770BaseTemplate<int> {};

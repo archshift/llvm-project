@@ -26,7 +26,7 @@ int receive_inalloca_overaligned(NonTrivial nt, OverAligned o) {
   return nt.x + o.buf[0];
 }
 
-// CHECK-LABEL: define dso_local i32 @"?receive_inalloca_overaligned@@Y{{.*}}"
+// CHECK-LABEL: define dso_local noundef i32 @"?receive_inalloca_overaligned@@Y{{.*}}"
 // CHECK-SAME: (<{ %struct.NonTrivial, %struct.OverAligned* }>* inalloca %0)
 
 int pass_inalloca_overaligned() {
@@ -34,19 +34,19 @@ int pass_inalloca_overaligned() {
   return gvi32;
 }
 
-// CHECK-LABEL: define dso_local i32 @"?pass_inalloca_overaligned@@Y{{.*}}"
+// CHECK-LABEL: define dso_local noundef i32 @"?pass_inalloca_overaligned@@Y{{.*}}"
 // CHECK: [[TMP:%[^ ]*]] = alloca %struct.OverAligned, align 64
 // CHECK: call i8* @llvm.stacksave()
 // CHECK: alloca inalloca <{ %struct.NonTrivial, %struct.OverAligned* }>
 
 // Construct OverAligned into TMP.
-// CHECK: call x86_thiscallcc %struct.OverAligned* @"??0OverAligned@@QAE@XZ"(%struct.OverAligned* [[TMP]])
+// CHECK: call x86_thiscallcc noundef %struct.OverAligned* @"??0OverAligned@@QAE@XZ"(%struct.OverAligned* noundef [[TMP]])
 
 // Construct NonTrivial into the GEP.
 // CHECK: [[GEP:%[^ ]*]] = getelementptr inbounds <{ %struct.NonTrivial, %struct.OverAligned* }>, <{ %struct.NonTrivial, %struct.OverAligned* }>* %{{.*}}, i32 0, i32 0
-// CHECK: call x86_thiscallcc %struct.NonTrivial* @"??0NonTrivial@@QAE@XZ"(%struct.NonTrivial* [[GEP]])
+// CHECK: call x86_thiscallcc noundef %struct.NonTrivial* @"??0NonTrivial@@QAE@XZ"(%struct.NonTrivial* noundef [[GEP]])
 
 // Store the address of an OverAligned temporary into the struct.
 // CHECK: getelementptr inbounds <{ %struct.NonTrivial, %struct.OverAligned* }>, <{ %struct.NonTrivial, %struct.OverAligned* }>* %{{.*}}, i32 0, i32 1
 // CHECK: store %struct.OverAligned* [[TMP]], %struct.OverAligned** %{{.*}}, align 4
-// CHECK: call i32 @"?receive_inalloca_overaligned@@Y{{.*}}"(<{ %struct.NonTrivial, %struct.OverAligned* }>* inalloca %argmem)
+// CHECK: call noundef i32 @"?receive_inalloca_overaligned@@Y{{.*}}"(<{ %struct.NonTrivial, %struct.OverAligned* }>* inalloca %argmem)

@@ -61,7 +61,7 @@ void mapWithPrivate() {
 // CHECK: define {{.*}} void @[[OFFLOAD_FIRSTPRIVATE]](i{{[0-9]*}}* {{[^,]*}}%x, i{{[0-9]*}}* {{[^,]*}}%y)
 // CHECK: call void ({{.*}}@[[OUTLINE_FIRSTPRIVATE:.omp_outlined.[.0-9]*]]
 //
-// CHECK: define {{.*}} void @[[OUTLINE_FIRSTPRIVATE]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} %x, i{{[0-9]*}} %y)
+// CHECK: define {{.*}} void @[[OUTLINE_FIRSTPRIVATE]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} noundef %x, i{{[0-9]*}} noundef %y)
 void mapWithFirstprivate() {
   int x, y;
   #pragma omp target teams firstprivate(x) map(x,y) firstprivate(y)
@@ -88,7 +88,7 @@ void mapWithReduction() {
 // CHECK: define {{.*}} void @[[OFFLOAD_FROM]](i{{[0-9]*}}* {{[^,]*}}%x)
 // CHECK: call void ({{.*}}@[[OUTLINE_FROM:.omp_outlined.[.0-9]*]]
 //
-// CHECK: define {{.*}} void @[[OUTLINE_FROM]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} %x)
+// CHECK: define {{.*}} void @[[OUTLINE_FROM]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} noundef %x)
 void mapFrom() {
   int x;
   #pragma omp target teams firstprivate(x) map(from:x)
@@ -101,7 +101,7 @@ void mapFrom() {
 // CHECK: define {{.*}} void @[[OFFLOAD_TO]](i{{[0-9]*}}* {{[^,]*}}%x)
 // CHECK: call void ({{.*}}@[[OUTLINE_TO:.omp_outlined.[.0-9]*]]
 //
-// CHECK: define {{.*}} void @[[OUTLINE_TO]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} %x)
+// CHECK: define {{.*}} void @[[OUTLINE_TO]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} noundef %x)
 void mapTo() {
   int x;
   #pragma omp target teams firstprivate(x) map(to:x)
@@ -114,7 +114,7 @@ void mapTo() {
 // CHECK: define {{.*}} void @[[OFFLOAD_ALLOC]](i{{[0-9]*}}* {{[^,]*}}%x)
 // CHECK: call void ({{.*}}@[[OUTLINE_ALLOC:.omp_outlined.[.0-9]*]]
 //
-// CHECK: define {{.*}} void @[[OUTLINE_ALLOC]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} %x)
+// CHECK: define {{.*}} void @[[OUTLINE_ALLOC]]({{.*}} %.global_tid., {{.*}} %.bound_tid., i{{[0-9]*}} noundef %x)
 void mapAlloc() {
   int x;
   #pragma omp target teams firstprivate(x) map(alloc:x)

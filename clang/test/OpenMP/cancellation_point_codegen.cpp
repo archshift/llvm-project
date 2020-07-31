@@ -127,7 +127,7 @@ for (int i = 0; i < argc; ++i) {
 // CHECK: [[RETURN]]
 // CHECK: ret void
 
-// CHECK: define internal i32 @{{[^(]+}}(i32
+// CHECK: define internal noundef i32 @{{[^(]+}}(i32
 // CHECK: [[RES:%.+]] = call i32 @__kmpc_cancellationpoint(%struct.ident_t* {{[^,]+}}, i32 {{[^,]+}}, i32 4)
 // CHECK: [[CMP:%.+]] = icmp ne i32 [[RES]], 0
 // CHECK: br i1 [[CMP]], label %[[EXIT:[^,]+]],
@@ -136,7 +136,7 @@ for (int i = 0; i < argc; ++i) {
 // CHECK: [[RETURN]]
 // CHECK: ret i32 0
 
-// CHECK: define internal i32 @{{[^(]+}}(i32
+// CHECK: define internal noundef i32 @{{[^(]+}}(i32
 // CHECK: [[RES:%.+]] = call i32 @__kmpc_cancellationpoint(%struct.ident_t* {{[^,]+}}, i32 {{[^,]+}}, i32 4)
 // CHECK: [[CMP:%.+]] = icmp ne i32 [[RES]], 0
 // CHECK: br i1 [[CMP]], label %[[EXIT:[^,]+]],

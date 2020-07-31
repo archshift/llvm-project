@@ -357,7 +357,7 @@ int foo(int n) {
 // CHECK-NEXT:  }
 
 
-// CHECK:       define internal void [[HVT1]](i[[SZ]] %{{.+}}, i{{32|64}}{{[*]*.*}} %{{.+}})
+// CHECK:       define internal void [[HVT1]](i[[SZ]] noundef %{{.+}}, i{{32|64}}{{[*]*.*}} %{{.+}})
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       store i[[SZ]] %{{.+}}, i[[SZ]]* [[AA_ADDR]], align
 // CHECK-64:    [[AA_CADDR:%.+]] = bitcast i[[SZ]]* [[AA_ADDR]] to i32*
@@ -368,7 +368,7 @@ int foo(int n) {
 // CHECK:       ret void
 // CHECK-NEXT:  }
 
-// CHECK:       define internal void [[HVT2]](i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}}, i[[SZ]] %{{.+}})
+// CHECK:       define internal void [[HVT2]](i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}}, i[[SZ]] noundef %{{.+}})
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       store i[[SZ]] %{{.+}}, i[[SZ]]* [[AA_ADDR]], align
 // CHECK:       [[AA_CADDR:%.+]] = bitcast i[[SZ]]* [[AA_ADDR]] to i16*

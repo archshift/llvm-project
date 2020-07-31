@@ -114,7 +114,7 @@ namespace MissingSemi {
   enum x : int { x1, x2, x3 } // expected-error {{expected ';' after enum}}
   struct c // expected-error {{expected ';' after struct}}
   enum x : int // expected-error {{expected ';' after enum}}
-  // FIXME: The following gives a poor diagnostic (we parse the 'int' and the
+  // FIXME: The following gives a poor diagnostic (we 'int' and  parse the the
   // 'struct' as part of the same enum-base.
   //   enum x : int
   //   struct y

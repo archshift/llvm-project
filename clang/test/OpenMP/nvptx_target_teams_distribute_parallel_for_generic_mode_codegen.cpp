@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 
 // CHECK: @__omp_offloading_{{.*}}_main_l16_exec_mode = weak constant i8 0
 
-// CHECK: define weak void @__omp_offloading_{{.*}}_main_l16(i{{64|32}} %{{[^,].*}}, i32* nonnull align {{[0-9]+}} dereferenceable{{[^,]*}}, i{{64|32}} %{{[^,)]*}})
+// CHECK: define weak void @__omp_offloading_{{.*}}_main_l16(i{{64|32}} noundef %{{[^,].*}}, i32* noundef nonnull align {{[0-9]+}} dereferenceable{{[^,]*}}, i{{64|32}} noundef %{{[^,)]*}})
 // CHECK: call void @__kmpc_spmd_kernel_init(
 // CHECK: [[TID:%.+]] = call i32 @__kmpc_global_thread_num(%struct.ident_t* @
 // CHECK: call void @__kmpc_spmd_kernel_deinit_v2(i16 0)
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
 
 // CHECK: call void @__kmpc_for_static_fini(%struct.ident_t* @
 
-// CHECK: define internal void [[PARALLEL]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, i{{64|32}} %{{.+}}, i{{64|32}} %{{.+}}, i{{64|32}} [[ARGC:%.+]], i32* nonnull align {{[0-9]+}} dereferenceable{{.*}})
+// CHECK: define internal void [[PARALLEL]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, i{{64|32}} noundef %{{.+}}, i{{64|32}} noundef %{{.+}}, i{{64|32}} noundef [[ARGC:%.+]], i32* noundef nonnull align {{[0-9]+}} dereferenceable{{.*}})
 // CHECK-NOT: call i8* @__kmpc_data_sharing_push_stack(
 // CHECK: alloca i{{[0-9]+}},
 // CHECK: alloca i{{[0-9]+}},
@@ -55,10 +55,10 @@ int main(int argc, char **argv) {
 // CHECK-64: [[ARGC:%.+]] = bitcast i64* [[ARGC_ADDR]] to i32*
 
 // CHECK: call void @__kmpc_for_static_init_4(
-// CHECK: call i32 [[FOO:@.+foo.+]](i32* [[I]])
-// CHECK: call i32 [[FOO]](i32* %{{.+}})
-// CHECK-32: call i32 [[FOO]](i32* [[ARGC_ADDR]])
-// CHECK-64: call i32 [[FOO]](i32* [[ARGC]])
+// CHECK: call noundef i32 [[FOO:@.+foo.+]](i32* noundef [[I]])
+// CHECK: call noundef i32 [[FOO]](i32* noundef %{{.+}})
+// CHECK-32: call noundef i32 [[FOO]](i32* noundef [[ARGC_ADDR]])
+// CHECK-64: call noundef i32 [[FOO]](i32* noundef [[ARGC]])
 // CHECK: call void @__kmpc_for_static_fini(
 
 // CHECK-NOT: call void @__kmpc_data_sharing_pop_stack(

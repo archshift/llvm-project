@@ -65,7 +65,7 @@ float fp_precise_5(float a, float b, float c) {
 #pragma float_control(pop)
 
 float fff(float x, float y) {
-// CHECK-LABEL: define float @_Z3fffff{{.*}}
+// CHECK-LABEL: define noundef float @_Z3fffff{{.*}}
 // CHECK: entry
 #pragma float_control(except, on)
   float z;
@@ -87,7 +87,7 @@ float fff(float x, float y) {
   return z;
 }
 float check_precise(float x, float y) {
-  // CHECK-LABEL: define float @_Z13check_preciseff{{.*}}
+  // CHECK-LABEL: define noundef float @_Z13check_preciseff{{.*}}
   float z;
   {
 #pragma float_control(precise, on)

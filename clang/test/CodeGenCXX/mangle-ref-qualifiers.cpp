@@ -5,11 +5,11 @@ struct X {
   int h() const &&;
 };
 
-// CHECK-LABEL: define i32 @_ZNR1X1fEv
+// CHECK-LABEL: define noundef i32 @_ZNR1X1fEv
 int X::f() & { return 0; }
-// CHECK-LABEL: define i32 @_ZNO1X1gEv
+// CHECK-LABEL: define noundef i32 @_ZNO1X1gEv
 int X::g() && { return 0; }
-// CHECK-LABEL: define i32 @_ZNKO1X1hEv
+// CHECK-LABEL: define noundef i32 @_ZNKO1X1hEv
 int X::h() const && { return 0; }
 
 // CHECK-LABEL: define void @_Z1fM1XFivREMS_FivOEMS_KFivOE

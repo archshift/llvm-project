@@ -21,12 +21,12 @@ struct B : A {
 // CHECK: @_ZN1CD1Ev = unnamed_addr alias {{.*}} @_ZN1CD2Ev
 
 // Base dtor: actually calls A's base dtor.
-// CHECK-LABEL: define void @_ZN1BD2Ev(%struct.B* %this) unnamed_addr
+// CHECK-LABEL: define void @_ZN1BD2Ev(%struct.B* noundef %this) unnamed_addr
 // CHECK: call void @_ZN6MemberD1Ev
 // CHECK: call void @_ZN1AD2Ev
 
 // Deleting dtor: defers to the complete dtor.
-// CHECK-LABEL: define void @_ZN1BD0Ev(%struct.B* %this) unnamed_addr
+// CHECK-LABEL: define void @_ZN1BD0Ev(%struct.B* noundef %this) unnamed_addr
 // CHECK: call void @_ZN1BD1Ev
 // CHECK: call void @_ZdlPv
 
@@ -38,10 +38,10 @@ struct C : B {
 
 C::~C() { }
 
-// Complete dtor: just an alias (checked above).
+// Complete dtor: just an alias (checked above noundef).
 
 // Deleting dtor: defers to the complete dtor.
-// CHECK-LABEL: define void @_ZN1CD0Ev(%struct.C* %this) unnamed_addr
+// CHECK-LABEL: define void @_ZN1CD0Ev(%struct.C* noundef %this) unnamed_addr
 // CHECK: call void @_ZN1CD1Ev
 // CHECK: call void @_ZdlPv
 

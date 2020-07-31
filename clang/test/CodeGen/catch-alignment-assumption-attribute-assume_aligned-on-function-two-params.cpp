@@ -7,7 +7,7 @@
 // CHECK-SANITIZE-ANYRECOVER: @[[LINE_100_ALIGNMENT_ASSUMPTION:.*]] = {{.*}}, i32 100, i32 10 }, {{.*}}* @[[CHAR]] }
 
 char **__attribute__((assume_aligned(0x80000000, 42))) passthrough(char **x) {
-  // CHECK:      define i8** @[[PASSTHROUGH:.*]](i8** %[[X:.*]])
+  // CHECK:      define noundef i8** @[[PASSTHROUGH:.*]](i8** noundef %[[X:.*]])
   // CHECK-NEXT: entry:
   // CHECK-NEXT:   %[[X_ADDR:.*]] = alloca i8**, align 8
   // CHECK-NEXT:   store i8** %[[X]], i8*** %[[X_ADDR]], align 8
@@ -18,12 +18,12 @@ char **__attribute__((assume_aligned(0x80000000, 42))) passthrough(char **x) {
 }
 
 char **caller(char **x) {
-  // CHECK:                           define i8** @{{.*}}(i8** %[[X:.*]])
+  // CHECK:                           define noundef i8** @{{.*}}(i8** noundef %[[X:.*]])
   // CHECK-NEXT:                      entry:
   // CHECK-NEXT:                        %[[X_ADDR:.*]] = alloca i8**, align 8
   // CHECK-NEXT:                        store i8** %[[X]], i8*** %[[X_ADDR]], align 8
   // CHECK-NEXT:                        %[[X_RELOADED:.*]] = load i8**, i8*** %[[X_ADDR]], align 8
-  // CHECK-NEXT:                        %[[X_RETURNED:.*]] = call i8** @[[PASSTHROUGH]](i8** %[[X_RELOADED]])
+  // CHECK-NEXT:                        %[[X_RETURNED:.*]] = call noundef i8** @[[PASSTHROUGH]](i8** noundef %[[X_RELOADED]])
   // CHECK-NEXT:                        %[[PTRINT:.*]] = ptrtoint i8** %[[X_RETURNED]] to i64
   // CHECK-NEXT:                        %[[OFFSETPTR:.*]] = sub i64 %[[PTRINT]], 42
   // CHECK-NEXT:                        %[[MASKEDPTR:.*]] = and i64 %[[OFFSETPTR]], 2147483647

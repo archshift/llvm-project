@@ -378,7 +378,7 @@ int foo(int n) {
 
 // CHECK:       define internal void [[HVT0]]()
 
-// CHECK:       define internal void [[HVT1]](i[[SZ]] %{{.+}})
+// CHECK:       define internal void [[HVT1]](i[[SZ]] noundef %{{.+}})
 // Create stack storage and store argument in there.
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       store i[[SZ]] %{{.+}}, i[[SZ]]* [[AA_ADDR]], align
@@ -386,7 +386,7 @@ int foo(int n) {
 // CHECK-64:    load i32, i32* [[AA_CADDR]], align
 // CHECK-32:    load i32, i32* [[AA_ADDR]], align
 
-// CHECK:       define internal void [[HVT2]](i[[SZ]] %{{.+}})
+// CHECK:       define internal void [[HVT2]](i[[SZ]] noundef %{{.+}})
 // Create stack storage and store argument in there.
 // CHECK:       [[AA_ADDR:%.+]] = alloca i[[SZ]], align
 // CHECK:       store i[[SZ]] %{{.+}}, i[[SZ]]* [[AA_ADDR]], align

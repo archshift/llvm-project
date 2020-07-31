@@ -12,7 +12,7 @@ typedef __SIZE_TYPE__ size_t;
 void test__cpuid(int *info, int level) {
   __cpuid(info, level);
 }
-// CHECK-LABEL: define {{.*}} @test__cpuid(i32* %{{.*}}, i32 %{{.*}})
+// CHECK-LABEL: define {{.*}} @test__cpuid(i32* noundef %{{.*}}, i32 noundef %{{.*}})
 // CHECK: call { i32, i32, i32, i32 } asm "cpuid",
 // CHECK-SAME:   "={ax},={bx},={cx},={dx},{ax},{cx},~{dirflag},~{fpsr},~{flags}"
 // CHECK-SAME:   (i32 %{{.*}}, i32 0)

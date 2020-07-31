@@ -20,9 +20,9 @@ void Lambdas(char *ptr) {
   gi = L2(ptr);
 }
 
-// CHECK-DAG: define internal i64 @"_ZZN7lambdas7LambdasEPcENK3$_0clEPvU17pass_object_size0"
+// CHECK-DAG: define internal noundef i64 @"_ZZN7lambdas7LambdasEPcENK3$_0clEPvU17pass_object_size0"
 // CHECK-NOT: call i64 @llvm.objectsize
-// CHECK-DAG: define internal i64 @"_ZZN7lambdas7LambdasEPcENK3$_1clEPvU17pass_object_size0"
+// CHECK-DAG: define internal noundef i64 @"_ZZN7lambdas7LambdasEPcENK3$_1clEPvU17pass_object_size0"
 // CHECK-NOT: call i64 @llvm.objectsize
 }
 
@@ -72,11 +72,11 @@ struct AsMember {
 
 // CHECK-LABEL: define void @_ZN8variadic4testEv()
 void test() {
-  // CHECK-RE: call{{[^@]+}}@_ZN8variadic6AsCtorC1EPKcU17pass_object_size0dz
+  // CHECK-RE: call noundef{{[^@]+}}@_ZN8variadic6AsCtorC1EPKcU17pass_object_size0dz
   AsCtor("a", 1.0);
-  // CHECK-RE: call{{[^@]+}}@_ZN8variadic8AsMember3barEPKcU17pass_object_size0dz
+  // CHECK-RE: call noundef{{[^@]+}}@_ZN8variadic8AsMember3barEPKcU17pass_object_size0dz
   AsMember{}.bar("a", 1.0);
-  // CHECK-RE: call{{[^@]+}}@_ZN8variadic8AsMemberclEPKcU17pass_object_size0dz
+  // CHECK-RE: call noundef{{[^@]+}}@_ZN8variadic8AsMemberclEPKcU17pass_object_size0dz
   AsMember{}("a", 1.0);
 }
 }

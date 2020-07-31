@@ -90,7 +90,7 @@ int main() {
     // LAMBDA:  ret
 #pragma omp target teams distribute simd firstprivate(g, g1, sivar)
   for (int i = 0; i < 2; ++i) {
-    // LAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} {{%.+}}, i{{64|32}} {{%.+}})
+    // LAMBDA: define{{.*}} internal{{.*}} void @[[LOFFL1]](i{{64|32}} noundef {{%.+}}, i{{64|32}} noundef {{%.+}})
     // LAMBDA: {{%.+}} = alloca i{{[0-9]+}},
     // LAMBDA: {{%.+}} = alloca i{{[0-9]+}},
     // LAMBDA: {{%.+}} = alloca i{{[0-9]+}},
@@ -132,7 +132,7 @@ int main() {
     // LAMBDA: call void [[INNER_LAMBDA:@.+]](
     // LAMBDA: call void @__kmpc_for_static_fini(
     [&]() {
-      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+      // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
       // LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
       g = 2;
       g1 = 2;

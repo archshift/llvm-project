@@ -241,7 +241,7 @@ int printf(const char *, ...);
 
 //
 
-// FIXME: Two more (thats it?) interesting cases. Method access on
+// FIXME: Two more (thats  it?) interesting cases. Method access on
 // getter w/o setter and method access on setter w/o getter.
 
 int main() {

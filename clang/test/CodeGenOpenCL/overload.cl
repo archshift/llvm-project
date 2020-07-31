@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -cl-std=CL2.0 -emit-llvm -o - -triple spir-unknown-unknown %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -cl-std=CL2.0 -emit-llvm -o - -triple spir-unknown-unknown %s | FileCheck %s
 
 typedef short short4 __attribute__((ext_vector_type(4)));
 

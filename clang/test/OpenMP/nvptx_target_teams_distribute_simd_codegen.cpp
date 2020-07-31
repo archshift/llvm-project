@@ -86,7 +86,7 @@ int bar(int n){
 // CHECK: call void @__kmpc_for_static_fini(
 // CHECK: ret void
 
-// CHECK: define {{.*}}void {{@__omp_offloading_.+}}_l46({{.+}}, i{{32|64}} [[F_IN:%.+]])
+// CHECK: define {{.*}}void {{@__omp_offloading_.+}}_l46({{.+}}, i{{32|64}} noundef [[F_IN:%.+]])
 // CHECK: store {{.+}} [[F_IN]], {{.+}}* {{.+}},
 // CHECK: call void @__kmpc_spmd_kernel_init(i32 %{{.+}}, i16 0, i16 0)
 // CHECK: call void @__kmpc_spmd_kernel_deinit_v2(i16 0)

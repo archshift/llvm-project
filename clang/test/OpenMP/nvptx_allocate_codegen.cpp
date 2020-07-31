@@ -96,7 +96,7 @@ void bar() {
     bar_b = bar_a;
     baz(bar_a);
   }
-// CHECK: define internal void [[OUTLINED]](i32* noalias %{{.+}}, i32* noalias %{{.+}})
+// CHECK: define internal void [[OUTLINED]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}})
 // CHECK-NOT: alloca double,
 // CHECK: alloca float,
 // CHECK-NOT: alloca double,

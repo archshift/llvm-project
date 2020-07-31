@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -std=c++1z -emit-llvm -triple x86_64-linux-gnu -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -std=c++1z -emit-llvm -triple x86_64-linux-gnu -o - %s | FileCheck %s
 
 struct A {
   A(int);
@@ -88,7 +88,7 @@ void j() {
   // CHECK:   %[[OUTERTEMP:.*]] = alloca %{{.*}}
   // CHECK:   %[[INNERTEMP:.*]] = alloca %{{.*}}
   // CHECK:   call void @_ZN1AC1Ei(%{{.*}} %[[INNERTEMP]], i32 1)
-  // CHECK:   call zeroext i1 @_ZN1AcvbEv(%{{.*}} %[[INNERTEMP]])
+  // CHECK:   call noundef zeroext i1 @_ZN1AcvbEv(%{{.*}} %[[INNERTEMP]])
   // CHECK:   br i1
   //
   // CHECK:   call void @_ZN1AC1EOS_(%{{.*}} %[[OUTERTEMP]], %{{.*}} %[[INNERTEMP]])

@@ -19,7 +19,7 @@ extern "C" void f() {
   B b;
   // CHECK: call void @"??__LA@@QEAA?AUno_suspend@@XZ"(
   a.operator co_await();
-  // CHECK-NEXT: call i8 @"??__L@YA?AUno_suspend@@AEBUB@@@Z"(
+  // CHECK-NEXT: call {{.*}} i8 @"??__L@YA?AUno_suspend@@AEBUB@@@Z"(
   operator co_await(b);
 }
 

@@ -54,7 +54,7 @@ int teams_argument_global(int n){
   }}}
 
   // outlined target regions
-  // CK1: define internal void @[[OFFL1]](i{{32|64}} [[TE_ARG:%.+]], i{{32|64}} [[TH_ARG:%.+]], i{{32|64}} {{.+}}, {{.+}})
+  // CK1: define internal void @[[OFFL1]](i{{32|64}} noundef [[TE_ARG:%.+]], i{{32|64}} noundef [[TH_ARG:%.+]], i{{32|64}} {{.+}}, {{.+}})
   // CK1: [[TE_ADDR:%.+]] = alloca i{{32|64}},
   // CK1: [[TH_ADDR:%.+]] = alloca i{{32|64}},
   // CK1: store{{.+}} [[TE_ARG]], {{.+}} [[TE_ADDR]],
@@ -255,7 +255,7 @@ int main (int argc, char **argv) {
 // CK4:  ret
 // CK4-NEXT: }
 
-// CK4: define {{.*}}void @[[OFFLT]](i{{32|64}} [[TE_ARG:%.+]], i{{32|64}} [[TH_ARG:%.+]], {{.+}})
+// CK4: define {{.*}}void @[[OFFLT]](i{{32|64}} noundef [[TE_ARG:%.+]], i{{32|64}} noundef [[TH_ARG:%.+]], {{.+}})
 // CK4: [[TE_ADDR:%.+]] = alloca i{{32|64}},
 // CK4: [[TH_ADDR:%.+]] = alloca i{{32|64}},
 // CK4: store{{.+}} [[TE_ARG]], {{.+}} [[TE_ADDR]],

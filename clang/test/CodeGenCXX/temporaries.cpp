@@ -1,6 +1,6 @@
-// RUN: %clang_cc1 -emit-llvm %s -o - -triple=x86_64-apple-darwin9 -std=c++11 | FileCheck %s -check-prefixes=CHECK,NULL-INVALID,CHECK-CXX11
-// RUN: %clang_cc1 -emit-llvm %s -o - -triple=x86_64-apple-darwin9 -std=c++17 | FileCheck %s -check-prefixes=CHECK,NULL-INVALID,CHECK-CXX17
-// RUN: %clang_cc1 -emit-llvm %s -o - -triple=x86_64-apple-darwin9 -std=c++11 -fno-delete-null-pointer-checks | FileCheck %s -check-prefixes=CHECK,NULL-VALID,CHECK-CXX11
+// RUN: %clang_cc1 -disable-noundef-args -emit-llvm %s -o - -triple=x86_64-apple-darwin9 -std=c++11 | FileCheck %s -check-prefixes=CHECK,NULL-INVALID,CHECK-CXX11
+// RUN: %clang_cc1 -disable-noundef-args -emit-llvm %s -o - -triple=x86_64-apple-darwin9 -std=c++17 | FileCheck %s -check-prefixes=CHECK,NULL-INVALID,CHECK-CXX17
+// RUN: %clang_cc1 -disable-noundef-args -emit-llvm %s -o - -triple=x86_64-apple-darwin9 -std=c++11 -fno-delete-null-pointer-checks | FileCheck %s -check-prefixes=CHECK,NULL-VALID,CHECK-CXX11
 
 namespace PR16263 {
   const unsigned int n = 1234;
@@ -190,11 +190,11 @@ struct B {
 
 B::B()
   // CHECK: call void @_ZN6PR50771AC1Ev
-  // CHECK: call i32 @_ZN6PR50771A1fEv
+  // CHECK: call noundef i32 @_ZN6PR50771A1fEv
   // CHECK: call void @_ZN6PR50771AD1Ev
   : a1(A().f())
   // CHECK: call void @_ZN6PR50771AC1Ev
-  // CHECK: call i32 @_ZN6PR50771gERKNS_1AE
+  // CHECK: call noundef i32 @_ZN6PR50771gERKNS_1AE
   // CHECK: call void @_ZN6PR50771AD1Ev
   , a2(g(A()))
 {
@@ -321,8 +321,8 @@ int& f(int);
 // CHECK-LABEL: define void @_ZN3T121gEv
 void g() {
   // CHECK: call void @_ZN3T121AC1Ev
-  // CHECK-NEXT: call i32 @_ZN3T121A1fEv(
-  // CHECK-NEXT: call {{(nonnull )?}}align {{[0-9]+}} dereferenceable({{[0-9]+}}) i32* @_ZN3T121fEi(
+  // CHECK-NEXT: call noundef i32 @_ZN3T121A1fEv(
+  // CHECK-NEXT: call noundef {{(nonnull )?}}align {{[0-9]+}} dereferenceable({{[0-9]+}}) i32* @_ZN3T121fEi(
   // CHECK-NEXT: call void @_ZN3T121AD1Ev(
   int& i = f(A().f());
 }
@@ -337,8 +337,8 @@ namespace PR6648 {
   struct D;
   D& zed(B);
   void foobar() {
-    // NULL-INVALID: call nonnull align 1 %"struct.PR6648::D"* @_ZN6PR66483zedENS_1BE
-    // NULL-VALID: call align 1 %"struct.PR6648::D"* @_ZN6PR66483zedENS_1BE
+    // NULL-INVALID: call noundef nonnull align 1 %"struct.PR6648::D"* @_ZN6PR66483zedENS_1BE
+    // NULL-VALID: call noundef align 1 %"struct.PR6648::D"* @_ZN6PR66483zedENS_1BE
     zed(foo);
   }
 }

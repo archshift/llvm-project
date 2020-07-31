@@ -125,7 +125,7 @@ int main() {
       // LAMBDA: [[OMP_LASTPRIV_DONE]]:
       // LAMBDA: ret
 
-      // LAMBDA: define{{.*}} internal{{.*}} void @[[LPAR_OUTL]](i32* noalias %{{.+}}, i32* noalias %{{.+}}, {{.+}}, {{.+}}, {{.+}} [[G1_IN:%.+]], {{.+}} [[SVAR_IN:%.+]], {{.+}} [[SFVAR_IN:%.+]], {{.+}} [[G_IN:%.+]])
+      // LAMBDA: define{{.*}} internal{{.*}} void @[[LPAR_OUTL]](i32* noalias noundef %{{.+}}, i32* noalias noundef %{{.+}}, {{.+}}, {{.+}}, {{.+}} [[G1_IN:%.+]], {{.+}} [[SVAR_IN:%.+]], {{.+}} [[SFVAR_IN:%.+]], {{.+}} [[G_IN:%.+]])
       // skip tid and prev variables
       // LAMBDA: alloca
       // LAMBDA: alloca
@@ -176,7 +176,7 @@ int main() {
       // LAMBDA: ret
 
       [&]() {
-        // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* [[ARG_PTR:%.+]])
+        // LAMBDA: define {{.+}} void [[INNER_LAMBDA]](%{{.+}}* noundef [[ARG_PTR:%.+]])
         // LAMBDA: store %{{.+}}* [[ARG_PTR]], %{{.+}}** [[ARG_PTR_REF:%.+]],
         g = 2;
         g1 = 2;
@@ -220,7 +220,7 @@ int main() {
 
 // CHECK: define{{.*}} i{{[0-9]+}} @main()
 // CHECK: [[TEST:%.+]] = alloca [[S_FLOAT_TY]],
-// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_FLOAT_TY_DEF_CONSTR:@.+]]([[S_FLOAT_TY]]* noundef [[TEST]])
 // CHECK: call i{{[0-9]+}} @__tgt_target_teams_mapper(
 // CHECK: call void [[OFFLOAD_FUN:@.+]](
 // CHECK: ret
@@ -229,7 +229,7 @@ int main() {
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_teams(
 // CHECK: ret
 //
-// CHECK: define internal void [[OMP_OUTLINED:@.+]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN:%.+]], [2 x [[S_FLOAT_TY]]]*{{.+}} [[S_ARR_IN:%.+]], [[S_FLOAT_TY]]*{{.+}} [[VAR_IN:%.+]], i{{[0-9]+}}{{.*}} [[S_VAR_IN:%.+]])
+// CHECK: define internal void [[OMP_OUTLINED:@.+]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN:%.+]], [2 x [[S_FLOAT_TY]]]*{{.+}} [[S_ARR_IN:%.+]], [[S_FLOAT_TY]]*{{.+}} [[VAR_IN:%.+]], i{{[0-9]+}}{{.*}} [[S_VAR_IN:%.+]])
 // CHECK: {{.+}} = alloca i{{[0-9]+}}*,
 // CHECK: {{.+}} = alloca i{{[0-9]+}}*,
 // CHECK: [[VEC_ADDR:%.+]] = alloca [2 x i{{[0-9]+}}]*,
@@ -283,7 +283,7 @@ int main() {
 // CHECK-32-DAG: store {{.+}}, {{.+}} [[SVAR_ADDR]],
 // CHECK: ret void
 
-// CHECK: define internal void [[OMP_OUTLINED:@.+]](i{{[0-9]+}}* noalias [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias %{{.+}}, {{.+}}, {{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN:%.+]], [2 x [[S_FLOAT_TY]]]*{{.+}} [[S_ARR_IN:%.+]], [[S_FLOAT_TY]]*{{.+}} [[VAR_IN:%.+]], i{{[0-9]+}}{{.*}} [[S_VAR_IN:%.+]])
+// CHECK: define internal void [[OMP_OUTLINED:@.+]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, {{.+}}, {{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN:%.+]], [2 x [[S_FLOAT_TY]]]*{{.+}} [[S_ARR_IN:%.+]], [[S_FLOAT_TY]]*{{.+}} [[VAR_IN:%.+]], i{{[0-9]+}}{{.*}} [[S_VAR_IN:%.+]])
 
 // gbl and bound tid vars, prev lb and ub vars
 // CHECK: {{.+}} = alloca i{{[0-9]+}}*,
@@ -345,7 +345,7 @@ int main() {
 // template tmain
 // CHECK: define{{.*}} i{{[0-9]+}} [[TMAIN_INT:@.+]]()
 // CHECK: [[TEST:%.+]] = alloca [[S_INT_TY]],
-// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* [[TEST]])
+// CHECK: call {{.*}} [[S_INT_TY_DEF_CONSTR:@.+]]([[S_INT_TY]]* noundef [[TEST]])
 // CHECK: call i{{[0-9]+}} @__tgt_target_teams_mapper(
 // CHECK: call void [[OFFLOAD_FUN_1:@.+]](
 // CHECK: ret
@@ -354,7 +354,7 @@ int main() {
 // CHECK: call void (%{{.+}}*, i{{[0-9]+}}, void (i{{[0-9]+}}*, i{{[0-9]+}}*, ...)*, ...) @__kmpc_fork_teams(%{{.+}}* @{{.+}}, i{{[0-9]+}} 4,
 // CHECK: ret
 
-// CHECK: define internal void [[OMP_OUTLINED_1:@.+]](i{{[0-9]+}}* noalias [[GTID_ADDR1:%.+]], i{{[0-9]+}}* noalias %{{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN1:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN1:%.+]], [2 x [[S_INT_TY]]]*{{.+}} [[S_ARR_IN1:%.+]], [[S_INT_TY]]*{{.+}} [[VAR_IN1:%.+]])
+// CHECK: define internal void [[OMP_OUTLINED_1:@.+]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR1:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN1:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN1:%.+]], [2 x [[S_INT_TY]]]*{{.+}} [[S_ARR_IN1:%.+]], [[S_INT_TY]]*{{.+}} [[VAR_IN1:%.+]])
 // skip alloca of global_tid and bound_tid
 // CHECK: {{.+}} = alloca i{{[0-9]+}}*,
 // CHECK: {{.+}} = alloca i{{[0-9]+}}*,
@@ -403,7 +403,7 @@ int main() {
 // CHECK-DAG: call void @llvm.memcpy.{{.+}}(i8* align {{[0-9]+}} [[VAR_ADDR_BCAST]],
 // CHECK: ret void
 
-// CHECK: define internal void [[TPAR_OUTL:@.+]](i{{[0-9]+}}* noalias [[GTID_ADDR1:%.+]], i{{[0-9]+}}* noalias %{{.+}}, {{.+}}, {{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN1:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN1:%.+]], [2 x [[S_INT_TY]]]*{{.+}} [[S_ARR_IN1:%.+]], [[S_INT_TY]]*{{.+}} [[VAR_IN1:%.+]])
+// CHECK: define internal void [[TPAR_OUTL:@.+]](i{{[0-9]+}}* noalias noundef [[GTID_ADDR1:%.+]], i{{[0-9]+}}* noalias noundef %{{.+}}, {{.+}}, {{.+}}, [2 x i{{[0-9]+}}]*{{.+}} [[VEC_IN1:%.+]], i{{[0-9]+}}{{.+}} [[T_VAR_IN1:%.+]], [2 x [[S_INT_TY]]]*{{.+}} [[S_ARR_IN1:%.+]], [[S_INT_TY]]*{{.+}} [[VAR_IN1:%.+]])
 // skip alloca of global_tid and bound_tid, and prev lb and ub vars
 // CHECK: {{.+}} = alloca i{{[0-9]+}}*,
 // CHECK: {{.+}} = alloca i{{[0-9]+}}*,

@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple lanai-unknown-unknown -mregparm 4 %s -emit-llvm -o - | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple lanai-unknown-unknown -mregparm 4 %s -emit-llvm -o - | FileCheck %s
 
 void f1(int a, int b, int c, int d,
         int e, int f, int g, int h);

@@ -35,12 +35,12 @@ static void *VoidPtr2VoidPtr(void *payload) {
 }
 
 static int ThreeInt2Int(int a, int b, int c) {
-  // RUN2:   define internal i32 @ThreeInt2Int(i32 %a, i32 %b, i32 %c)
+  // RUN2:   define internal i32 @ThreeInt2Int(i32 noundef %a, i32 noundef %b, i32 noundef %c)
   // RUN2:     %mul = mul nsw i32 %b, %a
   // RUN2:     %add = add nsw i32 %mul, %c
   // RUN2:     ret i32 %add
 
-  // IPCP:   define internal i32 @ThreeInt2Int(i32 %a, i32 %b, i32 %c)
+  // IPCP:   define internal i32 @ThreeInt2Int(i32 noundef %a, i32 noundef %b, i32 noundef %c)
   // IPCP:     %mul = mul nsw i32 4, %a
   // IPCP:     %add = add nsw i32 %mul, %c
   // IPCP:     ret i32 %add

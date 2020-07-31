@@ -117,7 +117,7 @@ __m256i test_mm256_avg_epu16(__m256i a, __m256i b) {
   return _mm256_avg_epu16(a, b);
 }
 
-// FIXME: We should also lower the __builtin_ia32_pblendw128 (and similar)
+// FIXME: We should also lower the __builtin_ia32_pblendw128 (and  similar)
 // functions to this IR. In the future we could delete the corresponding
 // intrinsic in LLVM if it's not being used anymore.
 __m256i test_mm256_blend_epi16(__m256i a, __m256i b) {

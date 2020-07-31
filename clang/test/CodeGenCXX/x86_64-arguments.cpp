@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -triple x86_64-unknown-unknown -emit-llvm -o - %s | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -triple x86_64-unknown-unknown -emit-llvm -o - %s | FileCheck %s
 
 // Basic base class test.
 struct f0_s0 { unsigned a; };
@@ -87,7 +87,7 @@ namespace PR5179 {
     B1 b1;
   };
 
-  // CHECK-LABEL: define i8* @_ZN6PR51793barENS_2B2E(i32* %b2.coerce)
+  // CHECK-LABEL: define noundef i8* @_ZN6PR51793barENS_2B2E(i32* %b2.coerce)
   const void *bar(B2 b2) {
     return b2.b1.pa;
   }
@@ -129,7 +129,7 @@ namespace test6 {
   int test(outer x) {
     return x.x + x.f;
   }
-  // CHECK-LABEL: define i32 @_ZN5test64testENS_5outerE(i64 %x.coerce0, i32 %x.coerce1)
+  // CHECK-LABEL: define noundef i32 @_ZN5test64testENS_5outerE(i64 %x.coerce0, i32 %x.coerce1)
 }
 
 namespace test7 {
@@ -181,7 +181,7 @@ namespace test9 {
     return S();
   }
 
-  // CHECK: define [[S]]* @_ZN5test91bEPNS_1SEiiiiNS_1TEPv([[S]]* {{%.*}}, i32 %0, i32 %1, i32 %2, i32 %3, [[T:%.*]]* byval([[T]]) align 8 %4, i8* %5)
+  // CHECK: define noundef [[S]]* @_ZN5test91bEPNS_1SEiiiiNS_1TEPv([[S]]* {{%.*}}, i32 %0, i32 %1, i32 %2, i32 %3, [[T:%.*]]* byval([[T]]) align 8 %4, i8* %5)
   S* b(S* sret, int, int, int, int, T, void*) {
     return sret;
   }
@@ -191,7 +191,7 @@ namespace test9 {
     return S();
   }
 
-  // CHECK: define [[S]]* @_ZN5test91dEPNS_1SEiiiNS_1TEPv([[S]]* {{%.*}}, i32 %0, i32 %1, i32 %2, i8* {{%.*}}, i8* {{%.*}}, i8* %3)
+  // CHECK: define noundef [[S]]* @_ZN5test91dEPNS_1SEiiiNS_1TEPv([[S]]* {{%.*}}, i32 %0, i32 %1, i32 %2, i8* {{%.*}}, i8* {{%.*}}, i8* %3)
   S* d(S* sret, int, int, int, T, void*) {
     return sret;
   }
@@ -207,7 +207,7 @@ struct BasePacked {
 struct DerivedPacked : public BasePacked {
   int three;
 };
-// CHECK-LABEL: define i32 @_ZN6test1020FuncForDerivedPackedENS_13DerivedPackedE({{.*}}* byval({{.*}}) align 8
+// CHECK-LABEL: define noundef i32 @_ZN6test1020FuncForDerivedPackedENS_13DerivedPackedE({{.*}}* byval({{.*}}) align 8
 int FuncForDerivedPacked(DerivedPacked d) {
   return d.three;
 }
@@ -219,5 +219,5 @@ union U {
   char __attribute__((__vector_size__(1))) f2;
 };
 int f(union U u) { return u.f2[1]; }
-// CHECK-LABEL: define i32 @_ZN6test111fENS_1UE(i32
+// CHECK-LABEL: define noundef i32 @_ZN6test111fENS_1UE(i32
 }

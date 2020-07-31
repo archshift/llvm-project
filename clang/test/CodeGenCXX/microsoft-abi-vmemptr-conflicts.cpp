@@ -1,4 +1,4 @@
-// RUN: %clang_cc1 -fno-rtti -emit-llvm -triple=i386-pc-win32 %s -o - | FileCheck %s
+// RUN: %clang_cc1 -disable-noundef-args -fno-rtti -emit-llvm -triple=i386-pc-win32 %s -o - | FileCheck %s
 
 // In each test case, we have two member pointers whose thunks have the same
 // vtable offset and same mangling, but their prototypes conflict.  The
@@ -41,9 +41,9 @@ long long f(C *c) {
 }
 }
 
-// CHECK-LABEL: define dso_local i64 @"?f@i64_return@@YA_JPAUC@1@@Z"(%"struct.i64_return::C"* %c)
-// CHECK: call x86_thiscallcc i32 bitcast (void (%"struct.i64_return::C"*, ...)* @"??_9C@i64_return@@$BA@AE" to i32 (%"struct.i64_return::C"*)*)(%"struct.i64_return::C"* %{{.*}})
-// CHECK: call x86_thiscallcc i64 bitcast (void (%"struct.i64_return::C"*, ...)* @"??_9C@i64_return@@$BA@AE" to i64 (%"struct.i64_return::C"*)*)(%"struct.i64_return::C"* %{{.*}})
+// CHECK-LABEL: define dso_local noundef i64 @"?f@i64_return@@YA_JPAUC@1@@Z"(%"struct.i64_return::C"* %c)
+// CHECK: call x86_thiscallcc noundef i32 bitcast (void (%"struct.i64_return::C"*, ...)* @"??_9C@i64_return@@$BA@AE" to i32 (%"struct.i64_return::C"*)*)(%"struct.i64_return::C"* %{{.*}})
+// CHECK: call x86_thiscallcc noundef i64 bitcast (void (%"struct.i64_return::C"*, ...)* @"??_9C@i64_return@@$BA@AE" to i64 (%"struct.i64_return::C"*)*)(%"struct.i64_return::C"* %{{.*}})
 
 // CHECK-LABEL: define linkonce_odr x86_thiscallcc void @"??_9C@i64_return@@$BA@AE"(%"struct.i64_return::C"* %this, ...) {{.*}} comdat
 // CHECK: musttail call x86_thiscallcc void (%"struct.i64_return::C"*, ...) %{{.*}}(%"struct.i64_return::C"* %{{.*}}, ...)
@@ -64,7 +64,7 @@ void f(C *c) {
 }
 
 // CHECK-LABEL: define dso_local void @"?f@sret@@YAXPAUC@1@@Z"(%"struct.sret::C"* %c)
-// CHECK: call x86_thiscallcc i32 bitcast (void (%"struct.sret::C"*, ...)* @"??_9C@sret@@$BA@AE" to i32 (%"struct.sret::C"*)*)(%"struct.sret::C"* %{{.*}})
+// CHECK: call x86_thiscallcc noundef i32 bitcast (void (%"struct.sret::C"*, ...)* @"??_9C@sret@@$BA@AE" to i32 (%"struct.sret::C"*)*)(%"struct.sret::C"* %{{.*}})
 // CHECK: call x86_thiscallcc void bitcast (void (%"struct.sret::C"*, ...)* @"??_9C@sret@@$BA@AE" to void (%"struct.sret::C"*, %"struct.sret::Big"*)*)(%"struct.sret::C"* %{{.*}}, %"struct.sret::Big"* sret align 4 %{{.*}})
 
 // CHECK-LABEL: define linkonce_odr x86_thiscallcc void @"??_9C@sret@@$BA@AE"(%"struct.sret::C"* %this, ...) {{.*}} comdat

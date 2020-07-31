@@ -15,14 +15,14 @@ void foo(int q) {
 
   #pragma omp parallel firstprivate(q, p)
   work1(p, q);
-// IPCP: call void @work1(i32 2, i32 %{{[._a-zA-Z0-9]*}})
+// IPCP: call void @work1(i32 noundef 2, i32 noundef %{{[._a-zA-Z0-9]*}})
 
   #pragma omp parallel for firstprivate(p, q)
   for (int i = 0; i < q; i++)
     work2(i, p);
-// IPCP: call void @work2(i32 %{{[._a-zA-Z0-9]*}}, i32 2)
+// IPCP: call void @work2(i32 noundef %{{[._a-zA-Z0-9]*}}, i32 noundef 2)
 
   #pragma omp target teams firstprivate(p)
   work12(p, p);
-// IPCP: call void @work12(i32 2, i32 2)
+// IPCP: call void @work12(i32 noundef 2, i32 noundef 2)
 }

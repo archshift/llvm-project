@@ -80,8 +80,8 @@ int target_teams_fun(int *g){
   }}}
 
   // outlined target regions
-  // HCK1: define internal void @[[OFFL1]](i{{32|64}} [[I_ARG:%.+]], i{{32|64}} [[N_ARG:%.+]], {{.+}}, i{{32|64}} [[TE_ARG:%.+]], i{{32|64}} [[TH_ARG:%.+]])
-  // TCK1: define weak void @{{.+}}target_teams_fun{{.*}}(i{{32|64}} [[I_ARG:%.+]], i{{32|64}} [[N_ARG:%.+]], {{.+}}, i{{32|64}} [[TE_ARG:%.+]], i{{32|64}} [[TH_ARG:%.+]])
+  // HCK1: define internal void @[[OFFL1]](i{{32|64}} noundef [[I_ARG:%.+]], i{{32|64}} noundef [[N_ARG:%.+]], {{.+}}, i{{32|64}} noundef [[TE_ARG:%.+]], i{{32|64}} noundef [[TH_ARG:%.+]])
+  // TCK1: define weak void @{{.+}}target_teams_fun{{.*}}(i{{32|64}} noundef [[I_ARG:%.+]], i{{32|64}} noundef [[N_ARG:%.+]], {{.+}}, i{{32|64}} noundef [[TE_ARG:%.+]], i{{32|64}} noundef [[TH_ARG:%.+]])
   // CK1: [[I_ADDR:%.+]] = alloca i{{32|64}},
   // CK1: [[N_ADDR:%.+]] = alloca i{{32|64}},
   // CK1: [[TE_ADDR:%.+]] = alloca i{{32|64}},

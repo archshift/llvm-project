@@ -46,7 +46,7 @@ void func() {
   // CHECK-SAME:               line: [[@LINE+2]]
   // CHECK: [[FOR]] = distinct !DILexicalBlock({{.*}}line: [[@LINE+1]])
   for (int i = 0; i != 10; ++i) {
-    // FIXME: Do not include scopes that have only other scopes (and no variables
+    // FIXME: Do not include scopes that have only other scopes (and  no variables
     // or using declarations) as direct children, they just waste
     // space/relocations/etc.
     // CHECK: [[FOR_LOOP_INCLUDING_COND:!.*]] = distinct !DILexicalBlock(scope: [[FOR]],{{.*}} line: [[@LINE-4]])

@@ -90,6 +90,44 @@ uptr StackTrace::GetPreviousInstructionPc(uptr pc) {
 #endif
 }
 
+typedef u32 TraceHash;
+
+struct StackUnwindCtx {
+  uptr pc;
+  uptr bp;
+  void *context;
+  uptr stack_top, stack_bottom;
+  TraceHash trace_hash = 0;
+  u32 max_depth = kStackTraceMax;
+  u32 tag = 0;
+  bool use_stack_bounds = false;
+  bool request_fast = false;
+
+  StackUnwindCtx(uptr pc, uptr bp, void *ctx) : pc(pc), bp(bp), context(ctx) {}
+  StackUnwindCtx &WithTraceHash(TraceHash hash) {
+    this->trace_hash = hash;
+    return *this;
+  }
+  StackUnwindCtx &WithStackBounds(uptr stack_top, uptr stack_bottom) {
+    this->stack_top = stack_top;
+    this->stack_bottom = stack_bottom;
+    this->use_stack_bounds = true;
+    return *this;
+  };
+  StackUnwindCtx &RequestFast(bool fast) {
+    this->request_fast = fast;
+    return *this;
+  }
+  StackUnwindCtx &WithMaxDepth(u32 max) {
+    this->max_depth = max;
+    return *this;
+  }
+  StackUnwindCtx &WithTag(u32 tag) {
+    this->tag = tag;
+    return *this;
+  }
+};
+
 // StackTrace that owns the buffer used to store the addresses.
 struct BufferedStackTrace : public StackTrace {
   uptr trace_buffer[kStackTraceMax];
@@ -118,6 +156,23 @@ struct BufferedStackTrace : public StackTrace {
   void Unwind(u32 max_depth, uptr pc, uptr bp, void *context, uptr stack_top,
               uptr stack_bottom, bool request_fast_unwind);
 
+  void Unwind(const StackUnwindCtx &ctx) {
+    if (ctx.use_stack_bounds) {
+      Unwind(ctx.max_depth, ctx.pc, ctx.bp, ctx.context, ctx.stack_top,
+             ctx.stack_bottom, ctx.request_fast);
+    } else {
+      Unwind(ctx.pc, ctx.bp, ctx.context, ctx.request_fast, ctx.max_depth);
+    }
+    tag = ctx.tag;
+  }
+
+  static const BufferedStackTrace &TLSUnwind(const StackUnwindCtx &ctx) {
+    thread_local BufferedStackTrace trace;
+    trace.Reset();
+    trace.Unwind(ctx);
+    return trace;
+  }
+
   void Reset() {
     *static_cast<StackTrace *>(this) = StackTrace(trace_buffer, 0);
     top_frame_bp = 0;
@@ -125,8 +180,8 @@ struct BufferedStackTrace : public StackTrace {
 
  private:
   // Every runtime defines its own implementation of this method
-  void UnwindImpl(uptr pc, uptr bp, void *context, bool request_fast,
-                  u32 max_depth);
+  __attribute__((weak)) void UnwindImpl(uptr pc, uptr bp, void *context,
+                                        bool request_fast, u32 max_depth);
 
   // UnwindFast/Slow have platform-specific implementations
   void UnwindFast(uptr pc, uptr bp, uptr stack_top, uptr stack_bottom,

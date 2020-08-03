@@ -11,8 +11,11 @@
 #ifndef MSAN_ORIGIN_H
 #define MSAN_ORIGIN_H
 
-#include "sanitizer_common/sanitizer_stackdepot.h"
 #include "msan_chained_origin_depot.h"
+#include "sanitizer_common/sanitizer_common.h"
+#include "sanitizer_common/sanitizer_hash.h"
+#include "sanitizer_common/sanitizer_hashcache.h"
+#include "sanitizer_common/sanitizer_stackdepot.h"
 
 namespace __msan {
 
@@ -99,14 +102,14 @@ class Origin {
     return Origin((1 << kHeapShift) | id);
   }
 
-  static Origin CreateHeapOrigin(StackTrace *stack) {
-    u32 stack_id = StackDepotPut(*stack);
+  static Origin CreateHeapOrigin(StackUnwindCtx *stack) {
+    u32 stack_id = StackDepotPutUnwound(*stack);
     CHECK(stack_id);
     CHECK((stack_id & kHeapIdMask) == stack_id);
     return Origin(stack_id);
   }
 
-  static Origin CreateChainedOrigin(Origin prev, StackTrace *stack) {
+  static Origin CreateChainedOrigin(Origin prev, StackUnwindCtx *stack) {
     int depth = prev.isChainedOrigin() ? prev.depth() : 0;
     // depth is the length of the chain minus 1.
     // origin_history_size of 0 means unlimited depth.
@@ -119,20 +122,37 @@ class Origin {
       }
     }
 
-    StackDepotHandle h = StackDepotPut_WithHandle(*stack);
-    if (!h.valid()) return prev;
+    u32 id = StackDepotPutUnwound(*stack);
+    if (!id)
+      return prev;
 
     if (flags()->origin_history_per_stack_limit > 0) {
-      int use_count = h.use_count();
-      if (use_count > flags()->origin_history_per_stack_limit) return prev;
+      // int use_count = h.use_count();
+      // if (use_count > flags()->origin_history_per_stack_limit) return prev;
     }
 
-    u32 chained_id;
-    bool inserted = ChainedOriginDepotPut(h.id(), prev.raw_id(), &chained_id);
-    CHECK((chained_id & kChainedIdMask) == chained_id);
+    static thread_local HashCache<128> chain_cache;
+    static ConcurrentHashCache<1024> chain_cache_l2;
 
-    if (inserted && flags()->origin_history_per_stack_limit > 0)
-      h.inc_use_count_unsafe();
+    u32 chained_id;
+    u32 chain_hash = id * 4132367431 + prev.raw_id() * 3462451541;
+
+    if (!chain_cache.get(chain_hash, &chained_id)) {
+      // L1 cache miss
+      if (chain_cache_l2.get(chain_hash, &chained_id)) {
+        // L2 cache hit; update L1
+        chain_cache.insert(chain_hash, chained_id);
+      } else {
+        // L1+L2 cache miss; update both caches
+        ChainedOriginDepotPut(id, prev.raw_id(), &chained_id);
+        CHECK((chained_id & kChainedIdMask) == chained_id);
+        chain_cache.insert(chain_hash, chained_id);
+        chain_cache_l2.insert(chain_hash, chained_id);
+      }
+    }
+
+    // if (inserted && flags()->origin_history_per_stack_limit > 0)
+      // h.inc_use_count_unsafe();
 
     return Origin((1 << kHeapShift) | (depth << kDepthShift) | chained_id);
   }

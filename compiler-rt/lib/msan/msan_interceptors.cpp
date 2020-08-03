@@ -908,7 +908,7 @@ INTERCEPTOR(void *, malloc, SIZE_T size) {
 void __msan_allocated_memory(const void *data, uptr size) {
   GET_MALLOC_STACK_TRACE;
   if (flags()->poison_in_malloc) {
-    stack.tag = STACK_TRACE_TAG_POISON;
+    stack.WithTag(STACK_TRACE_TAG_POISON);
     PoisonMemory(data, size, &stack);
   }
 }
@@ -921,7 +921,7 @@ void __msan_copy_shadow(void *dest, const void *src, uptr n) {
 void __sanitizer_dtor_callback(const void *data, uptr size) {
   GET_MALLOC_STACK_TRACE;
   if (flags()->poison_in_dtor) {
-    stack.tag = STACK_TRACE_TAG_POISON;
+    stack.WithTag(STACK_TRACE_TAG_POISON);
     PoisonMemory(data, size, &stack);
   }
 }

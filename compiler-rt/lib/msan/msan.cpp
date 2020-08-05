@@ -536,10 +536,45 @@ void __msan_dump_shadow(const void *x, uptr size) {
 
 sptr __msan_test_shadow(const void *x, uptr size) {
   if (!MEM_IS_APP(x)) return -1;
-  unsigned char *s = (unsigned char *)MEM_TO_SHADOW((uptr)x);
-  for (uptr i = 0; i < size; ++i)
-    if (s[i])
-      return i;
+  uptr align_offs = (uptr)x % 8;
+  unsigned char *s_begin = (unsigned char *)MEM_TO_SHADOW((uptr)x);
+  unsigned char *s = s_begin;
+
+  // Unaligned byte region
+  uptr unaligned_region = Min(size, 8 - align_offs);
+  if (unaligned_region) {
+    size -= unaligned_region;
+    unsigned char *end = s + unaligned_region;
+    #pragma unroll(8)
+    for (; s < end; s++) {
+      if (UNLIKELY(*s))
+        return s - s_begin;
+    }
+  }
+
+  // Aligned u64 region
+  uptr aligned_region = size / 8 * 8;
+  size -= aligned_region;
+  unsigned char *end = s + aligned_region;
+  #pragma unroll(4)
+  for (; s < end; s += 8) {
+    if (UNLIKELY(*(u64 *)s)) {
+      // We know it's poisoned, now find where it's poisoned
+      #pragma nounroll
+      for (int i = 0; i < 8; i++) {
+        if (s[i])
+          return s - s_begin + i;
+      }
+    }
+  }
+
+  // Aligned byte region
+  end = s + size;
+  #pragma unroll(8)
+  for (; s < end; s++) {
+    if (UNLIKELY(*s))
+      return s - s_begin;
+  }
   return -1;
 }
 

@@ -145,6 +145,7 @@
 #include "llvm/Transforms/Instrumentation/MemorySanitizer.h"
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/ArrayRef.h"
+#include "llvm/ADT/BitVector.h"
 #include "llvm/ADT/DepthFirstIterator.h"
 #include "llvm/ADT/SmallSet.h"
 #include "llvm/ADT/SmallString.h"
@@ -152,6 +153,8 @@
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Triple.h"
+#include "llvm/Analysis/AliasAnalysis.h"
+#include "llvm/Analysis/MemoryLocation.h"
 #include "llvm/Analysis/TargetLibraryInfo.h"
 #include "llvm/Analysis/ValueTracking.h"
 #include "llvm/IR/Argument.h"
@@ -497,7 +500,7 @@ public:
   MemorySanitizer(const MemorySanitizer &) = delete;
   MemorySanitizer &operator=(const MemorySanitizer &) = delete;
 
-  bool sanitizeFunction(Function &F, TargetLibraryInfo &TLI);
+  bool sanitizeFunction(Function &F, TargetLibraryInfo &TLI, AAResults *AA);
 
 private:
   friend struct MemorySanitizerVisitor;
@@ -642,11 +645,13 @@ struct MemorySanitizerLegacyPass : public FunctionPass {
 
   void getAnalysisUsage(AnalysisUsage &AU) const override {
     AU.addRequired<TargetLibraryInfoWrapperPass>();
+    AU.addRequired<AAResultsWrapperPass>();
   }
 
   bool runOnFunction(Function &F) override {
+    AAResults *AA = &getAnalysis<AAResultsWrapperPass>().getAAResults();
     return MSan->sanitizeFunction(
-        F, getAnalysis<TargetLibraryInfoWrapperPass>().getTLI(F));
+        F, getAnalysis<TargetLibraryInfoWrapperPass>().getTLI(F), AA);
   }
   bool doInitialization(Module &M) override;
 
@@ -668,7 +673,8 @@ MemorySanitizerOptions::MemorySanitizerOptions(int TO, bool R, bool K)
 PreservedAnalyses MemorySanitizerPass::run(Function &F,
                                            FunctionAnalysisManager &FAM) {
   MemorySanitizer Msan(*F.getParent(), Options);
-  if (Msan.sanitizeFunction(F, FAM.getResult<TargetLibraryAnalysis>(F)))
+  AAResults &AA = FAM.getResult<AAManager>(F);
+  if (Msan.sanitizeFunction(F, FAM.getResult<TargetLibraryAnalysis>(F), &AA))
     return PreservedAnalyses::none();
   return PreservedAnalyses::all();
 }
@@ -687,6 +693,7 @@ INITIALIZE_PASS_BEGIN(MemorySanitizerLegacyPass, "msan",
                       "MemorySanitizer: detects uninitialized reads.", false,
                       false)
 INITIALIZE_PASS_DEPENDENCY(TargetLibraryInfoWrapperPass)
+INITIALIZE_PASS_DEPENDENCY(AAResultsWrapperPass)
 INITIALIZE_PASS_END(MemorySanitizerLegacyPass, "msan",
                     "MemorySanitizer: detects uninitialized reads.", false,
                     false)
@@ -1057,6 +1064,7 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
   std::unique_ptr<VarArgHelper> VAHelper;
   const TargetLibraryInfo *TLI;
   BasicBlock *ActualFnStart;
+  AAResults *AA;
 
   // The following flags disable parts of MSan instrumentation based on
   // exclusion list contents and command-line options.
@@ -1080,8 +1088,9 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
   SmallVector<StoreInst *, 16> StoreList;
 
   MemorySanitizerVisitor(Function &F, MemorySanitizer &MS,
-                         const TargetLibraryInfo &TLI)
-      : F(F), MS(MS), VAHelper(CreateVarArgHelper(F, MS, *this)), TLI(&TLI) {
+                         const TargetLibraryInfo &TLI, AAResults *AA)
+      : F(F), MS(MS), VAHelper(CreateVarArgHelper(F, MS, *this)), TLI(&TLI),
+        AA(AA) {
     bool SanitizeFunction = F.hasFnAttribute(Attribute::SanitizeMemory);
     InsertChecks = SanitizeFunction;
     PropagateShadow = SanitizeFunction;
@@ -3832,6 +3841,77 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     }
   }
 
+  // Bytes in an alloca already stored to
+  using StoredSet = BitVector;
+  // Mapping of Value modifying a pointer => Offset it's pointing to
+  using RedefOffsets = DenseMap<Value *, uint64_t>;
+  // Set of instructions consuming a given alloca
+  using UserSet = SmallPtrSet<Value *, 10>;
+
+  // Determine whether all paths from this alloca lead to storing into it.
+  // If true, we can omit poisoning the alloca because it'll just be
+  // overwritten anyway.
+  bool firstUsesAreStore(Value *Alloca, Instruction *CurrInst,
+                         StoredSet StoredBytes) {
+    MemoryLocation AllocaLoc{Alloca, StoredBytes.size()};
+    const DataLayout &DL = F.getParent()->getDataLayout();
+
+    for (; CurrInst && !StoredBytes.all();
+         CurrInst = CurrInst->getNextNonDebugInstruction()) {
+      if (isNoModRef(AA->getModRefInfo(CurrInst, AllocaLoc)))
+        continue;
+
+      if (StoreInst *Store = dyn_cast<StoreInst>(CurrInst)) {
+        uint64_t StoreSize =
+            DL.getTypeStoreSize(Store->getValueOperand()->getType());
+        // The store could be a use if it's storing the alloca
+        // pointer somewhere. But we don't want that.
+        Value *Ptr = Store->getPointerOperand();
+        if (auto Offset = isPointerOffset(Alloca, Ptr, DL))
+          StoredBytes.set(*Offset, *Offset + StoreSize);
+        continue;
+      }
+
+      if (IntrinsicInst *Intrinsic = dyn_cast<IntrinsicInst>(CurrInst)) {
+        // Ignore lifetime intrinsics, count others as a use.
+        Intrinsic::ID ID = Intrinsic->getIntrinsicID();
+        if (ID != Intrinsic::lifetime_start && ID != Intrinsic::lifetime_end)
+          return false;
+        continue;
+      }
+
+      if (CallInst *Call = dyn_cast<CallInst>(CurrInst)) {
+        if (Call->getCalledFunction() != MS.MemcpyFn.getCallee() &&
+            Call->getCalledFunction() != MS.MemsetFn.getCallee() &&
+            Call->getCalledFunction() != MS.MemmoveFn.getCallee())
+          // We want to consider instrumented memory writing functions
+          // as stores here. Anything else is considered a use.
+          return false;
+
+        Value *StoreSizeVal = Call->getArgOperand(2);
+        Value *Dest = Call->getArgOperand(0);
+        auto Offset = isPointerOffset(Alloca, Dest, DL);
+        if (!Offset)
+          return false;
+
+        ConstantInt *StoreSizeConst = dyn_cast<ConstantInt>(StoreSizeVal);
+        if (!StoreSizeConst)
+          // Can only decide this covers the whole shadow if we can
+          // check the constant store size.
+          return false;
+        uint64_t StoreSize = StoreSizeConst->getLimitedValue();
+        StoredBytes.set(*Offset, *Offset + StoreSize);
+        continue;
+      }
+
+      return false;
+    }
+
+    // Reached end of basic block
+    // TODO: Check successive BBs
+    return StoredBytes.all();
+  };
+
   void instrumentAlloca(AllocaInst &I, Instruction *InsPoint = nullptr) {
     if (!InsPoint)
       InsPoint = &I;
@@ -3839,8 +3919,13 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     const DataLayout &DL = F.getParent()->getDataLayout();
     uint64_t TypeSize = DL.getTypeAllocSize(I.getAllocatedType());
     Value *Len = ConstantInt::get(MS.IntptrTy, TypeSize);
-    if (I.isArrayAllocation())
+    if (I.isArrayAllocation()) {
       Len = IRB.CreateMul(Len, I.getArraySize());
+    } else {
+      StoredSet StoredBytes(TypeSize, false);
+      if (firstUsesAreStore(&I, InsPoint, StoredBytes))
+        return;
+    }
 
     if (MS.CompileKernel)
       poisonAllocaKmsan(I, IRB, Len);
@@ -5265,11 +5350,12 @@ static VarArgHelper *CreateVarArgHelper(Function &Func, MemorySanitizer &Msan,
     return new VarArgNoOpHelper(Func, Msan, Visitor);
 }
 
-bool MemorySanitizer::sanitizeFunction(Function &F, TargetLibraryInfo &TLI) {
+bool MemorySanitizer::sanitizeFunction(Function &F, TargetLibraryInfo &TLI,
+                                       AAResults *AA) {
   if (!CompileKernel && F.getName() == kMsanModuleCtorName)
     return false;
 
-  MemorySanitizerVisitor Visitor(F, *this, TLI);
+  MemorySanitizerVisitor Visitor(F, *this, TLI, AA);
 
   // Clear out readonly/readnone attributes.
   AttrBuilder B;

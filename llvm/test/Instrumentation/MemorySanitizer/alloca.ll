@@ -22,6 +22,7 @@ target triple = "x86_64-unknown-linux-gnu"
 define void @static() sanitize_memory {
 entry:
   %x = alloca i32, align 4
+  %y = ptrtoint i32* %x to i32
   ret void
 }
 
@@ -38,6 +39,7 @@ entry:
   br label %l
 l:
   %x = alloca i32, align 4
+  %y = ptrtoint i32* %x to i32
   ret void
 }
 
@@ -51,6 +53,7 @@ l:
 define void @array() sanitize_memory {
 entry:
   %x = alloca i32, i64 5, align 4
+  %y = ptrtoint i32* %x to i32
   ret void
 }
 
@@ -64,6 +67,7 @@ entry:
 define void @array_non_const(i64 %cnt) sanitize_memory {
 entry:
   %x = alloca i32, i64 %cnt, align 4
+  %y = ptrtoint i32* %x to i32
   ret void
 }
 
@@ -79,6 +83,7 @@ entry:
 define void @unpoison_local() {
 entry:
   %x = alloca i32, i64 5, align 4
+  %y = ptrtoint i32* %x to i32
   ret void
 }
 
@@ -98,9 +103,11 @@ entry:
 
 another_bb:
   call void @llvm.lifetime.start.p0i8(i64 4, i8* nonnull %c)
+  %y = load i32, i32* %x
   store i32 7, i32* %x
   call void @llvm.lifetime.end.p0i8(i64 4, i8* nonnull %c)
   call void @llvm.lifetime.start.p0i8(i64 4, i8* nonnull %c)
+  %z = load i32, i32* %x
   store i32 8, i32* %x
   call void @llvm.lifetime.end.p0i8(i64 4, i8* nonnull %c)
   ret void

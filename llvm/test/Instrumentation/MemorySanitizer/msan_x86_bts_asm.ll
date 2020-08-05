@@ -58,9 +58,9 @@ if.else:                                          ; preds = %entry
   ret i32 1
 }
 
-; %nr is first poisoned, then unpoisoned (written to). Need to optimize this in the future.
-; CHECK: [[NRC1:%.*]] = bitcast i64* %nr to i8*
-; CHECK: call void @__msan_poison_alloca(i8* [[NRC1]]{{.*}})
+; %nr is first poisoned, then unpoisoned (written to). No need to poison.
+; CHECK-NOT: [[NRC1:%.*]] = bitcast i64* %nr to i8*
+; CHECK-NOT: call void @__msan_poison_alloca(i8* [[NRC1]]{{.*}})
 ; CHECK: [[NRC2:%.*]] = bitcast i64* %nr to i8*
 ; CHECK: call { i8*, i32* } @__msan_metadata_ptr_for_store_8(i8* [[NRC2]])
 

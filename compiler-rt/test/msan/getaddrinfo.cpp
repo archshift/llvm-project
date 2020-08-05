@@ -7,6 +7,7 @@
 
 void poison_stack_ahead() {
   char buf[100000];
+  __asm__ volatile("" ::"r"(buf));
   // With -O0 this poisons a large chunk of stack.
 }
 

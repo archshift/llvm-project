@@ -19,6 +19,7 @@ void dummy(long a, long b, long c, long d, long e) {}
 
 void poison_stack_and_param() {
   char x[10000];
+  __asm__ volatile("" ::"r"(x));
   int y;
   dummy(y, y, y, y, y);
 }

@@ -297,18 +297,19 @@ void InitializeInterceptors();
 
 void MsanAllocatorInit();
 void MsanAllocatorThreadFinish();
-void MsanDeallocate(StackTrace *stack, void *ptr);
+void MsanDeallocate(StackUnwindCtx *stack, void *ptr);
 
-void *msan_malloc(uptr size, StackTrace *stack);
-void *msan_calloc(uptr nmemb, uptr size, StackTrace *stack);
-void *msan_realloc(void *ptr, uptr size, StackTrace *stack);
-void *msan_reallocarray(void *ptr, uptr nmemb, uptr size, StackTrace *stack);
-void *msan_valloc(uptr size, StackTrace *stack);
-void *msan_pvalloc(uptr size, StackTrace *stack);
-void *msan_aligned_alloc(uptr alignment, uptr size, StackTrace *stack);
-void *msan_memalign(uptr alignment, uptr size, StackTrace *stack);
+void *msan_malloc(uptr size, StackUnwindCtx *stack);
+void *msan_calloc(uptr nmemb, uptr size, StackUnwindCtx *stack);
+void *msan_realloc(void *ptr, uptr size, StackUnwindCtx *stack);
+void *msan_reallocarray(void *ptr, uptr nmemb, uptr size,
+                        StackUnwindCtx *stack);
+void *msan_valloc(uptr size, StackUnwindCtx *stack);
+void *msan_pvalloc(uptr size, StackUnwindCtx *stack);
+void *msan_aligned_alloc(uptr alignment, uptr size, StackUnwindCtx *stack);
+void *msan_memalign(uptr alignment, uptr size, StackUnwindCtx *stack);
 int msan_posix_memalign(void **memptr, uptr alignment, uptr size,
-                        StackTrace *stack);
+                        StackUnwindCtx *stack);
 
 void InstallTrapHandler();
 void InstallAtExitHandler();
@@ -333,28 +334,33 @@ void UnpoisonThreadLocalState();
 
 // Returns a "chained" origin id, pointing to the given stack trace followed by
 // the previous origin id.
-u32 ChainOrigin(u32 id, StackTrace *stack);
+u32 ChainOrigin(u32 id, StackUnwindCtx *stack);
+
+TraceHash GetTraceHash(uptr pc);
 
 const int STACK_TRACE_TAG_POISON = StackTrace::TAG_CUSTOM + 1;
 
-#define GET_MALLOC_STACK_TRACE                                            \
-  BufferedStackTrace stack;                                               \
-  if (__msan_get_track_origins() && msan_inited)                          \
-    stack.Unwind(StackTrace::GetCurrentPc(), GET_CURRENT_FRAME(),         \
-                 nullptr, common_flags()->fast_unwind_on_malloc,          \
-                 common_flags()->malloc_context_size)
+#define GET_MALLOC_STACK_TRACE                                          \
+  StackUnwindCtx stack(StackTrace::GetCurrentPc(), GET_CURRENT_FRAME(), \
+                       nullptr);                                        \
+  if (__msan_get_track_origins() && msan_inited)                        \
+    stack.RequestFast(common_flags()->fast_unwind_on_malloc)            \
+        .WithMaxDepth(common_flags()->malloc_context_size)              \
+        .WithTraceHash(GetTraceHash(GET_CALLER_PC()));
 
 // For platforms which support slow unwinder only, we restrict the store context
 // size to 1, basically only storing the current pc. We do this because the slow
 // unwinder which is based on libunwind is not async signal safe and causes
 // random freezes in forking applications as well as in signal handlers.
-#define GET_STORE_STACK_TRACE_PC_BP(pc, bp)                                    \
-  BufferedStackTrace stack;                                                    \
-  if (__msan_get_track_origins() > 1 && msan_inited) {                         \
-    int size = flags()->store_context_size;                                    \
-    if (!SANITIZER_CAN_FAST_UNWIND)                                            \
-      size = Min(size, 1);                                                     \
-    stack.Unwind(pc, bp, nullptr, common_flags()->fast_unwind_on_malloc, size);\
+#define GET_STORE_STACK_TRACE_PC_BP(pc, bp)                  \
+  StackUnwindCtx stack(pc, bp, nullptr);                     \
+  if (__msan_get_track_origins() > 1 && msan_inited) {       \
+    int size = flags()->store_context_size;                  \
+    if (!SANITIZER_CAN_FAST_UNWIND)                          \
+      size = Min(size, 1);                                   \
+    stack.RequestFast(common_flags()->fast_unwind_on_malloc) \
+        .WithMaxDepth(size)                                  \
+        .WithTraceHash(GetTraceHash(GET_CALLER_PC()));       \
   }
 
 #define GET_STORE_STACK_TRACE \

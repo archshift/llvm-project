@@ -293,6 +293,11 @@ static cl::opt<bool> ClEagerChecks(
     cl::desc("check arguments and return values at function call boundaries"),
     cl::Hidden, cl::init(false));
 
+static cl::opt<bool>
+    ClCachedUnwinding("msan-cached-unwinding",
+                      cl::desc("hash active stack traces for fast unwinding"),
+                      cl::Hidden, cl::init(false));
+
 static cl::opt<bool> ClDumpStrictInstructions("msan-dump-strict-instructions",
        cl::desc("print out instructions with default strict semantics"),
        cl::Hidden, cl::init(false));
@@ -555,6 +560,9 @@ private:
   /// (x86_64-specific).
   Value *VAArgOverflowSizeTLS;
 
+  /// Thread-local shadow storage for current trace hash
+  Value *CurrTraceTLS;
+
   /// Are the instrumentation callbacks set up?
   bool CallbacksInitialized = false;
 
@@ -727,6 +735,7 @@ void MemorySanitizer::createKernelApi(Module &M) {
   VAArgTLS = nullptr;
   VAArgOriginTLS = nullptr;
   VAArgOverflowSizeTLS = nullptr;
+  CurrTraceTLS = nullptr;
 
   WarningFn = M.getOrInsertFunction("__msan_warning", IRB.getVoidTy(),
                                     IRB.getInt32Ty());
@@ -816,6 +825,8 @@ void MemorySanitizer::createUserspaceApi(Module &M) {
 
   VAArgOverflowSizeTLS =
       getOrInsertGlobal(M, "__msan_va_arg_overflow_size_tls", IRB.getInt64Ty());
+
+  CurrTraceTLS = getOrInsertGlobal(M, "__msan_ctrace_tls", IRB.getInt32Ty());
 
   for (size_t AccessSizeIndex = 0; AccessSizeIndex < kNumberOfAccessSizes;
        AccessSizeIndex++) {
@@ -1106,6 +1117,9 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     LLVM_DEBUG(if (!InsertChecks) dbgs()
                << "MemorySanitizer is not inserting checks into '"
                << F.getName() << "'\n");
+
+    if (ClCachedUnwinding)
+      ActualFnStart = insertTracePrologue(ActualFnStart);
   }
 
   Value *updateOrigin(Value *V, IRBuilder<> &IRB) {
@@ -1292,6 +1306,25 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     MS.RetvalOriginTLS =
         IRB.CreateGEP(MS.MsanContextStateTy, ContextState,
                       {Zero, IRB.getInt32(6)}, "retval_origin");
+    return ret;
+  }
+
+  BasicBlock *insertTracePrologue(BasicBlock *B) {
+    BasicBlock *ret = SplitBlock(B, B->getFirstNonPHI());
+    IRBuilder<> IRB(B->getFirstNonPHI());
+
+    // CurrTrace allows us to approximately hash the entire call trace leading
+    // to this function. We XOR in the prologue to mark the beginning of this
+    // frame, and then XOR in the epilogue (ret instructions) to mark the end.
+    Value *CurrTraceHash = IRB.CreateLoad(IRB.getInt32Ty(), MS.CurrTraceTLS);
+    Value *ReturnAddress = IRB.CreatePtrToInt(
+        IRB.CreateIntrinsic(Intrinsic::returnaddress, {}, {IRB.getInt32(0)}),
+        IRB.getInt32Ty());
+    CurrTraceHash =
+        IRB.CreateIntrinsic(Intrinsic::fshl, {IRB.getInt32Ty()},
+                            {CurrTraceHash, CurrTraceHash, IRB.getInt32(5)});
+    CurrTraceHash = IRB.CreateXor(CurrTraceHash, ReturnAddress);
+    IRB.CreateStore(CurrTraceHash, MS.CurrTraceTLS);
     return ret;
   }
 
@@ -3748,6 +3781,20 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
 
   void visitReturnInst(ReturnInst &I) {
     IRBuilder<> IRB(&I);
+    if (ClCachedUnwinding) {
+      // XOR out the current stack frame's hash to indicate returning up a
+      // frame.
+      Value *CurrTraceHash = IRB.CreateLoad(IRB.getInt32Ty(), MS.CurrTraceTLS);
+      Value *ReturnAddress = IRB.CreatePtrToInt(
+          IRB.CreateIntrinsic(Intrinsic::returnaddress, {}, {IRB.getInt32(0)}),
+          IRB.getInt32Ty());
+      CurrTraceHash = IRB.CreateXor(CurrTraceHash, ReturnAddress);
+      CurrTraceHash =
+          IRB.CreateIntrinsic(Intrinsic::fshr, {IRB.getInt32Ty()},
+                              {CurrTraceHash, CurrTraceHash, IRB.getInt32(5)});
+      IRB.CreateStore(CurrTraceHash, MS.CurrTraceTLS);
+    }
+
     Value *RetVal = I.getReturnValue();
     if (!RetVal) return;
     // Don't emit the epilogue for musttail call returns.

@@ -40,7 +40,7 @@ void SetOriginIfPoisoned(uptr addr, uptr src_shadow, uptr size,
 }
 
 void CopyOrigin(const void *dst, const void *src, uptr size,
-                StackTrace *stack) {
+                StackUnwindCtx *stack) {
   if (!MEM_IS_APP(dst) || !MEM_IS_APP(src)) return;
 
   uptr d = (uptr)dst;
@@ -95,7 +95,7 @@ void CopyOrigin(const void *dst, const void *src, uptr size,
 }
 
 void MoveShadowAndOrigin(const void *dst, const void *src, uptr size,
-                         StackTrace *stack) {
+                         StackUnwindCtx *stack) {
   if (!MEM_IS_APP(dst)) return;
   if (!MEM_IS_APP(src)) return;
   if (src == dst) return;
@@ -105,7 +105,7 @@ void MoveShadowAndOrigin(const void *dst, const void *src, uptr size,
 }
 
 void CopyShadowAndOrigin(const void *dst, const void *src, uptr size,
-                         StackTrace *stack) {
+                         StackUnwindCtx *stack) {
   if (!MEM_IS_APP(dst)) return;
   if (!MEM_IS_APP(src)) return;
   REAL(memcpy)((void *)MEM_TO_SHADOW((uptr)dst),
@@ -113,7 +113,7 @@ void CopyShadowAndOrigin(const void *dst, const void *src, uptr size,
   if (__msan_get_track_origins()) CopyOrigin(dst, src, size, stack);
 }
 
-void CopyMemory(void *dst, const void *src, uptr size, StackTrace *stack) {
+void CopyMemory(void *dst, const void *src, uptr size, StackUnwindCtx *stack) {
   REAL(memcpy)(dst, src, size);
   CopyShadowAndOrigin(dst, src, size, stack);
 }
@@ -162,7 +162,7 @@ void SetOrigin(const void *dst, uptr size, u32 origin) {
   if (end & 7ULL) *(u32 *)(end - 4) = origin;
 }
 
-void PoisonMemory(const void *dst, uptr size, StackTrace *stack) {
+void PoisonMemory(const void *dst, uptr size, StackUnwindCtx *stack) {
   SetShadow(dst, size, (u8)-1);
 
   if (__msan_get_track_origins()) {

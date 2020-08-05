@@ -28,21 +28,22 @@ void SetOriginIfPoisoned(uptr addr, uptr src_shadow, uptr size, u32 src_origin);
 // Copy origin from src (app address) to dst (app address), creating chained
 // origin ids as necessary, without overriding origin for fully initialized
 // quads.
-void CopyOrigin(const void *dst, const void *src, uptr size, StackTrace *stack);
+void CopyOrigin(const void *dst, const void *src, uptr size,
+                StackUnwindCtx *stack);
 
 // memmove() shadow and origin. Dst and src are application addresses.
 // See CopyOrigin() for the origin copying logic.
 void MoveShadowAndOrigin(const void *dst, const void *src, uptr size,
-                         StackTrace *stack);
+                         StackUnwindCtx *stack);
 
 // memcpy() shadow and origin. Dst and src are application addresses.
 // See CopyOrigin() for the origin copying logic.
 void CopyShadowAndOrigin(const void *dst, const void *src, uptr size,
-                         StackTrace *stack);
+                         StackUnwindCtx *stack);
 
 // memcpy() app memory, and do "the right thing" to the corresponding shadow and
 // origin regions.
-void CopyMemory(void *dst, const void *src, uptr size, StackTrace *stack);
+void CopyMemory(void *dst, const void *src, uptr size, StackUnwindCtx *stack);
 
 // Fill shadow will value. Ptr is an application address.
 void SetShadow(const void *ptr, uptr size, u8 value);
@@ -51,7 +52,7 @@ void SetShadow(const void *ptr, uptr size, u8 value);
 void SetOrigin(const void *dst, uptr size, u32 origin);
 
 // Mark memory region uninitialized, with origins.
-void PoisonMemory(const void *dst, uptr size, StackTrace *stack);
+void PoisonMemory(const void *dst, uptr size, StackUnwindCtx *stack);
 
 }  // namespace __msan
 

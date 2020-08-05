@@ -14,6 +14,7 @@
 
 #include "sanitizer_common.h"
 #include "sanitizer_hash.h"
+#include "sanitizer_hashcache.h"
 #include "sanitizer_stackdepotbase.h"
 
 namespace __sanitizer {
@@ -40,10 +41,10 @@ struct StackDepotNode {
         atomic_load(&hash_and_use_count, memory_order_relaxed) & kHashMask;
     if ((hash & kHashMask) != hash_bits || args.size != size || args.tag != tag)
       return false;
-    uptr i = 0;
-    for (; i < size; i++) {
-      if (stack[i] != args.trace[i]) return false;
-    }
+    // uptr i = 0;
+    // for (; i < size; i++) {
+    //   if (stack[i] != args.trace[i]) return false;
+    // }
     return true;
   }
   static uptr storage_size(const args_type &args) {
@@ -99,8 +100,38 @@ u32 StackDepotPut(StackTrace stack) {
   return h.valid() ? h.id() : 0;
 }
 
-StackDepotHandle StackDepotPut_WithHandle(StackTrace stack) {
-  return theDepot.Put(stack);
+u32 StackDepotPutUnwound(const StackUnwindCtx &ctx) {
+  static thread_local HashCache<1024> trace_hash_map;
+  static ConcurrentHashCache<16384> trace_map_l2;
+
+  const static auto PutTrace = [](const StackUnwindCtx &ctx) {
+    // Keep the temp trace in TLS because it's too big to be comfortable
+    // in the stack.
+    static thread_local BufferedStackTrace tmp_trace;
+    tmp_trace.Reset();
+    tmp_trace.Unwind(ctx);
+    return StackDepotPut(tmp_trace);
+  };
+
+  if (!ctx.trace_hash) {
+    return PutTrace(ctx);
+  }
+  u32 used_hash = ctx.trace_hash ^ ctx.tag;
+
+  u32 depot_id;
+  if (trace_hash_map.get(used_hash, &depot_id))
+    // L1 cache hit
+    return depot_id;
+  if (trace_map_l2.get(used_hash, &depot_id)) {
+    // L2 cache hit, so update L1
+    trace_hash_map.insert(used_hash, depot_id);
+    return depot_id;
+  }
+  // L1+L2 cache misses; update both caches
+  depot_id = PutTrace(ctx);
+  trace_hash_map.insert(used_hash, depot_id);
+  trace_map_l2.insert(used_hash, depot_id);
+  return depot_id;
 }
 
 StackTrace StackDepotGet(u32 id) {

@@ -33,12 +33,14 @@ namespace std {
 #define OPERATOR_NEW_BODY(nothrow) \
   GET_MALLOC_STACK_TRACE; \
   void *res = msan_malloc(size, &stack);\
-  if (!nothrow && UNLIKELY(!res)) ReportOutOfMemory(size, &stack);\
+  if (!nothrow && UNLIKELY(!res))     \
+    ReportOutOfMemory(size, &BufferedStackTrace::TLSUnwind(stack)); \
   return res
 #define OPERATOR_NEW_BODY_ALIGN(nothrow) \
   GET_MALLOC_STACK_TRACE;\
   void *res = msan_memalign((uptr)align, size, &stack);\
-  if (!nothrow && UNLIKELY(!res)) ReportOutOfMemory(size, &stack);\
+  if (!nothrow && UNLIKELY(!res))     \
+    ReportOutOfMemory(size, &BufferedStackTrace::TLSUnwind(stack)); \
   return res;
 
 INTERCEPTOR_ATTRIBUTE

@@ -67,6 +67,9 @@ THREADLOCAL u64 __msan_va_arg_overflow_size_tls;
 SANITIZER_INTERFACE_ATTRIBUTE
 THREADLOCAL u32 __msan_origin_tls;
 
+SANITIZER_INTERFACE_ATTRIBUTE
+THREADLOCAL TraceHash __msan_ctrace_tls;
+
 static THREADLOCAL int is_in_symbolizer;
 
 extern "C" SANITIZER_WEAK_ATTRIBUTE const int __msan_track_origins;
@@ -290,15 +293,22 @@ const char *GetStackOriginDescr(u32 id, uptr *pc) {
   return StackOriginDescr[id];
 }
 
-u32 ChainOrigin(u32 id, StackTrace *stack) {
+u32 ChainOrigin(u32 id, StackUnwindCtx *stack) {
   MsanThread *t = GetCurrentThread();
   if (t && t->InSignalHandler())
     return id;
 
   Origin o = Origin::FromRawId(id);
-  stack->tag = StackTrace::TAG_UNKNOWN;
+  stack->WithTag(StackTrace::TAG_UNKNOWN);
   Origin chained = Origin::CreateChainedOrigin(o, stack);
   return chained.raw_id();
+}
+
+TraceHash GetTraceHash(uptr pc) {
+  const static auto rotl5 = [](u32 x) { return (x << 5) | (x >> 27); };
+  if (__msan_ctrace_tls)
+    return rotl5(__msan_ctrace_tls) ^ pc;
+  return 0;
 }
 
 } // namespace __msan

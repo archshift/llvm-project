@@ -151,14 +151,15 @@ void MsanThreadLocalMallocStorage::CommitBack() {
   allocator.SwallowCache(GetAllocatorCache(this));
 }
 
-static void *MsanAllocate(StackTrace *stack, uptr size, uptr alignment,
+static void *MsanAllocate(StackUnwindCtx *stack, uptr size, uptr alignment,
                           bool zeroise) {
   if (size > max_malloc_size) {
     if (AllocatorMayReturnNull()) {
       Report("WARNING: MemorySanitizer failed to allocate 0x%zx bytes\n", size);
       return nullptr;
     }
-    ReportAllocationSizeTooBig(size, max_malloc_size, stack);
+    ReportAllocationSizeTooBig(size, max_malloc_size,
+                               &BufferedStackTrace::TLSUnwind(*stack));
   }
   MsanThread *t = GetCurrentThread();
   void *allocated;
@@ -174,7 +175,7 @@ static void *MsanAllocate(StackTrace *stack, uptr size, uptr alignment,
     SetAllocatorOutOfMemory();
     if (AllocatorMayReturnNull())
       return nullptr;
-    ReportOutOfMemory(size, stack);
+    ReportOutOfMemory(size, &BufferedStackTrace::TLSUnwind(*stack));
   }
   Metadata *meta =
       reinterpret_cast<Metadata *>(allocator.GetMetaData(allocated));
@@ -184,7 +185,7 @@ static void *MsanAllocate(StackTrace *stack, uptr size, uptr alignment,
   } else if (flags()->poison_in_malloc) {
     __msan_poison(allocated, size);
     if (__msan_get_track_origins()) {
-      stack->tag = StackTrace::TAG_ALLOC;
+      stack->WithTag(StackTrace::TAG_ALLOC);
       Origin o = Origin::CreateHeapOrigin(stack);
       __msan_set_origin(allocated, size, o.raw_id());
     }
@@ -193,7 +194,7 @@ static void *MsanAllocate(StackTrace *stack, uptr size, uptr alignment,
   return allocated;
 }
 
-void MsanDeallocate(StackTrace *stack, void *p) {
+void MsanDeallocate(StackUnwindCtx *stack, void *p) {
   CHECK(p);
   MSAN_FREE_HOOK(p);
   Metadata *meta = reinterpret_cast<Metadata *>(allocator.GetMetaData(p));
@@ -204,7 +205,7 @@ void MsanDeallocate(StackTrace *stack, void *p) {
   if (flags()->poison_in_free) {
     __msan_poison(p, size);
     if (__msan_get_track_origins()) {
-      stack->tag = StackTrace::TAG_DEALLOC;
+      stack->WithTag(StackTrace::TAG_DEALLOC);
       Origin o = Origin::CreateHeapOrigin(stack);
       __msan_set_origin(p, size, o.raw_id());
     }
@@ -220,7 +221,7 @@ void MsanDeallocate(StackTrace *stack, void *p) {
   }
 }
 
-void *MsanReallocate(StackTrace *stack, void *old_p, uptr new_size,
+void *MsanReallocate(StackUnwindCtx *stack, void *old_p, uptr new_size,
                      uptr alignment) {
   Metadata *meta = reinterpret_cast<Metadata*>(allocator.GetMetaData(old_p));
   uptr old_size = meta->requested_size;
@@ -230,7 +231,7 @@ void *MsanReallocate(StackTrace *stack, void *old_p, uptr new_size,
     meta->requested_size = new_size;
     if (new_size > old_size) {
       if (flags()->poison_in_malloc) {
-        stack->tag = StackTrace::TAG_ALLOC;
+        stack->WithTag(StackTrace::TAG_ALLOC);
         PoisonMemory((char *)old_p + old_size, new_size - old_size, stack);
       }
     }
@@ -245,11 +246,11 @@ void *MsanReallocate(StackTrace *stack, void *old_p, uptr new_size,
   return new_p;
 }
 
-void *MsanCalloc(StackTrace *stack, uptr nmemb, uptr size) {
+void *MsanCalloc(StackUnwindCtx *stack, uptr nmemb, uptr size) {
   if (UNLIKELY(CheckForCallocOverflow(size, nmemb))) {
     if (AllocatorMayReturnNull())
       return nullptr;
-    ReportCallocOverflow(nmemb, size, stack);
+    ReportCallocOverflow(nmemb, size, &BufferedStackTrace::TLSUnwind(*stack));
   }
   return MsanAllocate(stack, nmemb * size, sizeof(u64), true);
 }
@@ -262,15 +263,15 @@ static uptr AllocationSize(const void *p) {
   return b->requested_size;
 }
 
-void *msan_malloc(uptr size, StackTrace *stack) {
+void *msan_malloc(uptr size, StackUnwindCtx *stack) {
   return SetErrnoOnNull(MsanAllocate(stack, size, sizeof(u64), false));
 }
 
-void *msan_calloc(uptr nmemb, uptr size, StackTrace *stack) {
+void *msan_calloc(uptr nmemb, uptr size, StackUnwindCtx *stack) {
   return SetErrnoOnNull(MsanCalloc(stack, nmemb, size));
 }
 
-void *msan_realloc(void *ptr, uptr size, StackTrace *stack) {
+void *msan_realloc(void *ptr, uptr size, StackUnwindCtx *stack) {
   if (!ptr)
     return SetErrnoOnNull(MsanAllocate(stack, size, sizeof(u64), false));
   if (size == 0) {
@@ -280,59 +281,64 @@ void *msan_realloc(void *ptr, uptr size, StackTrace *stack) {
   return SetErrnoOnNull(MsanReallocate(stack, ptr, size, sizeof(u64)));
 }
 
-void *msan_reallocarray(void *ptr, uptr nmemb, uptr size, StackTrace *stack) {
+void *msan_reallocarray(void *ptr, uptr nmemb, uptr size,
+                        StackUnwindCtx *stack) {
   if (UNLIKELY(CheckForCallocOverflow(size, nmemb))) {
     errno = errno_ENOMEM;
     if (AllocatorMayReturnNull())
       return nullptr;
-    ReportReallocArrayOverflow(nmemb, size, stack);
+    ReportReallocArrayOverflow(nmemb, size,
+                               &BufferedStackTrace::TLSUnwind(*stack));
   }
   return msan_realloc(ptr, nmemb * size, stack);
 }
 
-void *msan_valloc(uptr size, StackTrace *stack) {
+void *msan_valloc(uptr size, StackUnwindCtx *stack) {
   return SetErrnoOnNull(MsanAllocate(stack, size, GetPageSizeCached(), false));
 }
 
-void *msan_pvalloc(uptr size, StackTrace *stack) {
+void *msan_pvalloc(uptr size, StackUnwindCtx *stack) {
   uptr PageSize = GetPageSizeCached();
   if (UNLIKELY(CheckForPvallocOverflow(size, PageSize))) {
     errno = errno_ENOMEM;
     if (AllocatorMayReturnNull())
       return nullptr;
-    ReportPvallocOverflow(size, stack);
+    ReportPvallocOverflow(size, &BufferedStackTrace::TLSUnwind(*stack));
   }
   // pvalloc(0) should allocate one page.
   size = size ? RoundUpTo(size, PageSize) : PageSize;
   return SetErrnoOnNull(MsanAllocate(stack, size, PageSize, false));
 }
 
-void *msan_aligned_alloc(uptr alignment, uptr size, StackTrace *stack) {
+void *msan_aligned_alloc(uptr alignment, uptr size, StackUnwindCtx *stack) {
   if (UNLIKELY(!CheckAlignedAllocAlignmentAndSize(alignment, size))) {
     errno = errno_EINVAL;
     if (AllocatorMayReturnNull())
       return nullptr;
-    ReportInvalidAlignedAllocAlignment(size, alignment, stack);
+    ReportInvalidAlignedAllocAlignment(size, alignment,
+                                       &BufferedStackTrace::TLSUnwind(*stack));
   }
   return SetErrnoOnNull(MsanAllocate(stack, size, alignment, false));
 }
 
-void *msan_memalign(uptr alignment, uptr size, StackTrace *stack) {
+void *msan_memalign(uptr alignment, uptr size, StackUnwindCtx *stack) {
   if (UNLIKELY(!IsPowerOfTwo(alignment))) {
     errno = errno_EINVAL;
     if (AllocatorMayReturnNull())
       return nullptr;
-    ReportInvalidAllocationAlignment(alignment, stack);
+    ReportInvalidAllocationAlignment(alignment,
+                                     &BufferedStackTrace::TLSUnwind(*stack));
   }
   return SetErrnoOnNull(MsanAllocate(stack, size, alignment, false));
 }
 
 int msan_posix_memalign(void **memptr, uptr alignment, uptr size,
-                        StackTrace *stack) {
+                        StackUnwindCtx *stack) {
   if (UNLIKELY(!CheckPosixMemalignAlignment(alignment))) {
     if (AllocatorMayReturnNull())
       return errno_EINVAL;
-    ReportInvalidPosixMemalignAlignment(alignment, stack);
+    ReportInvalidPosixMemalignAlignment(alignment,
+                                        &BufferedStackTrace::TLSUnwind(*stack));
   }
   void *ptr = MsanAllocate(stack, size, alignment, false);
   if (UNLIKELY(!ptr))

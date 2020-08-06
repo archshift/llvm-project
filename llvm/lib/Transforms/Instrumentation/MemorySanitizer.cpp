@@ -291,12 +291,12 @@ static cl::opt<bool> ClCheckAccessAddress("msan-check-access-address",
 static cl::opt<bool> ClEagerChecks(
     "msan-eager-checks",
     cl::desc("check arguments and return values at function call boundaries"),
-    cl::Hidden, cl::init(false));
+    cl::Hidden, cl::init(true));
 
 static cl::opt<bool>
     ClCachedUnwinding("msan-cached-unwinding",
                       cl::desc("hash active stack traces for fast unwinding"),
-                      cl::Hidden, cl::init(false));
+                      cl::Hidden, cl::init(true));
 
 static cl::opt<bool> ClDumpStrictInstructions("msan-dump-strict-instructions",
        cl::desc("print out instructions with default strict semantics"),
@@ -1072,6 +1072,7 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
   MemorySanitizer &MS;
   SmallVector<PHINode *, 16> ShadowPHINodes, OriginPHINodes;
   ValueMap<Value*, Value*> ShadowMap, OriginMap;
+  Value *PrevTraceHash = nullptr;
   std::unique_ptr<VarArgHelper> VAHelper;
   const TargetLibraryInfo *TLI;
   BasicBlock *ActualFnStart;
@@ -1316,13 +1317,13 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
     // CurrTrace allows us to approximately hash the entire call trace leading
     // to this function. We XOR in the prologue to mark the beginning of this
     // frame, and then XOR in the epilogue (ret instructions) to mark the end.
-    Value *CurrTraceHash = IRB.CreateLoad(IRB.getInt32Ty(), MS.CurrTraceTLS);
+    PrevTraceHash = IRB.CreateLoad(IRB.getInt32Ty(), MS.CurrTraceTLS);
     Value *ReturnAddress = IRB.CreatePtrToInt(
         IRB.CreateIntrinsic(Intrinsic::returnaddress, {}, {IRB.getInt32(0)}),
         IRB.getInt32Ty());
-    CurrTraceHash =
+    Value *CurrTraceHash =
         IRB.CreateIntrinsic(Intrinsic::fshl, {IRB.getInt32Ty()},
-                            {CurrTraceHash, CurrTraceHash, IRB.getInt32(5)});
+                            {PrevTraceHash, PrevTraceHash, IRB.getInt32(5)});
     CurrTraceHash = IRB.CreateXor(CurrTraceHash, ReturnAddress);
     IRB.CreateStore(CurrTraceHash, MS.CurrTraceTLS);
     return ret;
@@ -3782,17 +3783,9 @@ struct MemorySanitizerVisitor : public InstVisitor<MemorySanitizerVisitor> {
   void visitReturnInst(ReturnInst &I) {
     IRBuilder<> IRB(&I);
     if (ClCachedUnwinding) {
-      // XOR out the current stack frame's hash to indicate returning up a
+      // Restore the previous stack frame's hash to indicate returning up a
       // frame.
-      Value *CurrTraceHash = IRB.CreateLoad(IRB.getInt32Ty(), MS.CurrTraceTLS);
-      Value *ReturnAddress = IRB.CreatePtrToInt(
-          IRB.CreateIntrinsic(Intrinsic::returnaddress, {}, {IRB.getInt32(0)}),
-          IRB.getInt32Ty());
-      CurrTraceHash = IRB.CreateXor(CurrTraceHash, ReturnAddress);
-      CurrTraceHash =
-          IRB.CreateIntrinsic(Intrinsic::fshr, {IRB.getInt32Ty()},
-                              {CurrTraceHash, CurrTraceHash, IRB.getInt32(5)});
-      IRB.CreateStore(CurrTraceHash, MS.CurrTraceTLS);
+      IRB.CreateStore(PrevTraceHash, MS.CurrTraceTLS);
     }
 
     Value *RetVal = I.getReturnValue();
